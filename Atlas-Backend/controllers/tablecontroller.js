@@ -10,6 +10,66 @@ const getSampleDetailsData = async (req, res) => {
   }
 };
 
+// Controller function to update a record
+const updateRecord = async (req, res) => {
+  const {
+    RSN, 
+    articleName, 
+    designFileNo, 
+    seriesArticleFileNo, 
+    articleType, 
+    gender, 
+    machineSpeed, 
+    designer, 
+    grapher, 
+    master, 
+    sampleStatus 
+  } = req.body;
+
+  // Check if RSN and other required fields are provided
+  if (!RSN || !articleName || !designFileNo || !seriesArticleFileNo || !articleType || !gender || 
+      !machineSpeed || !designer || !grapher || !master || !sampleStatus) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  try {
+    // SQL query for updating the record
+    const query = `
+      UPDATE sample_details 
+      SET ArticleName=?, DesignFileNo=?, SeriesArticleFileNo=?, ArticleType=?, Gender=?, 
+          MachineSpeed=?, Designer=?, Grapher=?, SampleMaster=?, SampleStatus=? 
+      WHERE RSN = ?`;
+
+    // Execute the query with parameters
+    const [result] = await db.execute(query, [
+      articleName, 
+      designFileNo, 
+      seriesArticleFileNo, 
+      articleType, 
+      gender, 
+      machineSpeed, 
+      designer, 
+      grapher, 
+      master, 
+      sampleStatus, 
+      RSN
+    ]);
+
+    // If no rows were affected, return 404
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Record not found' });
+    }
+
+    // Success response
+    res.status(200).json({ message: 'Record updated successfully' });
+  } catch (error) {
+    // Log the error and return a server error response
+    console.error(error);
+    res.status(500).json({ message: 'Error updating record' });
+  }
+};
+
+
 // Fetch data from Knitting_Details table
 const getKnittingDetailsData = (req, res) => {
   try {
@@ -65,4 +125,5 @@ module.exports = {
   getSampleDetailsData,
   getKnittingDetailsData,
   addSampleDetails,
+  updateRecord,
 };

@@ -11,5 +11,8 @@ router.get('/KnittingDetails', tableController.getKnittingDetailsData);
 
 router.post(`/add-sample`, tableController.addSampleDetails);
 
+// Define the update route
+router.put('/update-sample', tableController.updateRecord);
+
 // Export the router to use it in the main server file
 module.exports = router;

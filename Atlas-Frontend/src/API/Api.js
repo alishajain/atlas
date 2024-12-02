@@ -30,3 +30,29 @@ export const addSampleDetails = async (data) => {
     }
   }
 };
+
+// This function handles the PUT request to update a record in the database
+export const updateRecord = async (data) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/update-sample', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Error updating record');
+    }
+
+    return result;
+  } catch (error) {
+    console.log("*********************************")
+    console.error('API Error:', error);
+    throw new Error(error.message || 'There was an error with the API request');
+  }
+};
+
