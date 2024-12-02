@@ -35,6 +35,8 @@ const AddSampleDetails = () => {
     } finally {
       setLoading(false);
     }
+
+    window.location.reload();
   };
 
   const handleMachineSpeedChange = (e) => {
@@ -88,7 +90,7 @@ const AddSampleDetails = () => {
           <label htmlFor="sampleStatus">Sample Status:</label>
           <input id="sampleStatus" type="text" value={sampleStatus} onChange={(e) => setSampleStatus(e.target.value)} required />
         </div>
-        <button type="submit" disabled={loading}>Submit</button>
+        <button type="submit" disabled={loading}>Add New</button>
       </form>
       {loading && <p>Loading...</p>} {/* Show loading message */}
       {message && <p>{message}</p>}
