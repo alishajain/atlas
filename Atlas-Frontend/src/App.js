@@ -1,14 +1,10 @@
 import './App.css';
-import SampleDetails from './Components/SampleDetails.js';
-import AddSampleDetails from './Components/AddSampleDetails.js';
-import UpdateSampleData from './Components/UpdateSample.js';
+import WelcomeSample from './Pages/WelcomeSample.js';
 
 function App() {
   return (
     <div>
-      <SampleDetails />
-      <AddSampleDetails />
-      <UpdateSampleData />
+      <WelcomeSample />
     </div>
   );
 }
