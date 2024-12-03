@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import AddSampleDetails from "../Components/AddSampleDetails";
-import SampleDetails from "../Components/SampleDetails";
+import ShowSamples from "./ShowSamples";
 import UpdateSampleData from "../Components/UpdateSample";
+import AddKnittingDetails from "../Components/AddKnittingDetails";
 
 const WelcomeSample = () => {
   const [selectedComponent, setSelectedComponent] = useState("");
@@ -16,9 +17,14 @@ const WelcomeSample = () => {
   const renderComponent = () => {
     switch (selectedComponent) {
       case "ShowAll":
-        return <SampleDetails />;
+        return <ShowSamples />
       case "NewRecord":
-        return <AddSampleDetails />;
+        return (
+          <div>
+            <AddSampleDetails />
+            <AddKnittingDetails />
+          </div>
+        );
       case "UpdateRecord":
         return <UpdateSampleData />;
       default:

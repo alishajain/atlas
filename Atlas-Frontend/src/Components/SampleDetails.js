@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import WelcomeSample from "../Pages/WelcomeSample";
 
 const SampleDetails = () => {
   const [sampleDetails, setSampleDetails] = useState([]);  // Ensure initial state is an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [backButton, setBackButton] = useState(false);
-
 
   useEffect(() => {
     axios
@@ -34,13 +31,8 @@ const SampleDetails = () => {
     return <p>Error fetching sample details: {error}</p>;
   }
 
-  const handleBackButton = () => {
-    setBackButton(true);
-  };
-
   return (
     <div>
-      {!backButton && (
     <div>
       <h1>Sample Details</h1>
       <table>
@@ -78,10 +70,7 @@ const SampleDetails = () => {
           {!Array.isArray(sampleDetails) && <p>Not an Array</p>}
         </tbody>
       </table>
-      <button onClick={handleBackButton}>Go to Welcome Page</button>
     </div>
-    )}
-    {backButton && <WelcomeSample />}
   </div>
   );
 };

@@ -1,41 +1,78 @@
 import React, { useState } from "react";
-import WelcomeSample from "../Pages/WelcomeSample";
 import { addSampleDetails } from "../API/Api";
 
 const AddSampleDetails = () => {
-  const [articleName, setArticleName] = useState("");
-  const [designFileNo, setDesignFileNo] = useState("");
-  const [seriesArticleFileNo, setSeriesArticleFileNo] = useState("");
-  const [articleType, setArticleType] = useState("");
-  const [gender, setGender] = useState("");
-  const [machineSpeed, setMachineSpeed] = useState("");
-  const [designer, setDesigner] = useState("");
-  const [grapher, setGrapher] = useState("");
-  const [master, setMaster] = useState("");
-  const [sampleStatus, setSampleStatus] = useState("");
+  const [formData, setFormData] = useState({
+    articleName: "",
+    designFileNo: "",
+    seriesArticleFileNo: "",
+    articleType: "",
+    gender: "",
+    machineSpeed: "",
+    designer: "",
+    grapher: "",
+    master: "",
+    sampleStatus: "",
+  });
+  
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [backButton, setBackButton] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleMachineSpeedChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        machineSpeed: value,
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const {
+      articleName,
+      designFileNo,
+      seriesArticleFileNo,
+      articleType,
+      gender,
+      machineSpeed,
+      designer,
+      grapher,
+      master,
+      sampleStatus,
+    } = formData;
+
+    return (
+      articleName &&
+      designFileNo &&
+      seriesArticleFileNo &&
+      articleType &&
+      gender &&
+      machineSpeed &&
+      designer &&
+      grapher &&
+      master &&
+      sampleStatus
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate inputs
-    if (
-      !articleName ||
-      !designFileNo ||
-      !seriesArticleFileNo ||
-      !articleType ||
-      !gender ||
-      !machineSpeed ||
-      !designer ||
-      !grapher ||
-      !master ||
-      !sampleStatus
-    ) {
+    if (!validateForm()) {
       setMessage("All fields are required.");
       return;
     }
+
+    const { articleName, designFileNo, seriesArticleFileNo, articleType, gender, machineSpeed, designer, grapher, master, sampleStatus } = formData;
 
     const data = {
       articleName,
@@ -53,11 +90,9 @@ const AddSampleDetails = () => {
     try {
       setLoading(true);
       const result = await addSampleDetails(data);
-      setMessage("Sample details added successfully." || result.message);
+      setMessage(result.message || "Sample details added successfully.");
     } catch (error) {
-      setMessage(
-        error.message || "An error occurred while adding the sample details."
-      );
+      setMessage(error.message || "An error occurred while adding the sample details.");
     } finally {
       setLoading(false);
     }
@@ -65,135 +100,31 @@ const AddSampleDetails = () => {
     window.location.reload();
   };
 
-  const handleMachineSpeedChange = (e) => {
-    const value = e.target.value;
-    if (!isNaN(value)) {
-      setMachineSpeed(value);
-    }
-  };
-
-  const handleBackButton = () => {
-    setBackButton(true);
-  };
-
   return (
     <div>
-      {!backButton && (
         <div>
           <h2>Add Sample Details</h2>
           <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="articleName">Article Name:</label>
-              <input
-                id="articleName"
-                type="text"
-                value={articleName}
-                onChange={(e) => setArticleName(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="designFileNo">Design File Number:</label>
-              <input
-                id="designFileNo"
-                type="text"
-                value={designFileNo}
-                onChange={(e) => setDesignFileNo(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="seriesArticleFileNo">
-                Series Article File No:
-              </label>
-              <input
-                id="seriesArticleFileNo"
-                type="text"
-                value={seriesArticleFileNo}
-                onChange={(e) => setSeriesArticleFileNo(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="articleType">Article Type:</label>
-              <input
-                id="articleType"
-                type="text"
-                value={articleType}
-                onChange={(e) => setArticleType(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="gender">Gender:</label>
-              <input
-                id="gender"
-                type="text"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="machineSpeed">Machine Speed:</label>
-              <input
-                id="machineSpeed"
-                type="number"
-                value={machineSpeed}
-                onChange={handleMachineSpeedChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="designer">Designer Name:</label>
-              <input
-                id="designer"
-                type="text"
-                value={designer}
-                onChange={(e) => setDesigner(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="grapher">Grapher Name:</label>
-              <input
-                id="grapher"
-                type="text"
-                value={grapher}
-                onChange={(e) => setGrapher(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="master">Master Name:</label>
-              <input
-                id="master"
-                type="text"
-                value={master}
-                onChange={(e) => setMaster(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="sampleStatus">Sample Status:</label>
-              <input
-                id="sampleStatus"
-                type="text"
-                value={sampleStatus}
-                onChange={(e) => setSampleStatus(e.target.value)}
-                required
-              />
-            </div>
+            {Object.keys(formData).map((key) => (
+              <div key={key}>
+                <label htmlFor={key}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}:</label>
+                <input
+                  id={key}
+                  type={key === "machineSpeed" ? "number" : "text"}
+                  value={formData[key]}
+                  onChange={key === "machineSpeed" ? handleMachineSpeedChange : handleChange}
+                  required
+                />
+              </div>
+            ))}
             <button type="submit" disabled={loading}>
               Add New
             </button>
           </form>
-          {loading && <p>Loading...</p>} {/* Show loading message */}
+          {loading && <p>Loading...</p>}
           {message && <p>{message}</p>}
-          <button onClick={handleBackButton}>Go to Welcome Page</button>
+          
         </div>
-      )}
-      {backButton && <WelcomeSample />}
     </div>
   );
 };

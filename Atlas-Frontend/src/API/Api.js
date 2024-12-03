@@ -31,6 +31,41 @@ export const addSampleDetails = async (data) => {
   }
 };
 
+export const addKnittingDetails = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/add-knitting`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    // Check for a successful response (e.g., status 200)
+    if (response.status === 200) {
+      return response.data; // Return response data to the caller
+    } else {
+      throw new Error('Unexpected response status: ' + response.status);
+    }
+  } catch (error) {
+    // Enhanced error handling with more specific details
+    console.error('API call error:', error);
+
+    // Check if the error has a response (e.g., 404, 500)
+    if (error.response) {
+      console.error('Response error:', error.response.data);
+      return { success: false, message: `Error: ${error.response.status} - ${error.response.data}` };
+    } 
+    // Check if the error is due to network issues or no response
+    else if (error.request) {
+      console.error('Request error:', error.request);
+      return { success: false, message: 'No response received from the API' };
+    } 
+    // For other types of errors (e.g., misconfiguration)
+    else {
+      console.error('Error message:', error.message);
+      return { success: false, message: error.message };
+    }
+  }
+};
+
+
 // This function handles the PUT request to update a record in the database
 export const updateRecord = async (data) => {
   try {
