@@ -3,10 +3,12 @@ const express = require('express');
 const router = express.Router();
 const sampleController = require('../controllers/SampleTableController');
 const knittingController = require('../controllers/KnittingTableController');
+const yarnController = require('../controllers/YarnMasterController')
 
 // Route for fetching data
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
 router.get('/KnittingDetails', knittingController.getKnittingDetails);
+router.get('/YarnDetails', yarnController.getYarnDetails);
 
 // Route for adding new Record
 router.post('/add-sample', sampleController.addSampleDetails);
