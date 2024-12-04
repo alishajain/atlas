@@ -10,6 +10,24 @@ const getSampleDetailsData = async (req, res) => {
   }
 };
 
+// Controller to fetch knitting details by RSN
+const getSampleDetailsByRSN = async (req, res) => {
+  const RSN = req.params.RSN; // Get RSN from URL parameters
+
+  try {
+    const [rows] = await db.query('SELECT * FROM sample_details WHERE RSN = ?', [RSN]);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Sample record not found." });
+    }
+
+    res.status(200).json({ success: true, data: rows[0] }); // Return the first record (should be unique by RSN)
+  } catch (err) {
+    console.error("Error fetching sample details:", err);
+    res.status(500).json({ success: false, message: "Error fetching sample details.", error: err.message });
+  }
+};
+
 // Controller function to update a record
 const updateSampleRecord = async (req, res) => {
   const {
@@ -169,4 +187,5 @@ module.exports = {
   getSampleDetailsData,
   addSampleDetails,
   updateSampleRecord,
+  getSampleDetailsByRSN,
 };

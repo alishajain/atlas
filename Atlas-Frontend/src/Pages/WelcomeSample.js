@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import AddSampleDetails from "../Components/AddSampleDetails";
 import ShowSamples from "./ShowSamples";
-import UpdateSampleData from "../Components/UpdateSample";
-import AddKnittingDetails from "../Components/AddKnittingDetails";
+import UpdateSample from "./UpdateSample";
+import AddSample from "./AddSample";
 
 const WelcomeSample = () => {
   const [selectedComponent, setSelectedComponent] = useState("");
@@ -19,14 +18,9 @@ const WelcomeSample = () => {
       case "ShowAll":
         return <ShowSamples />
       case "NewRecord":
-        return (
-          <div>
-            <AddSampleDetails />
-            <AddKnittingDetails />
-          </div>
-        );
+        return <AddSample />
       case "UpdateRecord":
-        return <UpdateSampleData />;
+        return <UpdateSample />;
       default:
         return <p>Please select the activity you want to perform.</p>;
     }

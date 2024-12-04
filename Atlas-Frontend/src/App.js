@@ -1,10 +1,11 @@
 import './App.css';
 import WelcomeSample from './Pages/WelcomeSample.js';
+import UpdateSample from './Pages/UpdateSample.js';
 
 function App() {
   return (
     <div>
-      <WelcomeSample />
+      <UpdateSample />
     </div>
   );
 }
