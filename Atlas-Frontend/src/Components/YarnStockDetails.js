@@ -61,8 +61,8 @@ const YarnStockDetails = () => {
           <tbody>
             {Array.isArray(yarnStockDetails) &&
               yarnStockDetails.map((yarn) => (
-                <tr key={yarn.YarnID}>
-                  <td>{formatDate(yarn.Date)}</td> {/* Format the Date here */}
+                <tr key={`${yarn.YarnId}-${yarn.Date}-${yarn.SupplierName}`}>
+                  <td>{formatDate(yarn.Date)}</td>
                   <td>{yarn.YarnID}</td>
                   <td>{yarn.SupplierName}</td>
                   <td>{yarn.SupplierCity}</td>

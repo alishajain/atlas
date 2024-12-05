@@ -43,6 +43,7 @@ const AddYarnStockDetails = () => {
       const response = await addYarnStockDetails(formData);
       if (response.success) {
         setMessage("Yarn stock details added successfully.");
+        window.location.reload();
       } else {
         setMessage("Error adding yarn stock details.");
       }
@@ -86,7 +87,6 @@ const AddYarnStockDetails = () => {
             ))}
           </select>
         </div>
-
 
         <div>
           <label htmlFor="supplierName">Supplier Name:</label>
