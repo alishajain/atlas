@@ -12,10 +12,14 @@ router.get('/KnittingDetails', knittingController.getKnittingDetails);
 router.get('/YarnDetails', yarnController.getYarnDetails);
 router.get('/YarnStock', yarnStockController.getYarnStockDetails);
 
+//Route to get IDs
+router.get('/yarnId', yarnStockController.getYarnIds);
+
 // Route for adding new Record
 router.post('/add-sample', sampleController.addSampleDetails);
 router.post('/add-knitting', knittingController.addKnittingDetails);
 router.post('/add-yarn', yarnController.addYarnDetails);
+router.post('/add-yarn-stock', yarnStockController.addYarnStockDetails);
 
 // Define the update route
 router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);

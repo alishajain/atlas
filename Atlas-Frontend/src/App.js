@@ -1,12 +1,10 @@
 import './App.css';
-import YarnDetails from './Components/YarnDetails.js';
-import AddYarnDetails from './Components/AddYarnDetails.js';
+import AddYarnStockDetails from './Components/AddYarnStockDetails';
 
 function App() {
   return (
     <div>
-      <YarnDetails />
-      <AddYarnDetails />
+      <AddYarnStockDetails />
     </div>
   );
 }

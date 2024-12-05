@@ -65,12 +65,12 @@ const addYarnDetails = async (req, res) => {
       if (connection) {
         await connection.rollback();
       }
-      console.error("Error inserting sample data:", error); // Log the detailed error for debugging
+      console.error("Error inserting yarn data:", error); // Log the detailed error for debugging
       res
         .status(500)
         .json({
           success: false,
-          message: `Error inserting sample data: ${error.message}`,
+          message: `Error inserting yarn data: ${error.message}`,
         }); // Send error response with message
     } finally {
       // Always release the connection back to the pool
