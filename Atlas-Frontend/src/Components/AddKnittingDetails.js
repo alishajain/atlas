@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addKnittingDetails } from "../API/Api"; // Assuming Api.js is in the same directory
+import { addKnittingDetails } from "../API/SampleApi"; // Assuming Api.js is in the same directory
 
 const AddKnittingDetailsForm = () => {
   const [formData, setFormData] = useState({

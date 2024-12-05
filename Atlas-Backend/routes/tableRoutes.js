@@ -3,16 +3,19 @@ const express = require('express');
 const router = express.Router();
 const sampleController = require('../controllers/SampleTableController');
 const knittingController = require('../controllers/KnittingTableController');
-const yarnController = require('../controllers/YarnMasterController')
+const yarnController = require('../controllers/YarnMasterController');
+const yarnStockController = require('../controllers/YarnInventoryController');
 
 // Route for fetching data
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
 router.get('/KnittingDetails', knittingController.getKnittingDetails);
 router.get('/YarnDetails', yarnController.getYarnDetails);
+router.get('/YarnStock', yarnStockController.getYarnStockDetails);
 
 // Route for adding new Record
 router.post('/add-sample', sampleController.addSampleDetails);
 router.post('/add-knitting', knittingController.addKnittingDetails);
+router.post('/add-yarn', yarnController.addYarnDetails);
 
 // Define the update route
 router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);

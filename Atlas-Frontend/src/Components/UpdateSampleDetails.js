@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { updateRecord, getSampleDetailsByRSN } from "../API/Api";
+import { updateRecord, getSampleDetailsByRSN } from "../API/SampleApi";
 
 const UpdateSampleDetails = ({ RSN }) => {
   const [articleName, setArticleName] = useState("");

@@ -1,11 +1,12 @@
 import './App.css';
-import WelcomeSample from './Pages/WelcomeSample.js';
-import UpdateSample from './Pages/UpdateSample.js';
+import YarnDetails from './Components/YarnDetails.js';
+import AddYarnDetails from './Components/AddYarnDetails.js';
 
 function App() {
   return (
     <div>
-      <UpdateSample />
+      <YarnDetails />
+      <AddYarnDetails />
     </div>
   );
 }

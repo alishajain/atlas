@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getKnittingDetailsByRSN, updateKnittingDetails } from "../API/Api";
+import { getKnittingDetailsByRSN, updateKnittingDetails } from "../API/SampleApi";
 
 const UpdateKnittingRecord = ({ RSN }) => {
   const [formData, setFormData] = useState({

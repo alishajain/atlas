@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addSampleDetails } from "../API/Api";
+import { addSampleDetails } from "../API/SampleApi";
 
 const AddSampleDetails = () => {
   const [formData, setFormData] = useState({
