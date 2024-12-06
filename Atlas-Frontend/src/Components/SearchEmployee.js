@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import {
-  searchEmployee,
-  deleteEmployee,
-  updateEmployee,
-} from "../API/EmployeeApi"; // Import necessary functions
+import { searchEmployee, deleteEmployee } from "../API/EmployeeApi"; // Import necessary functions
+import UpdateEmployee from "./UpdateEmployee"; // Import the UpdateEmployee component
 
 const formatDate = (date) => {
   const jsDate = new Date(date);
@@ -50,9 +47,22 @@ const SearchEmployee = () => {
     }
   };
 
-  const handleUpdate = async (emp) => {
-    setSelectedEmployee(emp);
-    // Here you could populate the form with the selected employee's data and allow the user to update it.
+  const handleUpdate = (emp) => {
+    setSelectedEmployee(emp); // Set the selected employee for updating
+  };
+
+  const handleCancelUpdate = () => {
+    setSelectedEmployee(null); // Cancel update and reset selected employee
+  };
+
+  const handleSaveUpdatedEmployee = (updatedEmployee) => {
+    // Update the employees list with the updated employee details
+    setEmployees((prev) =>
+      prev.map((emp) =>
+        emp.EmpId === updatedEmployee.EmpId ? updatedEmployee : emp
+      )
+    );
+    setSelectedEmployee(null); // Reset the selected employee
   };
 
   return (
@@ -111,9 +121,7 @@ const SearchEmployee = () => {
                 <td>{formatDate(emp.Anniversary)}</td>
                 <td>
                   <button onClick={() => handleUpdate(emp)}>Update</button>
-                  <button onClick={() => handleDelete(emp.EmpId)}>
-                    Delete
-                  </button>
+                  <button onClick={() => handleDelete(emp.EmpId)}>Delete</button>
                 </td>
               </tr>
             ))
@@ -124,6 +132,14 @@ const SearchEmployee = () => {
           )}
         </tbody>
       </table>
+
+      {selectedEmployee && (
+        <UpdateEmployee
+          employee={selectedEmployee}
+          onSave={handleSaveUpdatedEmployee}
+          onCancel={handleCancelUpdate}
+        />
+      )}
     </div>
   );
 };
