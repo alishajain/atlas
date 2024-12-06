@@ -1,16 +1,12 @@
 import './App.css';
-import AddYarnStockDetails from './Components/AddYarnStockDetails';
-import AddYarnDetails from './Components/AddYarnDetails';
-import YarnDetails from './Components/YarnDetails';
-import YarnStockDetails from './Components/YarnStockDetails';
+import EmployeeDetails from './Components/EmployeeDetails';
+import SearchEmployee from './Components/SearchEmployee';
 
 const App = () => {
   return (
     <div>
-      <AddYarnDetails />
-      <AddYarnStockDetails />
-      <YarnDetails />
-      <YarnStockDetails />
+      <SearchEmployee />
+      <EmployeeDetails />
     </div>
   );
 }

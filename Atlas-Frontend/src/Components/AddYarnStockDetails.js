@@ -9,6 +9,7 @@ const AddYarnStockDetails = () => {
   const [supplierCity, setSupplierCity] = useState(""); // State for Supplier City
   const [weight, setWeight] = useState(""); // State for Weight
   const [amount, setAmount] = useState(""); // State for Amount
+  const [billNo, setBillNo] = useState(""); // State for BillNo
   const [message, setMessage] = useState(""); // State for success or error message
   const [loading, setLoading] = useState(false); // State to track form submission loading
 
@@ -37,6 +38,7 @@ const AddYarnStockDetails = () => {
       SupplierCity: supplierCity,
       Weight: weight,
       Amount: amount,
+      BillNo: billNo,
     };
 
     try {
@@ -122,12 +124,23 @@ const AddYarnStockDetails = () => {
         </div>
 
         <div>
-          <label htmlFor="amount">Amount:</label>
+          <label htmlFor="amount">Cost:</label>
           <input
             type="number"
             id="amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="billNo">Bill Number:</label>
+          <input
+            type="text"
+            id="billNo"
+            value={billNo}
+            onChange={(e) => setBillNo(e.target.value)}
             required
           />
         </div>

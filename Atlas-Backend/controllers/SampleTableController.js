@@ -1,4 +1,4 @@
-const db = require("../db/database"); // Assuming this is the connection pool
+const db = require("../db/database");
 
 // Fetch data from Sample_Details table
 const getSampleDetailsData = async (req, res) => {

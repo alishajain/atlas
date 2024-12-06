@@ -4,7 +4,6 @@ const API_URL = "http://localhost:5000/api";
 
 // Add Yarn Details - Insert new Yarn into yarn_master
 export const addYarnDetails = async (data) => {
-  console.log(data);
   try {
     const response = await axios.post(`${API_URL}/add-yarn`, data, {
       headers: { "Content-Type": "application/json" },

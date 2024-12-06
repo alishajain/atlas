@@ -35,6 +35,8 @@ const YarnStockDetails = () => {
       });
   }, []);
 
+  console.log(yarnStockDetails);
+
   if (loading) {
     return <p>Loading Yarn Details...</p>;
   }
@@ -55,19 +57,21 @@ const YarnStockDetails = () => {
               <th>Supplier Name</th>
               <th>Supplier City</th>
               <th>Weight (in Kgs)</th>
-              <th>Amount</th>
+              <th>Cost</th>
+              <th>Bill Number</th>
             </tr>
           </thead>
           <tbody>
             {Array.isArray(yarnStockDetails) &&
               yarnStockDetails.map((yarn) => (
-                <tr key={`${yarn.YarnId}-${yarn.Date}-${yarn.SupplierName}`}>
+                <tr key={`${yarn.YarnId}-${yarn.BillNo}`}>
                   <td>{formatDate(yarn.Date)}</td>
                   <td>{yarn.YarnID}</td>
                   <td>{yarn.SupplierName}</td>
                   <td>{yarn.SupplierCity}</td>
                   <td>{yarn.Weight}</td>
                   <td>{yarn.Amount}</td>
+                  <td>{yarn.BillNO}</td>
                 </tr>
               ))}
             {!Array.isArray(yarnStockDetails) && <p>Not an Array</p>}
