@@ -6,6 +6,7 @@ const knittingController = require('../controllers/KnittingTableController');
 const yarnController = require('../controllers/YarnMasterController');
 const yarnStockController = require('../controllers/YarnInventoryController');
 const employeeController = require('../controllers/EmployeeController');
+const userController = require ('../controllers/UserController');
 
 // Route for fetching data
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -13,6 +14,7 @@ router.get('/KnittingDetails', knittingController.getKnittingDetails);
 router.get('/YarnDetails', yarnController.getYarnDetails);
 router.get('/YarnStock', yarnStockController.getYarnStockDetails);
 router.get('/EmployeeDetails', employeeController.getEmployeeDetails);
+router.post('/login', userController.loginUser);
 
 //Route to get IDs
 router.get('/yarnId', yarnStockController.getYarnIds);
