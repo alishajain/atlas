@@ -9,6 +9,7 @@ const yarnStockController = require('../controllers/YarnInventoryController');
 const employeeController = require('../controllers/EmployeeController');
 const userController = require ('../controllers/UserController');
 const machineController = require ('../controllers/MachineMasterController');
+const imageController = require('../controllers/ImageController');
 
 // Routes for Sample Details
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -48,6 +49,8 @@ router.get('/machines', machineController.showAllMachines);
 router.get('/search-machine/:MachineNo', machineController.searchMachine);
 router.delete('/delete-machine/:MachineNo', machineController.deleteMachine);
 router.put('/update-machine/:MachineNo', machineController.updateMachine);
+
+//Routes for Sample Image
 
 // Export the router to use it in the main server file
 module.exports = router;
