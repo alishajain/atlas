@@ -1,5 +1,6 @@
-const db = require("../db/database");
+const db = require("../db/database"); // Your database connection file
 
+// Function to fetch all employee details
 const getEmployeeDetails = async (req, res) => {
   try {
     const [results] = await db.query("SELECT * FROM employee_details");
@@ -70,13 +71,11 @@ const addEmployee = async (req, res) => {
       Anniversary,
     ]);
     // Return a success response with the inserted record details
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Employee added successfully",
-        data: { EmpId, EmpName },
-      });
+    res.status(201).json({
+      success: true,
+      message: "Employee added successfully",
+      data: { EmpId, EmpName },
+    });
   } catch (err) {
     console.error("Error inserting employee data:", err);
     res.status(500).json({ error: "Failed to add employee" });
@@ -113,11 +112,11 @@ const searchEmployee = async (req, res) => {
 
 // Function to delete an employee by EmpId
 const deleteEmployee = async (req, res) => {
-  const { empId } = req.params;
+  const { EmpId } = req.params;
 
   try {
     // Check if empId exists
-    if (!empId) {
+    if (!EmpId) {
       return res
         .status(400)
         .json({ success: false, message: "Employee ID is required" });
@@ -126,7 +125,7 @@ const deleteEmployee = async (req, res) => {
     // Perform the deletion operation
     const result = await db.query(
       "DELETE FROM employee_details WHERE EmpId = ?",
-      [empId]
+      [EmpId]
     );
 
     if (result.affectedRows > 0) {
@@ -149,48 +148,25 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
+
+// Function to update an employee's details by EmpId
 const updateEmployee = async (req, res) => {
-  const { empId } = req.params;
-  const {
-    EmpName,
-    Address,
-    EmailId,
-    ContactNo,
-    AltContactNo,
-    DOB,
-    Age,
-    JoiningDate,
-    Designation,
-    Anniversary,
-  } = req.body;
+  const { EmpId } = req.params;
+  const { EmpName, Address, EmailId, ContactNo, AltContactNo, DOB, Age, JoiningDate, Designation, Anniversary } = req.body;
 
   // Check if all required fields are present
-  if (
-    !EmpName ||
-    !Address ||
-    !EmailId ||
-    !ContactNo ||
-    !DOB ||
-    !Age ||
-    !JoiningDate ||
-    !Designation ||
-    !Anniversary
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Missing required fields" });
+  if (!EmpName || !Address || !EmailId || !ContactNo || !DOB || !Age || !JoiningDate || !Designation) {
+    return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
   // Ensure dates are in the correct format
   try {
     const dobDate = new Date(DOB);
     const joiningDate = new Date(JoiningDate);
-    const anniversaryDate = new Date(Anniversary);
+    const anniversaryDate = Anniversary ? new Date(Anniversary) : null;
 
-    if (isNaN(dobDate) || isNaN(joiningDate) || isNaN(anniversaryDate)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid date format" });
+    if (isNaN(dobDate) || isNaN(joiningDate) || (anniversaryDate && isNaN(anniversaryDate))) {
+      return res.status(400).json({ success: false, message: "Invalid date format" });
     }
 
     // Update employee details in the database
@@ -206,8 +182,8 @@ const updateEmployee = async (req, res) => {
         Age,
         joiningDate.toISOString().split("T")[0],
         Designation,
-        anniversaryDate.toISOString().split("T")[0],
-        empId,
+        anniversaryDate ? anniversaryDate.toISOString().split("T")[0] : null,
+        EmpId,
       ]
     );
 
@@ -217,12 +193,11 @@ const updateEmployee = async (req, res) => {
       res.status(404).json({ success: false, message: "Employee not found" });
     }
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error updating employee" });
+    console.error("Error updating employee:", error);
+    res.status(500).json({ success: false, message: "Error updating employee", error: error.message });
   }
 };
+
 
 module.exports = {
   getEmployeeDetails,

@@ -38,6 +38,7 @@ const SearchEmployee = () => {
 
   const handleDelete = async (empId) => {
     try {
+      console.log(`Deleting employee with EmpId: ${empId}`);
       const result = await deleteEmployee(empId);
       if (result.success) {
         setEmployees(employees.filter((emp) => emp.EmpId !== empId)); // Remove deleted employee from the state

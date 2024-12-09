@@ -43,6 +43,7 @@ export const searchEmployee = async (empId, empName) => {
 // Function to delete an employee
 export const deleteEmployee = async (empId) => {
   try {
+    console.log(`Requesting DELETE for EmpId: ${empId}`);
     const response = await axios.delete(`${API_URL}/delete-employee/${empId}`);
     return response.data;
   } catch (error) {
@@ -51,25 +52,30 @@ export const deleteEmployee = async (empId) => {
   }
 };
 
-// Function to update an employee
+
 export const updateEmployee = async (updatedEmployee) => {
   try {
-    console.log(updatedEmployee); // Log to check the data being sent
-
     // Make a PUT request to update the employee, passing EmpId in the URL
-    const response = await axios.put(
-      `${API_URL}/update-employee/${updatedEmployee.EmpId}`, // Pass EmpId in the URL
-      updatedEmployee // Send the updated employee data in the request body
+    const response = await fetch(
+      `${API_URL}/update-employee/${updatedEmployee.EmpId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedEmployee),
+      }
     );
+    
+    console.log('Alisha');
+    
+    // Directly await the JSON parsing
+    const result = await response.json();
 
-    // Assuming the response contains a `success` field to indicate success
-    if (response.data.success) {
-      return response.data; // Return the updated employee data on success
-    } else {
-      throw new Error("Failed to update employee");
+    if (!response.ok) {
+      throw new Error(result.message || 'Error updating record');
     }
+    return result;
   } catch (error) {
-    console.error("Error updating employee:", error);
-    throw new Error("Error updating employee");
+    throw new Error(error.message || 'There was an error with the API request');
   }
 };

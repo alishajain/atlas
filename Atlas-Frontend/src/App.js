@@ -1,7 +1,7 @@
 import React from 'react';
-import WelcomeSample from './Pages/WelcomeSample';
-// import './App.css';
-// import LoginForm from './Components/LoginForm';
+import './App.css';
+import Signup from './Pages/Signup';
+import SearchMachine from './Components/SearchMachine';
 
 // const App = () => {
 //   return (
@@ -10,7 +10,7 @@ import WelcomeSample from './Pages/WelcomeSample';
 //         <h1>Welcome to the Homepage</h1>
 //       </header>
 //       <main>
-//         <LoginForm />
+//         <Signup />
 //       </main>
 //     </div>
 //   );
@@ -20,7 +20,7 @@ const App = () => {
 
   return (
     <div>
-      <WelcomeSample />
+      <SearchMachine />
     </div>
   );
 };

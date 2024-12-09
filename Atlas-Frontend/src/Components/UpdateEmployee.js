@@ -13,6 +13,7 @@ const formatDateForInput = (date) => {
 const UpdateEmployee = ({ employee, onSave, onCancel }) => {
   // Set up state for updated employee
   const [updatedEmployee, setUpdatedEmployee] = useState({ ...employee });
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Whenever employee prop changes, update the state
   useEffect(() => {
@@ -28,29 +29,35 @@ const UpdateEmployee = ({ employee, onSave, onCancel }) => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedEmployee((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setUpdatedEmployee((prev) => {
+      const updatedData = { ...prev, [name]: value };
+      return updatedData;
+    });
   };
 
   // Handle save button click
   const handleSave = async () => {
+    if (!updatedEmployee.EmpName || !updatedEmployee.EmailId || !updatedEmployee.ContactNo) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    setSuccessMessage("Updated record successfully")
     try {
-      const result = await updateEmployee(updatedEmployee); // Call the update function
+      const result = await updateEmployee(updatedEmployee);
       if (result.success) {
-        onSave(result.data); // Pass the updated data back to the parent component
-      } else {
-        alert("Error updating employee");
+        onSave(result.data);
+        alert("Updated Record");
       }
     } catch (err) {
-      alert("Error updating employee: " + err.message);
+      console.log("Error updating employee: " + err.message);
     }
   };
 
   return (
     <div>
       <h1>Update Employee</h1>
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       <form>
         <div>
           <label>Employee ID</label>
