@@ -1,4 +1,4 @@
-const db = require("../db/database"); // Your database connection file
+const db = require("../db/database");
 
 // Function to fetch all employee details
 const getEmployeeDetails = async (req, res) => {

@@ -93,14 +93,12 @@ export const updateRecord = async (data) => {
 
 //Fetch sample details by RSN
 export const getSampleDetailsByRSN = async (RSN) => {
-  console.log(RSN);
   if (!RSN) {
     throw new Error("RSN is required");
   }
 
   try {
     const url = `${API_URL}/sample-details/${RSN}`;
-    console.log("Fetching sample details from:", url);
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -111,14 +109,12 @@ export const getSampleDetailsByRSN = async (RSN) => {
 
 //Fetch knitting details by RSN
 export const getKnittingDetailsByRSN = async (RSN) => {
-  console.log(RSN);
   if (!RSN) {
     throw new Error("RSN is required");
   }
 
   try {
     const url = `${API_URL}/knitting-details/${RSN}`;
-    console.log("Fetching knitting details from:", url);
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
