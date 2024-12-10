@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { addKnittingDetails } from "../API/SampleApi"; // Assuming Api.js is in the same directory
 
 const AddKnittingDetailsForm = () => {
+  const location = useLocation();
+  const selectedStates = location.state || {}; // Access selected states (checkbox selections)
+
   const [formData, setFormData] = useState({
     RSN: "",
     Size: "",
     FrontRight: { Weight: "", Time: "" },
     FrontLeft: { Weight: "", Time: "" },
-    FrontComplete: { Weight: "", time: "" },
+    FrontComplete: { Weight: "", Time: "" },
     BackRight: { Weight: "", Time: "" },
     BackLeft: { Weight: "", Time: "" },
     BackComplete: { Weight: "", Time: "" },
@@ -19,18 +23,34 @@ const AddKnittingDetailsForm = () => {
     Kharcha1: { Weight: "", Time: "" },
     Kharcha2: { Weight: "", Time: "" },
     Kharcha3: { Weight: "", Time: "" },
-    Total: { Weight: 0, Time: 0 }, // Set initial values of Total
+    Total: { Weight: 0, Time: 0 }, // Initial values for Total
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
+  useEffect(() => {
+    // Initialize formData based on selectedStates
+    setFormData((prevData) => {
+      const newFormData = { ...prevData };
+      Object.keys(newFormData).forEach((key) => {
+        if (selectedStates[key]) {
+          newFormData[key] = { Weight: "", Time: "" }; // Initialize only for selected states
+        }
+      });
+      return newFormData;
+    });
+  }, [selectedStates]); // Re-run when selectedStates change
+
   // Function to handle change in any input field (weight or time)
   const handleChange = (e, field, type) => {
     const { value } = e.target;
     setFormData((prevData) => {
       const newFormData = { ...prevData };
+      if (!newFormData[field]) {
+        newFormData[field] = { Weight: "", Time: "" }; // Initialize if undefined
+      }
       newFormData[field][type] = value;
 
       // Recalculate total weight and total time
@@ -157,45 +177,32 @@ const AddKnittingDetailsForm = () => {
               </td>
             </tr>
 
-            {/* JSON Fields */}
-            {[
-              "FrontRight",
-              "FrontLeft",
-              "FrontComplete",
-              "BackRight",
-              "BackLeft",
-              "BackComplete",
-              "SleeveRight",
-              "SleeveLeft",
-              "BothSleeves",
-              "Tape",
-              "Collar",
-              "Kharcha1",
-              "Kharcha2",
-              "Kharcha3",
-            ].map((field) => (
-              <tr key={field}>
-                <td>{field}</td>
-                <td>
-                  <input
-                    type="number"
-                    value={formData[field].Weight}
-                    onChange={(e) => handleChange(e, field, "Weight")}
-                    placeholder="Weight"
-                    required
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={formData[field].Time}
-                    onChange={(e) => handleChange(e, field, "Time")}
-                    placeholder="Time"
-                    required
-                  />
-                </td>
-              </tr>
-            ))}
+            {/* Dynamic Fields Based on Selected States */}
+            {Object.keys(selectedStates)
+              .filter((field) => selectedStates[field]) // Filter only selected fields
+              .map((field) => (
+                <tr key={field}>
+                  <td>{field}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={formData[field]?.Weight || ""}
+                      onChange={(e) => handleChange(e, field, "Weight")}
+                      placeholder="Weight"
+                      required
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={formData[field]?.Time || ""}
+                      onChange={(e) => handleChange(e, field, "Time")}
+                      placeholder="Time"
+                      required
+                    />
+                  </td>
+                </tr>
+              ))}
 
             {/* Total Row */}
             <tr>
