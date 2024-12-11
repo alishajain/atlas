@@ -1,32 +1,27 @@
 import React from 'react';
 import './App.css';
-import UpdateSample from './Pages/UpdateSample';
-import Signup from './Pages/Signup';
 import PanelSelection from './Components/PanelSelection';
+import AddSampleDetails from './Components/AddSampleDetails';
+import AddKnittingDetailsForm from './Components/AddKnittingDetails'; // Import your form component
 
-// const App = () => {
-//   return (
-//     <div className="app">
-//       <header className="header">
-//         <h1>Welcome to the Homepage</h1>
-//       </header>
-//       <main>
-//         <Signup />
-//       </main>
-//     </div>
-//   );
-// };
-
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import React Router components
-import AddKnittingDetailsForm from "./Components/AddKnittingDetails"; // Import your form component
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Update for React Router v6
 
 function App() {
   return (
-    <Router> {/* Wrap everything in a Router */}
-      <Routes> 
-        <Route path="/" element={<PanelSelection />} /> {/* Home or Panel Selection */}
-        <Route path="/add-knitting-details" element={<AddKnittingDetailsForm />} /> {/* The form component */}
-      </Routes>
+    <Router>
+      <div>
+        {/* Set up the routing for your app */}
+        <Routes>
+          {/* Route for Add Sample Details Page */}
+          <Route path="/" element={<AddSampleDetails />} />
+
+          {/* Route for Panel Selection Page */}
+          <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
+
+          {/* Route for Add Knitting Details Page */}
+          <Route path="/add-knitting-details/:RSN" element={<AddKnittingDetailsForm />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

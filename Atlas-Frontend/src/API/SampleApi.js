@@ -156,3 +156,14 @@ export const updateKnittingDetails = async (RSN, knittingData) => {
 
   return data;
 };
+
+// Function to fetch the latest RSN
+export const getLatestRSN = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-latest-rsn`);
+    return response.data.RSN;  // Assuming response contains the latest RSN number
+  } catch (error) {
+    console.error("Error fetching latest RSN:", error.response || error.message);
+    throw error;
+  }
+};

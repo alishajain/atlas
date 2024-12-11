@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const PanelSelection = () => {
   const [selectedFields, setSelectedFields] = useState({
@@ -20,6 +20,18 @@ const PanelSelection = () => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();  // Use location hook to get passed state
+
+  // Access RSN from state
+  const RSN = location.state ? location.state.RSN : null; // Check if RSN exists in state
+
+  useEffect(() => {
+    if (!RSN) {
+      console.log('RSN is not available.');
+    } else {
+      console.log('Fetched RSN:', RSN);
+    }
+  }, [RSN]);
 
   const handleChange = (e) => {
     const { name, checked } = e.target;
@@ -30,8 +42,10 @@ const PanelSelection = () => {
   };
 
   const handleNext = () => {
-    // Navigate and pass the selected fields as state
-    navigate('/add-knitting-details', { state: selectedFields });
+    // Navigate to AddKnittingDetailsForm with RSN and selected fields
+    navigate(`/add-knitting-details/${RSN}`, {
+      state: { RSN, selectedFields },  // Pass both RSN and selectedFields in state
+    });
   };
 
   return (
@@ -53,6 +67,7 @@ const PanelSelection = () => {
           </div>
         ))}
       </div>
+      {RSN && <p>RSN: {RSN}</p>} {/* Display the fetched RSN */}
       <button onClick={handleNext}>Next</button>
     </div>
   );

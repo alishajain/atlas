@@ -4,10 +4,11 @@ import { addKnittingDetails } from "../API/SampleApi"; // Assuming Api.js is in 
 
 const AddKnittingDetailsForm = () => {
   const location = useLocation();
-  const selectedStates = location.state || {}; // Access selected states (checkbox selections)
+  const selectedStates = location.state?.selectedFields || {}; // Access selected states (checkbox selections)
+  const RSN = location.state?.RSN || ""; // Access RSN
 
   const [formData, setFormData] = useState({
-    RSN: "",
+    RSN: RSN,
     Size: "",
     FrontRight: { Weight: "", Time: "" },
     FrontLeft: { Weight: "", Time: "" },
@@ -51,7 +52,9 @@ const AddKnittingDetailsForm = () => {
       if (!newFormData[field]) {
         newFormData[field] = { Weight: "", Time: "" }; // Initialize if undefined
       }
-      newFormData[field][type] = value;
+
+      // Set value to 0 if it's empty
+      newFormData[field][type] = value === "" ? 0 : value; // Set to 0 if empty
 
       // Recalculate total weight and total time
       newFormData.Total = calculateTotal(newFormData);
@@ -79,16 +82,18 @@ const AddKnittingDetailsForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate that all fields have both weight and time
-    for (let field in formData) {
-      if (typeof formData[field] === "object") {
-        const { Weight, Time } = formData[field];
-        if (Weight === "" || Time === "") {
-          setError(`Both weight and time must be provided for ${field}`);
-          return; // Stop submission if any required field is missing
-        }
+    // Ensure all fields have weight and time
+    const updatedFormData = { ...formData };
+
+    Object.keys(updatedFormData).forEach((field) => {
+      if (typeof updatedFormData[field] === "object") {
+        const { Weight, Time } = updatedFormData[field];
+
+        // Set to 0 if Weight or Time is empty
+        if (Weight === "") updatedFormData[field].Weight = 0;
+        if (Time === "") updatedFormData[field].Time = 0;
       }
-    }
+    });
 
     // Start loading indicator
     setLoading(true);
@@ -97,7 +102,7 @@ const AddKnittingDetailsForm = () => {
 
     try {
       // Send the data to the backend via the API function
-      const response = await addKnittingDetails(formData);
+      const response = await addKnittingDetails(updatedFormData);
 
       // On success, display success message and clear form
       setSuccess("Knitting details added successfully!");
@@ -129,8 +134,6 @@ const AddKnittingDetailsForm = () => {
       // End loading indicator
       setLoading(false);
     }
-
-    window.location.reload();
   };
 
   return (

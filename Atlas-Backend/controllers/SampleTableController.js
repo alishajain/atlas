@@ -155,13 +155,13 @@ const addSampleDetails = async (req, res) => {
     // Commit the transaction
     await connection.commit();
 
-    // Send a successful response
+    // Send a successful response with the RSN (insertId is the auto-incremented RSN)
     res
       .status(200)
       .json({
         success: true,
         message: "Sample details added successfully",
-        RSN: newSampleDetails.insertId,
+        RSN: newSampleDetails.insertId, // Send back the generated RSN
       });
   } catch (error) {
     // Rollback if an error occurs
@@ -183,9 +183,23 @@ const addSampleDetails = async (req, res) => {
   }
 };
 
+// New function to fetch the latest RSN (auto-incremented value)
+const getLatestRSN = async (req, res) => {
+  try {
+    // Query to get the last inserted RSN (auto-incremented)
+    const [rows] = await db.query('SELECT MAX(RSN) AS RSN FROM sample_details');
+    const latestRSN = rows[0].RSN + 1; // Increment by 1 to get the next RSN
+    res.json({ success: true, RSN: latestRSN }); // Return the next available RSN
+  } catch (err) {
+    console.error("Error fetching latest RSN:", err);
+    res.status(500).json({ success: false, message: "Error fetching latest RSN", error: err.message });
+  }
+};
+
 module.exports = {
   getSampleDetailsData,
   addSampleDetails,
   updateSampleRecord,
   getSampleDetailsByRSN,
+  getLatestRSN,
 };

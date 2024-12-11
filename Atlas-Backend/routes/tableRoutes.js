@@ -16,6 +16,7 @@ router.get('/SampleDetails', sampleController.getSampleDetailsData);
 router.post('/add-sample', sampleController.addSampleDetails);
 router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);
 router.put('/update-sample', sampleController.updateSampleRecord);
+router.get('/get-latest-rsn', sampleController.getLatestRSN);
 
 // Routes for Knitting Details
 router.get('/KnittingDetails', knittingController.getKnittingDetails);
