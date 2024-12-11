@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { addKnittingDetails, getMachineNos } from "../API/SampleApi"; // Assuming Api.js is in the same directory
+import ColorMatchingForm from "./ColorMatchingForm"; // Import ColorMatchingForm component
 
 const AddKnittingDetailsForm = () => {
   const location = useLocation();
@@ -31,6 +32,7 @@ const AddKnittingDetailsForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [machineNos, setMachineNos] = useState([]); // State to store machine numbers
+  const [showColorMatchingForm, setShowColorMatchingForm] = useState(false); // State to manage ColorMatchingForm visibility
 
   useEffect(() => {
     // Fetch machine numbers from the API
@@ -119,7 +121,7 @@ const AddKnittingDetailsForm = () => {
         // Set to 0 if Weight or Time is empty
         if (Weight === "") updatedFormData[field].Weight = 0;
         if (Time === "") updatedFormData[field].Time = 0;
-        if (MachineNo === "") updatedFormData[field].MachineNo = 0; // No longer handling MachineType
+        if (MachineNo === "") updatedFormData[field].MachineNo = ""; // No longer handling MachineType
       }
     });
 
@@ -134,6 +136,10 @@ const AddKnittingDetailsForm = () => {
 
       // On success, display success message and clear form
       setSuccess("Knitting details added successfully!");
+
+      // Show ColorMatchingForm upon successful submission
+      setShowColorMatchingForm(true);
+
       setFormData({
         RSN: "",
         Size: "",
@@ -268,6 +274,9 @@ const AddKnittingDetailsForm = () => {
       {/* Display Success or Error Messages */}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
+
+      {/* Conditionally render ColorMatchingForm */}
+      {showColorMatchingForm && <ColorMatchingForm />}
     </div>
   );
 };
