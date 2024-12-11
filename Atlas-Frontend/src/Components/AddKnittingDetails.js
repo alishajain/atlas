@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { addKnittingDetails } from "../API/SampleApi"; // Assuming Api.js is in the same directory
+import { addKnittingDetails, getMachineNos } from "../API/SampleApi"; // Assuming Api.js is in the same directory
 
 const AddKnittingDetailsForm = () => {
   const location = useLocation();
@@ -10,26 +10,41 @@ const AddKnittingDetailsForm = () => {
   const [formData, setFormData] = useState({
     RSN: RSN,
     Size: "",
-    FrontRight: { Weight: "", Time: "" },
-    FrontLeft: { Weight: "", Time: "" },
-    FrontComplete: { Weight: "", Time: "" },
-    BackRight: { Weight: "", Time: "" },
-    BackLeft: { Weight: "", Time: "" },
-    BackComplete: { Weight: "", Time: "" },
-    SleeveRight: { Weight: "", Time: "" },
-    SleeveLeft: { Weight: "", Time: "" },
-    BothSleeves: { Weight: "", Time: "" },
-    Tape: { Weight: "", Time: "" },
-    Collar: { Weight: "", Time: "" },
-    Kharcha1: { Weight: "", Time: "" },
-    Kharcha2: { Weight: "", Time: "" },
-    Kharcha3: { Weight: "", Time: "" },
+    FrontRight: { Weight: "", Time: "", MachineNo: "" },
+    FrontLeft: { Weight: "", Time: "", MachineNo: "" },
+    FrontComplete: { Weight: "", Time: "", MachineNo: "" },
+    BackRight: { Weight: "", Time: "", MachineNo: "" },
+    BackLeft: { Weight: "", Time: "", MachineNo: "" },
+    BackComplete: { Weight: "", Time: "", MachineNo: "" },
+    SleeveRight: { Weight: "", Time: "", MachineNo: "" },
+    SleeveLeft: { Weight: "", Time: "", MachineNo: "" },
+    BothSleeves: { Weight: "", Time: "", MachineNo: "" },
+    Tape: { Weight: "", Time: "", MachineNo: "" },
+    Collar: { Weight: "", Time: "", MachineNo: "" },
+    Kharcha1: { Weight: "", Time: "", MachineNo: "" },
+    Kharcha2: { Weight: "", Time: "", MachineNo: "" },
+    Kharcha3: { Weight: "", Time: "", MachineNo: "" },
     Total: { Weight: 0, Time: 0 }, // Initial values for Total
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [machineNos, setMachineNos] = useState([]); // State to store machine numbers
+
+  useEffect(() => {
+    // Fetch machine numbers from the API
+    const fetchMachineNos = async () => {
+      try {
+        const response = await getMachineNos();
+        setMachineNos(response.data); // Set the machine numbers to state
+      } catch (error) {
+        setError("Failed to fetch machine numbers");
+      }
+    };
+
+    fetchMachineNos();
+  }, []); // Only run once on component mount
 
   useEffect(() => {
     // Initialize formData based on selectedStates
@@ -37,24 +52,36 @@ const AddKnittingDetailsForm = () => {
       const newFormData = { ...prevData };
       Object.keys(newFormData).forEach((key) => {
         if (selectedStates[key]) {
-          newFormData[key] = { Weight: "", Time: "" }; // Initialize only for selected states
+          newFormData[key] = {
+            Weight: "",
+            Time: "",
+            MachineNo: "", // No longer handling MachineType
+          }; // Initialize with new fields
         }
       });
       return newFormData;
     });
   }, [selectedStates]); // Re-run when selectedStates change
 
-  // Function to handle change in any input field (weight or time)
+  // Function to handle change in any input field (weight, time, machine model)
   const handleChange = (e, field, type) => {
     const { value } = e.target;
     setFormData((prevData) => {
       const newFormData = { ...prevData };
       if (!newFormData[field]) {
-        newFormData[field] = { Weight: "", Time: "" }; // Initialize if undefined
+        newFormData[field] = {
+          Weight: "",
+          Time: "",
+          MachineNo: "", // No longer handling MachineType
+        }; // Initialize if undefined
       }
 
-      // Set value to 0 if it's empty
-      newFormData[field][type] = value === "" ? 0 : value; // Set to 0 if empty
+      // Set value to 0 if it's empty for weight/time or empty string for machine fields
+      if (type === "Weight" || type === "Time") {
+        newFormData[field][type] = value === "" ? 0 : value; // Set to 0 if empty
+      } else {
+        newFormData[field][type] = value === "" ? "" : value; // Set to empty string if empty
+      }
 
       // Recalculate total weight and total time
       newFormData.Total = calculateTotal(newFormData);
@@ -82,16 +109,17 @@ const AddKnittingDetailsForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure all fields have weight and time
+    // Ensure all fields have weight, time, and machine number
     const updatedFormData = { ...formData };
 
     Object.keys(updatedFormData).forEach((field) => {
       if (typeof updatedFormData[field] === "object") {
-        const { Weight, Time } = updatedFormData[field];
+        const { Weight, Time, MachineNo } = updatedFormData[field];
 
         // Set to 0 if Weight or Time is empty
         if (Weight === "") updatedFormData[field].Weight = 0;
         if (Time === "") updatedFormData[field].Time = 0;
+        if (MachineNo === "") updatedFormData[field].MachineNo = 0; // No longer handling MachineType
       }
     });
 
@@ -109,20 +137,20 @@ const AddKnittingDetailsForm = () => {
       setFormData({
         RSN: "",
         Size: "",
-        FrontRight: { Weight: "", Time: "" },
-        FrontLeft: { Weight: "", Time: "" },
-        FrontComplete: { Weight: "", Time: "" },
-        BackRight: { Weight: "", Time: "" },
-        BackLeft: { Weight: "", Time: "" },
-        BackComplete: { Weight: "", Time: "" },
-        SleeveRight: { Weight: "", Time: "" },
-        SleeveLeft: { Weight: "", Time: "" },
-        BothSleeves: { Weight: "", Time: "" },
-        Tape: { Weight: "", Time: "" },
-        Collar: { Weight: "", Time: "" },
-        Kharcha1: { Weight: "", Time: "" },
-        Kharcha2: { Weight: "", Time: "" },
-        Kharcha3: { Weight: "", Time: "" },
+        FrontRight: { Weight: "", Time: "", MachineNo: "" },
+        FrontLeft: { Weight: "", Time: "", MachineNo: "" },
+        FrontComplete: { Weight: "", Time: "", MachineNo: "" },
+        BackRight: { Weight: "", Time: "", MachineNo: "" },
+        BackLeft: { Weight: "", Time: "", MachineNo: "" },
+        BackComplete: { Weight: "", Time: "", MachineNo: "" },
+        SleeveRight: { Weight: "", Time: "", MachineNo: "" },
+        SleeveLeft: { Weight: "", Time: "", MachineNo: "" },
+        BothSleeves: { Weight: "", Time: "", MachineNo: "" },
+        Tape: { Weight: "", Time: "", MachineNo: "" },
+        Collar: { Weight: "", Time: "", MachineNo: "" },
+        Kharcha1: { Weight: "", Time: "", MachineNo: "" },
+        Kharcha2: { Weight: "", Time: "", MachineNo: "" },
+        Kharcha3: { Weight: "", Time: "", MachineNo: "" },
         Total: { Weight: 0, Time: 0 },
       });
     } catch (error) {
@@ -146,13 +174,14 @@ const AddKnittingDetailsForm = () => {
               <th>Field</th>
               <th>Weight</th>
               <th>Time</th>
+              <th>Machine No</th> {/* Removed 'Machine Type' */}
             </tr>
           </thead>
           <tbody>
             {/* Static Fields (RSN and Size) */}
             <tr>
               <td>RSN:</td>
-              <td colSpan="2">
+              <td colSpan="3">
                 <input
                   type="text"
                   name="RSN"
@@ -167,7 +196,7 @@ const AddKnittingDetailsForm = () => {
 
             <tr>
               <td>Size:</td>
-              <td colSpan="2">
+              <td colSpan="3">
                 <input
                   type="text"
                   name="Size"
@@ -204,6 +233,20 @@ const AddKnittingDetailsForm = () => {
                       required
                     />
                   </td>
+                  <td>
+                    <select
+                      value={formData[field]?.MachineNo || ""}
+                      onChange={(e) => handleChange(e, field, "MachineNo")}
+                      required
+                    >
+                      <option value="">Select Machine No</option>
+                      {machineNos.map((machineNo) => (
+                        <option key={machineNo} value={machineNo}>
+                          {machineNo}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
                 </tr>
               ))}
 
@@ -212,6 +255,7 @@ const AddKnittingDetailsForm = () => {
               <td>Total</td>
               <td>{formData.Total.Weight}</td>
               <td>{formData.Total.Time}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>

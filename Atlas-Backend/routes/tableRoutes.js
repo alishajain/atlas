@@ -50,10 +50,11 @@ router.get('/machines', machineController.showAllMachines);
 router.get('/search-machine/:MachineNo', machineController.searchMachine);
 router.delete('/delete-machine/:MachineNo', machineController.deleteMachine);
 router.put('/update-machine/:MachineNo', machineController.updateMachine);
+router.get('/get-machineNo', machineController.getMachineNo);
 
 // Routes for Sample Image
-router.post('/upload-image', imageController.upload.single('image'), imageController.uploadImage);  // Endpoint for uploading image
-router.get('/image/:RSN', imageController.getImage);  // Endpoint for fetching image by RSN
+router.post('/upload-image', imageController.upload.single('image'), imageController.uploadImage);
+router.get('/image/:RSN', imageController.getImage); 
 
 // Export the router to use it in the main server file
 module.exports = router;

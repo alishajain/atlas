@@ -2,13 +2,12 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
-//Adds Sample details
+// Adds Sample details
 export const addSampleDetails = async (data) => {
   try {
     const response = await axios.post(`${API_URL}/add-sample`, data, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
-
     return response.data; // Return response data to the caller
   } catch (error) {
     // Enhanced error handling with more specific details
@@ -32,11 +31,11 @@ export const addSampleDetails = async (data) => {
   }
 };
 
-//Adds Knitting Details
+// Adds Knitting Details
 export const addKnittingDetails = async (data) => {
   try {
     const response = await axios.post(`${API_URL}/add-knitting`, data, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     // Check for a successful response (e.g., status 200)
@@ -67,7 +66,7 @@ export const addKnittingDetails = async (data) => {
   }
 };
 
-//Updates Sample details
+// Updates Sample details
 export const updateRecord = async (data) => {
   try {
     const response = await fetch('http://localhost:5000/api/update-sample', {
@@ -91,10 +90,10 @@ export const updateRecord = async (data) => {
   }
 };
 
-//Fetch sample details by RSN
+// Fetch sample details by RSN
 export const getSampleDetailsByRSN = async (RSN) => {
   if (!RSN) {
-    throw new Error("RSN is required");
+    throw new Error('RSN is required');
   }
 
   try {
@@ -102,15 +101,15 @@ export const getSampleDetailsByRSN = async (RSN) => {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching sample details:", error.response || error.message);
+    console.error('Error fetching sample details:', error.response || error.message);
     throw error;
   }
 };
 
-//Fetch knitting details by RSN
+// Fetch knitting details by RSN
 export const getKnittingDetailsByRSN = async (RSN) => {
   if (!RSN) {
-    throw new Error("RSN is required");
+    throw new Error('RSN is required');
   }
 
   try {
@@ -118,32 +117,32 @@ export const getKnittingDetailsByRSN = async (RSN) => {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching knitting details:", error.response || error.message);
+    console.error('Error fetching knitting details:', error.response || error.message);
     throw error;
   }
 };
 
-//Function to update the knitting details
+// Function to update the knitting details
 export const updateKnittingDetails = async (RSN, knittingData) => {
   if (!RSN || !knittingData) {
-    throw new Error("RSN and knittingData are required");
+    throw new Error('RSN and knittingData are required');
   }
 
   const url = `${API_URL}/knitting-details/${RSN}`;
-  console.log("Updating knitting details at:", url);
-  console.log("Knitting Data:", knittingData);
+  console.log('Updating knitting details at:', url);
+  console.log('Knitting Data:', knittingData);
 
   const response = await fetch(url, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(knittingData),
   });
 
   if (!response.ok) {
     const errorText = await response.text(); // Get error response body
-    console.error("Error response:", errorText);
+    console.error('Error response:', errorText);
     throw new Error(`Failed to update knitting details: ${errorText}`);
   }
 
@@ -151,7 +150,7 @@ export const updateKnittingDetails = async (RSN, knittingData) => {
   try {
     data = await response.json();
   } catch (err) {
-    throw new Error("Failed to parse response data");
+    throw new Error('Failed to parse response data');
   }
 
   return data;
@@ -163,7 +162,18 @@ export const getLatestRSN = async () => {
     const response = await axios.get(`${API_URL}/get-latest-rsn`);
     return response.data.RSN;  // Assuming response contains the latest RSN number
   } catch (error) {
-    console.error("Error fetching latest RSN:", error.response || error.message);
+    console.error('Error fetching latest RSN:', error.response || error.message);
+    throw error;
+  }
+};
+
+// New function to fetch unique ModelNos
+export const getMachineNos = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-machineNo`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching model numbers:', error.response || error.message);
     throw error;
   }
 };

@@ -93,10 +93,34 @@ const updateMachine = async (req, res) => {
   }
 };
 
+const getMachineNo = async (req, res) => {
+  try {
+    // Query the database to fetch MachineNo from machine_master
+    const result = await db.query("SELECT MachineNo FROM machine_master");
+
+    // The first array contains the actual data we need, so we access result[0]
+    if (result && result[0]) {
+      // Extract the MachineNo values from the first array
+      const machineNos = result[0].map(row => row.MachineNo);
+
+      // Send the machine numbers as a JSON response
+      return res.json({ success: true, data: machineNos });
+    } else {
+      // Handle case where result[0] is empty or missing
+      return res.status(404).json({ error: "No machine numbers found" });
+    }
+  } catch (error) {
+    // Log the error and return a detailed error message
+    console.error("Error while fetching machine numbers:", error);
+    res.status(500).json({ error: `An error occurred while fetching machine numbers: ${error.message}` });
+  }
+};
+
 module.exports = {
   addMachine,
   showAllMachines,
   searchMachine,
   deleteMachine,
   updateMachine,
+  getMachineNo,
 };
