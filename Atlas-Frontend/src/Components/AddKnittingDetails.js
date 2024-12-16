@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { addKnittingDetails, getMachineNos } from "../API/SampleApi"; // Assuming Api.js is in the same directory
-import ColorMatchingForm from "./ColorMatchingForm"; // Import ColorMatchingForm component
+import { useLocation, useNavigate } from "react-router-dom";
+import { addKnittingDetails, getMachineNos } from "../API/SampleApi";
 
 const AddKnittingDetailsForm = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const selectedStates = location.state?.selectedFields || {}; // Access selected states (checkbox selections)
+  const selectedStates = location.state?.selectedFields || {}; // Access selected fields
   const RSN = location.state?.RSN || ""; // Access RSN
 
   const [formData, setFormData] = useState({
@@ -25,14 +25,13 @@ const AddKnittingDetailsForm = () => {
     Kharcha1: { Weight: "", Time: "", MachineNo: "" },
     Kharcha2: { Weight: "", Time: "", MachineNo: "" },
     Kharcha3: { Weight: "", Time: "", MachineNo: "" },
-    Total: { Weight: 0, Time: 0 }, // Initial values for Total
+    Total: { Weight: 0, Time: 0 },
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [machineNos, setMachineNos] = useState([]); // State to store machine numbers
-  const [showColorMatchingForm, setShowColorMatchingForm] = useState(false); // State to manage ColorMatchingForm visibility
 
   useEffect(() => {
     // Fetch machine numbers from the API
@@ -100,8 +99,8 @@ const AddKnittingDetailsForm = () => {
     Object.keys(data).forEach((key) => {
       if (key !== "RSN" && key !== "Size" && key !== "Total") {
         const { Weight, Time } = data[key];
-        totalWeight += parseFloat(Weight) || 0; // Add weight, default to 0 if not a valid number
-        totalTime += parseFloat(Time) || 0; // Add time, default to 0 if not a valid number
+        totalWeight += parseFloat(Weight) || 0;
+        totalTime += parseFloat(Time) || 0;
       }
     });
 
@@ -138,7 +137,9 @@ const AddKnittingDetailsForm = () => {
       setSuccess("Knitting details added successfully!");
 
       // Show ColorMatchingForm upon successful submission
-      setShowColorMatchingForm(true);
+      navigate(`/add-color-details/${RSN}`, {
+        state: { RSN, selectedStates }, // Pass RSN and selectedFields to the ColorMatchingForm
+      });
 
       setFormData({
         RSN: "",
@@ -165,7 +166,6 @@ const AddKnittingDetailsForm = () => {
         error.message || "An error occurred while adding knitting details"
       );
     } finally {
-      // End loading indicator
       setLoading(false);
     }
   };
@@ -270,13 +270,8 @@ const AddKnittingDetailsForm = () => {
           {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
-
-      {/* Display Success or Error Messages */}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
-
-      {/* Conditionally render ColorMatchingForm */}
-      {showColorMatchingForm && <ColorMatchingForm />}
     </div>
   );
 };

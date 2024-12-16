@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import PanelSelection from './Components/PanelSelection';
 import AddSampleDetails from './Components/AddSampleDetails';
-import AddKnittingDetailsForm from './Components/AddKnittingDetails'; // Import your form component
+import AddKnittingDetailsForm from './Components/AddKnittingDetails';
+import ColorMatchingForm from './Components/ColorMatchingForm';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Update for React Router v6
 
@@ -20,6 +21,8 @@ function App() {
 
           {/* Route for Add Knitting Details Page */}
           <Route path="/add-knitting-details/:RSN" element={<AddKnittingDetailsForm />} />
+
+          <Route path="/add-color-details/:RSN" element={<ColorMatchingForm />} />
         </Routes>
       </div>
     </Router>
