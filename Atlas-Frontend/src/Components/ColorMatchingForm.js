@@ -1,14 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { addColorMatching } from "../API/ColorApi";
 
 const ColorMatchingForm = ({ onSubmit }) => {
   const location = useLocation();
-  const { RSN, selectedStates } = location.state || {}; // Access RSN and selectedFields passed via navigation
+  const { RSN, selectedStates, size } = location.state || {};
 
   const [numColors, setNumColors] = useState(0); // Number of color matches
   const [buttonNames, setButtonNames] = useState([]); // Names for the buttons
   const [activeColorMatchIndices, setActiveColorMatchIndices] = useState([]); // To track which color matches are being edited
   const [formData, setFormData] = useState([]); // To store form data for the color match form
+  const [isSubmitted, setIsSubmitted] = useState(false); // Track if submit has been clicked
+  const [successMessage, setSuccessMessage] = useState(""); // Track success message for submission
+  const [errorMessage, setErrorMessage] = useState(""); // Track error message in case of failure
+
+  // Function to generate ColorId
+  const generateColorId = () => {
+    const firstAndLastLetters = buttonNames
+      .map((name) => {
+        if (name) {
+          return name[0].toUpperCase() + name[name.length - 1].toUpperCase();
+        }
+        return "";
+      })
+      .join(""); // Join first and last letters of each button name
+
+    const selectedUppercase = Object.entries(selectedStates)
+      .filter(([key, value]) => value === true) // Filter only fields where value is true
+      .map(([key, value]) => key) // Get the keys (fields) that are true
+      .filter((key) => /^[A-Z0-9]+$/.test(key)) // Keep only uppercase letters or numerals
+      .join(""); // Join them into a single string
+
+    return `${RSN}${firstAndLastLetters}${selectedUppercase}`;
+  };
 
   // Handle number of colors change
   const handleNumColorsChange = (e) => {
@@ -16,6 +40,9 @@ const ColorMatchingForm = ({ onSubmit }) => {
     setNumColors(num);
     setButtonNames(Array(num).fill("")); // Reset button names when the number changes
     setActiveColorMatchIndices([]); // Reset active color match when number of colors changes
+    setIsSubmitted(false); // Reset submission state
+    setSuccessMessage(""); // Reset success message
+    setErrorMessage(""); // Reset error message
   };
 
   // Handle button name change
@@ -34,10 +61,48 @@ const ColorMatchingForm = ({ onSubmit }) => {
   };
 
   // Handle submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Pass the button names and formData to the parent component (AddKnittingDetailsForm)
-    onSubmit(buttonNames, formData);
+
+    // Generate ColorId
+    const colorId = generateColorId();
+
+    // Iterate over each selected state and make a separate API call for each true state
+    try {
+      const promises = Object.entries(selectedStates)
+        .filter(([panel, value]) => value === true) // Filter selected states that are true
+        .map(([panel, value]) => {
+          // Prepare the color data for each selected state
+          const colorData = {
+            RSN,
+            colorId,
+            panel, // Include the panel key in the data
+            colorMatches: buttonNames,
+            formData: formData,
+          };
+
+          // Call the addColorMatching API function for each selected state
+          return addColorMatching(colorData);
+        });
+
+      // Wait for all API calls to complete
+      await Promise.all(promises);
+
+      // Handle success
+      setSuccessMessage("Color matching data successfully added!");
+      setErrorMessage(""); // Clear any error messages
+      console.log("All color matching data added successfully");
+
+      // Pass the button names and formData to the parent component (AddKnittingDetailsForm)
+      onSubmit(buttonNames, formData);
+    } catch (error) {
+      // Handle error
+      setErrorMessage("Failed to add color matching data. Please try again.");
+      setSuccessMessage(""); // Clear success message in case of error
+      console.error("API calls failed:", error);
+    }
+
+    setIsSubmitted(true); // Mark the form as submitted
   };
 
   // Open the color match form when a button is clicked
@@ -58,11 +123,7 @@ const ColorMatchingForm = ({ onSubmit }) => {
   };
 
   useEffect(() => {
-    // Optionally, you can pre-populate the form based on RSN or selectedFields if needed.
     if (selectedStates) {
-      // Log selectedStates for debugging
-      console.log("selectedStates:", selectedStates);
-
       // Ensure selectedStates is an object before proceeding
       if (typeof selectedStates !== "object" || selectedStates === null) {
         console.error("selectedStates is not a valid object:", selectedStates);
@@ -75,9 +136,10 @@ const ColorMatchingForm = ({ onSubmit }) => {
     <div>
       <h2>Color Matching</h2>
       <p>RSN: {RSN}</p> {/* Display RSN for reference */}
-      <p>Selected Panels: {JSON.stringify(selectedStates)}</p>{" "}
-      {/* Optionally, display selected fields */}
-      {/* Color Match Buttons */}
+      <p>Size: {size}</p>
+      {/* Success/Error Messages */}
+      {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
       <div>
         <label>Number of color matches: </label>
         <input
@@ -98,9 +160,11 @@ const ColorMatchingForm = ({ onSubmit }) => {
               onChange={(e) => handleButtonNameChange(index, e)}
               required
             />
-            <button type="button" onClick={() => openColorMatchForm(index)}>
-              Open Color Match Form
-            </button>
+            {isSubmitted && ( // Show the button only after submission
+              <button type="button" onClick={() => openColorMatchForm(index)}>
+                Open Color Match Form
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -145,7 +209,6 @@ const ColorMatchingForm = ({ onSubmit }) => {
                   ))}
               </tbody>
             </table>
-
             <button type="submit">Submit</button>
           </form>
         </div>

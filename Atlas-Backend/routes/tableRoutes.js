@@ -10,6 +10,8 @@ const employeeController = require('../controllers/EmployeeController');
 const userController = require('../controllers/UserController');
 const machineController = require('../controllers/MachineMasterController');
 const imageController = require('../controllers/ImageController');
+const colorMatchingController = require('../controllers/ColorMatchingController');
+const colorDetailsController = require('../controllers/ColorDetailsController');
 
 // Routes for Sample Details
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -54,7 +56,23 @@ router.get('/get-machineNo', machineController.getMachineNo);
 
 // Routes for Sample Image
 router.post('/upload-image', imageController.upload.single('image'), imageController.uploadImage);
-router.get('/image/:RSN', imageController.getImage); 
+router.get('/image/:RSN', imageController.getImage);
+
+// Routes for Color Matching
+router.get('/color-matching', colorMatchingController.getAllColorMatching); 
+router.post('/add-color-matching', colorMatchingController.addColorMatching);
+router.get('/color-matching/:RSN', colorMatchingController.getColorMatchingByRSN); 
+router.put('/update-color-matching/:RSN', colorMatchingController.updateColorMatching);
+router.delete('/delete-color-matching/:RSN', colorMatchingController.deleteColorMatching);
+
+// Routes for Color Details
+router.post('/add-color-detail', colorDetailsController.addColorDetail);
+router.get('/color-details', colorDetailsController.getAllColorDetails);
+router.get('/color-detail/:ColorId', colorDetailsController.getColorDetailByColorId);
+router.put('/update-color-detail/:ColorId', colorDetailsController.updateColorDetail);
+router.delete('/delete-color-detail/:ColorId', colorDetailsController.deleteColorDetail);
+
+module.exports = router;
 
 // Export the router to use it in the main server file
 module.exports = router;

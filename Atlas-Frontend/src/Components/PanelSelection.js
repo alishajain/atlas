@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const PanelSelection = () => {
@@ -24,14 +24,6 @@ const PanelSelection = () => {
 
   // Access RSN from state
   const RSN = location.state ? location.state.RSN : null; // Check if RSN exists in state
-
-  useEffect(() => {
-    if (!RSN) {
-      console.log('RSN is not available.');
-    } else {
-      console.log('Fetched RSN:', RSN);
-    }
-  }, [RSN]);
 
   const handleChange = (e) => {
     const { name, checked } = e.target;

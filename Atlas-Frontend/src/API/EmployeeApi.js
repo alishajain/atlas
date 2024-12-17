@@ -52,7 +52,7 @@ export const deleteEmployee = async (empId) => {
   }
 };
 
-
+// Function to update an employee
 export const updateEmployee = async (updatedEmployee) => {
   try {
     // Make a PUT request to update the employee, passing EmpId in the URL
