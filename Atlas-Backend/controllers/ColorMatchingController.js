@@ -2,11 +2,11 @@ const db = require("../db/database");
 
 // Create a new color matching entry
 const addColorMatching = async (req, res) => {
-  const { RSN, ColorId, MatchingName, Panel } = req.body;
+  const { ColorId, RSN, MatchingName, Panel } = req.body;
+  console.log(ColorId, RSN, MatchingName, Panel);
 
   // Validate input data
-  if (!RSN || !ColorId || !MatchingName || !Panel) {
-    console.log("Alisha");
+  if (!ColorId || !RSN || !MatchingName || !Panel) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
