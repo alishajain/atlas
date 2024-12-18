@@ -5,7 +5,7 @@ import AddColorDetails from "./AddColorDetails"; // Import the AddColorDetails c
 
 const AddColorMatching = () => {
   const location = useLocation();
-  const RSN = 20;
+  const RSN = 18;
   const selectedStates = {
     FrontRight: false,
     FrontLeft: false,

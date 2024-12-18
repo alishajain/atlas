@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { addColorDetail } from "../API/ColorDetailApi"; 
 
 const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
-
   const initialState = {
     ColorId: "",
     BaseColor: { name: null, weight: 0 },
@@ -20,10 +19,12 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
       .map(([key]) => key);
 
     // Update the formData to have one entry per selected panel
-    setFormData(selectedPanels.map((panelName) => ({
-      ...initialState,
-      ColorId: generateColorId(panelName), // Autofill ColorId based on the panel name
-    })));
+    setFormData(
+      selectedPanels.map((panelName) => ({
+        ...initialState,
+        ColorId: panelName, // Set the panel name as ColorId
+      }))
+    );
   }, [selectedStates]);
 
   // Handle change for input fields (ColorId, BaseColor Name/Weight, and each Color Name/Weight)
@@ -112,16 +113,10 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
           <tbody>
             {formData.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                <td>
-                  <input
-                    type="text"
-                    name="ColorId"
-                    value={row.ColorId}
-                    onChange={(e) => handleInputChange(e, rowIndex, "ColorId")}
-                    readOnly
-                    style={{ backgroundColor: "#f0f0f0" }}
-                  />
-                </td>
+                {/* Panel Column - display the selected panel name instead of ColorId */}
+                <td>{row.ColorId}</td>
+
+                {/* Base Color */}
                 <td>
                   <input
                     type="text"
@@ -139,6 +134,7 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
                   />
                 </td>
 
+                {/* Color columns */}
                 {row.colors.map((color, colorIndex) => (
                   <React.Fragment key={colorIndex}>
                     <td>
