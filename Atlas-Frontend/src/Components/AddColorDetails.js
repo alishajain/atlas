@@ -28,12 +28,13 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
   }, [selectedStates]);
 
   // Handle change for input fields (ColorId, BaseColor Name/Weight, and each Color Name/Weight)
-  const handleInputChange = (e, index, field) => {
+  const handleInputChange = (e, index, field, colorIndex = null) => {
     const { name, value } = e.target;
     const updatedFormData = [...formData];
 
-    if (field === "colors") {
-      updatedFormData[index].colors[name] = value;
+    if (field === "colors" && colorIndex !== null) {
+      // Update the specific color field (either name or weight)
+      updatedFormData[index].colors[colorIndex][name] = value;
     } else if (field === "BaseColor") {
       updatedFormData[index].BaseColor[name] = value;
     } else {
@@ -41,22 +42,12 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
     }
 
     // Recalculate total weight whenever a weight field is changed
-    if (field === "colors" && name.includes("weight")) {
-      updatedFormData[index].totalWeight = updatedFormData[index].colors.reduce(
-        (sum, color) => {
-          return sum + (parseFloat(color.weight) || 0); // Sum up all color weights, defaulting to 0 if invalid
-        },
-        0
-      );
-    }
+    updatedFormData[index].totalWeight = updatedFormData[index].colors.reduce(
+      (sum, color) => sum + (parseFloat(color.weight) || 0), 0
+    );
 
     // Recalculate total weight for BaseColor
-    if (field === "BaseColor" && name === "weight") {
-      updatedFormData[index].totalWeight =
-        updatedFormData[index].colors.reduce((sum, color) => {
-          return sum + (parseFloat(color.weight) || 0);
-        }, 0) + (parseFloat(updatedFormData[index].BaseColor.weight) || 0);
-    }
+    updatedFormData[index].totalWeight += (parseFloat(updatedFormData[index].BaseColor.weight) || 0);
 
     setFormData(updatedFormData);
   };
@@ -140,17 +131,17 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
                     <td>
                       <input
                         type="text"
-                        name={colorIndex}
+                        name="name"
                         value={color.name || ""}
                         placeholder={`Color ${colorIndex + 1} Name`}
-                        onChange={(e) => handleInputChange(e, rowIndex, "colors")}
+                        onChange={(e) => handleInputChange(e, rowIndex, "colors", colorIndex)}
                       />
                       <input
                         type="number"
-                        name={colorIndex}
+                        name="weight"
                         value={color.weight || 0}
                         placeholder={`Color ${colorIndex + 1} Weight`}
-                        onChange={(e) => handleInputChange(e, rowIndex, "colors")}
+                        onChange={(e) => handleInputChange(e, rowIndex, "colors", colorIndex)}
                       />
                     </td>
                   </React.Fragment>
