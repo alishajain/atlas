@@ -23,24 +23,41 @@ const addColorDetail = async (req, res) => {
   } = req.body;
 
   try {
-    const query = `
-      INSERT INTO color_details (ColorId, Size, BaseColor, Color1, Color2, Color3, Color4, Color5, Color6, Color7, Color8, Color9, Color10, Color11, Color12, Color13, Color14)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [
-      ColorId, Size, JSON.stringify(BaseColor), JSON.stringify(Color1), JSON.stringify(Color2),
-      JSON.stringify(Color3), JSON.stringify(Color4), JSON.stringify(Color5), JSON.stringify(Color6),
-      JSON.stringify(Color7), JSON.stringify(Color8), JSON.stringify(Color9), JSON.stringify(Color10),
-      JSON.stringify(Color11), JSON.stringify(Color12), JSON.stringify(Color13), JSON.stringify(Color14),
+    // Make sure that BaseColor and ColorX (Color1, Color2, ...) are objects with 'Name' and 'Weight' keys
+    const baseColorString = JSON.stringify(BaseColor);  // Stringify BaseColor
+    const colorStrings = [
+      JSON.stringify(Color1), JSON.stringify(Color2), JSON.stringify(Color3),
+      JSON.stringify(Color4), JSON.stringify(Color5), JSON.stringify(Color6),
+      JSON.stringify(Color7), JSON.stringify(Color8), JSON.stringify(Color9),
+      JSON.stringify(Color10), JSON.stringify(Color11), JSON.stringify(Color12),
+      JSON.stringify(Color13), JSON.stringify(Color14)
     ];
 
+    // Prepare the SQL query for inserting into the database
+    const query = `
+      INSERT INTO color_details (
+        ColorId, Size, BaseColor, Color1, Color2, Color3, Color4, Color5, Color6, Color7, Color8, Color9, Color10, Color11, Color12, Color13, Color14
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    // Fill the values array with ColorId, Size, BaseColor, and Colors
+    const values = [
+      ColorId,
+      Size,
+      baseColorString,
+      ...colorStrings,  // Spread the color strings for Color1 to Color14
+    ];
+
+    // Execute the query
     await db.query(query, values);
+
     res.status(201).json({ message: "Color detail added successfully!" });
   } catch (error) {
     console.error("Error adding color detail:", error);
     res.status(500).json({ message: "Error adding color detail", error });
   }
 };
+
 
 // Function to get all color details
 const getAllColorDetails = async (req, res) => {

@@ -3,7 +3,6 @@ const db = require("../db/database");
 // Create a new color matching entry
 const addColorMatching = async (req, res) => {
   const { ColorId, RSN, MatchingName, Panel } = req.body;
-  console.log(ColorId, RSN, MatchingName, Panel);
 
   // Validate input data
   if (!ColorId || !RSN || !MatchingName || !Panel) {
@@ -120,6 +119,34 @@ const deleteColorMatching = async (req, res) => {
   }
 };
 
+const getColorId = async (req, res) => {
+  const { RSN, MatchingName, Panel } = req.params;
+
+  // Validate input data
+  if (!RSN || !MatchingName || !Panel) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const query = `SELECT ColorId FROM color_matching WHERE RSN = ? AND MatchingName = ? AND Panel = ?`;
+
+    const [rows] = await db.execute(query, [RSN, MatchingName, Panel]);
+
+    // Check if a result was found
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No matching color found" });
+    }
+
+    // Return the ColorId
+    return res.status(200).json({ ColorId: rows[0].ColorId });
+  } catch (error) {
+    // Handle any errors that occur during query execution
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred while retrieving the color ID" });
+  }
+};
+
+
 // Export functions using module.exports
 module.exports = {
   addColorMatching,
@@ -127,4 +154,5 @@ module.exports = {
   getColorMatchingByRSN,
   updateColorMatching,
   deleteColorMatching,
+  getColorId,
 };

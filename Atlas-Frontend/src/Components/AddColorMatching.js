@@ -5,7 +5,7 @@ import AddColorDetails from "./AddColorDetails"; // Import the AddColorDetails c
 
 const AddColorMatching = () => {
   const location = useLocation();
-  const RSN = 18;
+  const RSN = 2;
   const selectedStates = {
     FrontRight: false,
     FrontLeft: false,
@@ -14,6 +14,7 @@ const AddColorMatching = () => {
     Kharcha1: true,
     Kharcha2: false,
   };
+  const size = 'Xl';
 
   const [numColors, setNumColors] = useState(0);
   const [matchingName, setMatchingName] = useState([]);
@@ -77,7 +78,7 @@ const AddColorMatching = () => {
               .reduce(
                 (acc, char) => (/[A-Z0-9]/.test(char) ? acc + char : acc),
                 ""
-              )}${RSN}${colorName[0].toUpperCase()}${colorName[
+              )}${RSN}${colorName[0].toUpperCase()}${colorName[1].toUpperCase()}${colorName[
               colorName.length - 1
             ].toUpperCase()}`,
             RSN: RSN,
@@ -151,6 +152,7 @@ const AddColorMatching = () => {
             key={index}
             matchingName={colorName} // Pass the specific color name to AddColorDetails
             RSN={RSN}
+            size={size}
             selectedStates={selectedStates}
           />
         ))}

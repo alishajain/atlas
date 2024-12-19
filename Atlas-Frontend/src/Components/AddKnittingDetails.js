@@ -138,7 +138,7 @@ const AddKnittingDetailsForm = () => {
 
       // Show ColorMatchingForm upon successful submission
       navigate(`/add-color-details/${RSN}`, {
-        state: { RSN, selectedStates, size: formData.Size }, // Pass RSN and selectedFields to the ColorMatchingForm
+        state: { RSN, selectedStates, size: formData.Size },
       });
 
       setFormData({

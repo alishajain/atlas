@@ -79,10 +79,27 @@ const deleteColorMatching = async (RSN) => {
   }
 };
 
+// Get ColorId by RSN, MatchingName, and Panel
+const getColorId = async (RSN, MatchingName, Panel) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/get-colorId/${RSN}/${MatchingName}/${Panel}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching color ID for RSN ${RSN}, MatchingName ${MatchingName}, Panel ${Panel}:`,
+      error
+    );
+    throw error;
+  }
+};
+
 export {
   addColorMatching,
   getAllColorMatching,
   getColorMatchingByRSN,
   updateColorMatching,
   deleteColorMatching,
+  getColorId,
 };

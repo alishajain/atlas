@@ -1,54 +1,96 @@
 import React, { useState, useEffect } from "react";
-import { addColorDetail } from "../API/ColorDetailApi"; 
+import { addColorDetail } from "../API/ColorDetailApi";
+import { getColorId } from "../API/ColorApi";
 
-const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
-  const initialState = {
+const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
+  // Initial state for a row in the table
+  const initialRowState = {
     ColorId: "",
-    BaseColor: { name: null, weight: 0 },
-    colors: Array(14).fill({ name: null, weight: 0 }), 
-    totalWeight: 0,
+    Size: size,
+    BaseColor: { Name: "", Weight: "" },
+    colors: Array(14).fill({ Name: "", Weight: "" }), // Initialize colors array with 14 colors
   };
 
-  // Initialize the formData based on the selectedStates with true values
+  // State for form data (this will be an array of rows)
   const [formData, setFormData] = useState([]);
 
-  useEffect(() => {
-    // Dynamically create formData based on selectedStates with value true
-    const selectedPanels = Object.entries(selectedStates)
-      .filter(([_, value]) => value === true)
-      .map(([key]) => key);
+  // State to store ColorIds fetched from the API
+  const [colorIds, setColorIds] = useState({});
 
-    // Update the formData to have one entry per selected panel
+  // State to handle success and error messages
+  const [message, setMessage] = useState({ type: "", content: "" });
+
+  // Extract selected panels from selectedStates
+  const selectedPanels = Object.entries(selectedStates)
+    .filter(([_, value]) => value === true)
+    .map(([key]) => key);
+
+  // Set initial formData when selectedStates change
+  useEffect(() => {
     setFormData(
       selectedPanels.map((panelName) => ({
-        ...initialState,
-        ColorId: panelName, // Set the panel name as ColorId
+        ...initialRowState,
+        ColorId: panelName, // Assign the panel name to ColorId
       }))
     );
   }, [selectedStates]);
 
-  // Handle change for input fields (ColorId, BaseColor Name/Weight, and each Color Name/Weight)
-  const handleInputChange = (e, index, field, colorIndex = null) => {
-    const { name, value } = e.target;
-    const updatedFormData = [...formData];
+  // Fetch ColorId for each selected panel
+  const fetchColorId = async () => {
+    try {
+      const newColorIds = {};
 
-    if (field === "colors" && colorIndex !== null) {
-      // Update the specific color field (either name or weight)
-      updatedFormData[index].colors[colorIndex][name] = value;
-    } else if (field === "BaseColor") {
-      updatedFormData[index].BaseColor[name] = value;
-    } else {
-      updatedFormData[index][name] = value;
+      for (const Panel of selectedPanels) {
+        const data = await getColorId(RSN, matchingName, Panel);
+        newColorIds[Panel] = data.ColorId; // Use only Panel as the key
+      }
+
+      // Update formData with the fetched ColorIds
+      setFormData((prevFormData) =>
+        prevFormData.map((row) => ({
+          ...row,
+          ColorId: newColorIds[row.ColorId] || row.ColorId,
+        }))
+      );
+      setColorIds(newColorIds); // Store all ColorIds in state
+    } catch (error) {
+      console.error("Error fetching ColorId:", error);
+      setMessage({ type: "error", content: "Error fetching ColorIds." });
     }
+  };
 
-    // Recalculate total weight whenever a weight field is changed
-    updatedFormData[index].totalWeight = updatedFormData[index].colors.reduce(
-      (sum, color) => sum + (parseFloat(color.weight) || 0), 0
-    );
+  // Handle input changes (BaseColor, Color1, Color2, etc.)
+  const handleInputChange = (e, rowIndex, field, colorIndex = null) => {
+    const { name, value } = e.target;
 
-    // Recalculate total weight for BaseColor
-    updatedFormData[index].totalWeight += (parseFloat(updatedFormData[index].BaseColor.weight) || 0);
+    // Create a new array by mapping over formData
+    const updatedFormData = formData.map((row, index) => {
+      if (index === rowIndex) {
+        // Only update the row that was modified
+        const updatedRow = { ...row };
 
+        if (field === "colors" && colorIndex !== null) {
+          // Update specific color field (either name or weight)
+          updatedRow.colors = updatedRow.colors.map((color, idx) =>
+            idx === colorIndex
+              ? { ...color, [name]: value } // Update the color field (Name or Weight)
+              : color
+          );
+        } else if (field === "BaseColor") {
+          updatedRow.BaseColor = {
+            ...updatedRow.BaseColor, // Copy BaseColor object
+            [name]: value, // Update BaseColor field (name or weight)
+          };
+        } else {
+          updatedRow[name] = value; // Update other fields like ColorId, Size
+        }
+
+        return updatedRow; // Return the updated row
+      }
+      return row; // For other rows, return the original unchanged row
+    });
+
+    // Update formData with the modified array
     setFormData(updatedFormData);
   };
 
@@ -56,35 +98,51 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare the data in the expected format
     const colorData = formData.map((row) => {
       const colors = row.colors.reduce((acc, color, index) => {
-        acc[`Color${index + 1}`] = { name: color.name, weight: color.weight };
+        acc[`Color${index + 1}`] = { Name: color.Name, Weight: color.Weight };
         return acc;
       }, {});
 
       return {
         ColorId: row.ColorId,
+        Size: row.Size,
         BaseColor: row.BaseColor,
-        totalWeight: row.totalWeight,
         ...colors,
       };
     });
 
     try {
-      // Send the data to the backend via the addColorDetail API call from ColordetailsApi.js
-      const response = await Promise.all(
+      // Send the data to the backend via the addColorDetail API, making separate API calls for each row
+      const responses = await Promise.all(
         colorData.map((data) => addColorDetail(data))
       );
-      console.log(response); // Log the successful response
+      setMessage({ type: "success", content: "Data submitted successfully!" });
+      console.log(responses); // Log the successful responses for all panels
     } catch (error) {
       console.error("Error submitting form:", error);
+      setMessage({ type: "error", content: "Error submitting the form." });
     }
   };
 
   return (
     <div>
-      <h3>{matchingName}</h3> {/* Display the matching name as a heading */}
+      <button onClick={fetchColorId}>Fetch ColorIds</button>
+      <h3>{matchingName}</h3>
+
+      {/* Show success/error message */}
+      {message.content && (
+        <div
+          style={{
+            color: message.type === "error" ? "red" : "green",
+            marginBottom: "10px",
+            fontWeight: "bold",
+          }}
+        >
+          {message.content}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         <table border="1" style={{ width: "100%", tableLayout: "auto" }}>
           <thead>
@@ -104,22 +162,21 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
           <tbody>
             {formData.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {/* Panel Column - display the selected panel name instead of ColorId */}
                 <td>{row.ColorId}</td>
 
                 {/* Base Color */}
                 <td>
                   <input
                     type="text"
-                    name="name"
-                    value={row.BaseColor.name || ""}
+                    name="Name"
+                    value={row.BaseColor.Name || ""}
                     placeholder="Base Color Name"
                     onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
                   />
                   <input
                     type="number"
-                    name="weight"
-                    value={row.BaseColor.weight || 0}
+                    name="Weight"
+                    value={row.BaseColor.Weight || ""}
                     placeholder="Base Color Weight"
                     onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
                   />
@@ -131,17 +188,21 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
                     <td>
                       <input
                         type="text"
-                        name="name"
-                        value={color.name || ""}
+                        name="Name"
+                        value={color.Name || ""}
                         placeholder={`Color ${colorIndex + 1} Name`}
-                        onChange={(e) => handleInputChange(e, rowIndex, "colors", colorIndex)}
+                        onChange={(e) =>
+                          handleInputChange(e, rowIndex, "colors", colorIndex)
+                        }
                       />
                       <input
                         type="number"
-                        name="weight"
-                        value={color.weight || 0}
+                        name="Weight"
+                        value={color.Weight || ""}
                         placeholder={`Color ${colorIndex + 1} Weight`}
-                        onChange={(e) => handleInputChange(e, rowIndex, "colors", colorIndex)}
+                        onChange={(e) =>
+                          handleInputChange(e, rowIndex, "colors", colorIndex)
+                        }
                       />
                     </td>
                   </React.Fragment>
@@ -152,7 +213,7 @@ const AddColorDetails = ({ matchingName, RSN, selectedStates }) => {
                   <input
                     type="number"
                     name="totalWeight"
-                    value={row.totalWeight}
+                    value={row.totalWeight || ""}
                     readOnly
                     style={{ backgroundColor: "#f0f0f0" }}
                   />
