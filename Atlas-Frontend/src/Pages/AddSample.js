@@ -1,24 +1,29 @@
-import React, { useState } from "react";
-import WelcomeSample from "./WelcomeSample";
-import AddSampleDetails from "../Components/AddSampleDetails";
-import AddKnittingDetails from "../Components/AddKnittingDetails"
+import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const AddSample = () => {
-  const [backButton, setBackButton] = useState(false);
+const AddNewSample = () => {
+  const navigate = useNavigate(); // Initialize navigate function
 
-  const handleBackButton = () => setBackButton(true);
+  // Function to handle "Yes" click - navigate to root to add sample
+  const handleYesClick = () => {
+    navigate("/add-sample-details"); // Navigate to root where AddSampleDetails is displayed
+  };
+
+  // Function to handle "No" click - navigate to homepage
+  const handleNoClick = () => {
+    navigate("/"); // Navigate to home page where Homepage component is displayed
+  };
+
   return (
     <div>
-      {!backButton && (
-        <div>
-          <AddSampleDetails />
-          <AddKnittingDetails />
-          <button onClick={handleBackButton}>Go to Welcome Page</button>
-        </div>
-      )}
-      {backButton && <WelcomeSample />}
+      <h2>Do you want to add a new sample?</h2>
+
+      <div>
+        <button onClick={handleYesClick}>Yes</button>
+        <button onClick={handleNoClick}>No</button>
+      </div>
     </div>
   );
 };
 
-export default AddSample;
+export default AddNewSample;

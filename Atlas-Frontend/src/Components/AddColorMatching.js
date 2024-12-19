@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addColorMatching } from "../API/ColorApi";
 import AddColorDetails from "./AddColorDetails";
-import AddNewSample from "./AddNewSample";
+import AddSample from '../Pages/AddSample';
 
 const AddColorMatching = () => {
   const location = useLocation();
@@ -118,7 +118,7 @@ const AddColorMatching = () => {
 
   // Function to handle "Next" button click - Navigate to /add-new-sample
   const handleNextClick = () => {
-    navigate("/add-new-sample"); // Navigate to the AddNewSample component
+    navigate("/add-sample"); // Navigate to the AddNewSample component
   };
 
   return (
