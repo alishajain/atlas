@@ -43,6 +43,7 @@ const PanelSelection = () => {
   return (
     <div>
       <h1>Panel Selection</h1>
+        {RSN && <p>RSN: {RSN}</p>}
       <div>
         {/* Render checkboxes dynamically based on state */}
         {Object.keys(selectedFields).map((field) => (
@@ -59,7 +60,6 @@ const PanelSelection = () => {
           </div>
         ))}
       </div>
-      {RSN && <p>RSN: {RSN}</p>} {/* Display the fetched RSN */}
       <button onClick={handleNext}>Next</button>
     </div>
   );

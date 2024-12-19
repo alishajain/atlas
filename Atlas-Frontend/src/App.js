@@ -4,7 +4,8 @@ import PanelSelection from './Components/PanelSelection';
 import AddSampleDetails from './Components/AddSampleDetails';
 import AddKnittingDetailsForm from './Components/AddKnittingDetails';
 import AddColorMatching from './Components/AddColorMatching';
-import AddColorDetails from './Components/AddColorDetails';
+import AddNewSample from './Components/AddNewSample';
+import WelcomeSample from './Pages/WelcomeSample';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Update for React Router v6
 
@@ -13,10 +14,12 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/add-sample-details" element={<AddSampleDetails />} />
+          <Route path="/" element={<AddSampleDetails />} />
           <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
           <Route path="/add-knitting-details/:RSN" element={<AddKnittingDetailsForm />} />
-          <Route path="/" element={<AddColorMatching />} />
+          <Route path="/add-color-details/:RSN" element={<AddColorMatching />} />
+          <Route path='/add-new-sample' element={<AddNewSample />} />
+          <Route path='/home-sample' elememt={<WelcomeSample />} />
         </Routes>
       </div>
     </Router>

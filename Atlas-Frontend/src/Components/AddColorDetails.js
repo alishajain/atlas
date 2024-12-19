@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { addColorDetail } from "../API/ColorDetailApi";
 import { getColorId } from "../API/ColorApi";
+import { getYarnIds } from "../API/YarnApi";
 
 const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
   // Initial state for a row in the table
@@ -16,6 +17,9 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
 
   // State to store ColorIds fetched from the API
   const [colorIds, setColorIds] = useState({});
+
+  // State to store YarnIds for the dropdown
+  const [yarnIds, setYarnIds] = useState({});
 
   // State to handle success and error messages
   const [message, setMessage] = useState({ type: "", content: "" });
@@ -56,6 +60,25 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     } catch (error) {
       console.error("Error fetching ColorId:", error);
       setMessage({ type: "error", content: "Error fetching ColorIds." });
+    }
+  };
+
+  // Fetch YarnIds for dropdown selection
+  const fetchYarnIds = async () => {
+    try {
+      const response = await getYarnIds();
+      console.log("YarnIds Response:", response); // Log the response for debugging
+
+      // Check if the response contains the `data` property and is an object
+      if (response && response.data && typeof response.data === "object") {
+        setYarnIds(response.data); // Set the yarnIds object to state
+      } else {
+        console.error("Error: YarnIds response is not an object", response);
+        setMessage({ type: "error", content: "Invalid data format for YarnIds." });
+      }
+    } catch (error) {
+      console.error("Error fetching YarnIds:", error);
+      setMessage({ type: "error", content: "Error fetching YarnIds." });
     }
   };
 
@@ -125,10 +148,15 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     }
   };
 
+  // Fetch YarnIds when component mounts
+  useEffect(() => {
+    fetchYarnIds();
+  }, []);
+
   return (
     <div>
-      <button onClick={fetchColorId}>Fetch ColorIds</button>
       <h3>{matchingName}</h3>
+      <button onClick={fetchColorId}>Fetch ColorIds</button>
 
       {/* Show success/error message */}
       {message.content && (
@@ -166,13 +194,24 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
 
                 {/* Base Color */}
                 <td>
-                  <input
-                    type="text"
+                  <select
                     name="Name"
                     value={row.BaseColor.Name || ""}
-                    placeholder="Base Color Name"
-                    onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
-                  />
+                    onChange={(e) =>
+                      handleInputChange(e, rowIndex, "BaseColor")
+                    }
+                  >
+                    <option value="">Select Yarn</option>
+                    {Object.values(yarnIds).length === 0 ? (
+                      <option value="">No Yarn available</option>
+                    ) : (
+                      Object.values(yarnIds).map((yarn) => (
+                        <option key={yarn.YarnId} value={yarn.Name}>
+                          {yarn.YarnId}
+                        </option>
+                      ))
+                    )}
+                  </select>
                   <input
                     type="number"
                     name="Weight"
@@ -186,15 +225,24 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                 {row.colors.map((color, colorIndex) => (
                   <React.Fragment key={colorIndex}>
                     <td>
-                      <input
-                        type="text"
+                      <select
                         name="Name"
                         value={color.Name || ""}
-                        placeholder={`Color ${colorIndex + 1} Name`}
                         onChange={(e) =>
                           handleInputChange(e, rowIndex, "colors", colorIndex)
                         }
-                      />
+                      >
+                        <option value="">Select Yarn</option>
+                        {Object.values(yarnIds).length === 0 ? (
+                          <option value="">No Yarn available</option>
+                        ) : (
+                          Object.values(yarnIds).map((yarn) => (
+                            <option key={yarn.YarnId} value={yarn.Name}>
+                              {yarn.YarnId}
+                            </option>
+                          ))
+                        )}
+                      </select>
                       <input
                         type="number"
                         name="Weight"

@@ -38,7 +38,7 @@ export const addYarnDetails = async (data) => {
 export const getYarnIds = async () => {
   try {
     const response = await axios.get(`${API_URL}/yarnId`);
-    return response.data; // Return the Yarn IDs
+    return response.data;
   } catch (error) {
     console.error("Error fetching YarnIds:", error);
     throw new Error("Error fetching YarnIds");

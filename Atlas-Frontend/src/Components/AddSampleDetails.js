@@ -30,7 +30,8 @@ const AddSampleDetails = () => {
 
   const handleMachineSpeedChange = (e) => {
     const value = e.target.value;
-    if (!isNaN(value)) {
+    // Allow only numbers greater than or equal to 0
+    if (!isNaN(value) && value >= 0) {
       setFormData((prevData) => ({
         ...prevData,
         machineSpeed: value,
@@ -116,8 +117,6 @@ const AddSampleDetails = () => {
     } finally {
       setLoading(false);
     }
-
-    window.location.reload();
   };
 
   return (

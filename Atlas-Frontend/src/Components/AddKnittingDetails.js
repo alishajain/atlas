@@ -67,8 +67,15 @@ const AddKnittingDetailsForm = () => {
   // Function to handle change in any input field (weight, time, machine model)
   const handleChange = (e, field, type) => {
     const { value } = e.target;
+
+    // Ensure the value is not negative for weight and time fields
+    const validValue = type === "Weight" || type === "Time"
+      ? Math.max(0, parseFloat(value)) // Ensure non-negative values
+      : value;
+
     setFormData((prevData) => {
       const newFormData = { ...prevData };
+
       if (!newFormData[field]) {
         newFormData[field] = {
           Weight: "",
@@ -79,7 +86,7 @@ const AddKnittingDetailsForm = () => {
 
       // Set value to 0 if it's empty for weight/time or empty string for machine fields
       if (type === "Weight" || type === "Time") {
-        newFormData[field][type] = value === "" ? 0 : value; // Set to 0 if empty
+        newFormData[field][type] = validValue || 0; // Use validated value (or 0 if empty)
       } else {
         newFormData[field][type] = value === "" ? "" : value; // Set to empty string if empty
       }
