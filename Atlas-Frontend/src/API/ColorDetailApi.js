@@ -27,7 +27,7 @@ const getAllColorDetails = async () => {
 // Get a specific color detail by ColorId
 const getColorDetailByColorId = async (ColorId) => {
   try {
-    const response = await axios.get(`${API_URL}/color-detail/${ColorId}`);
+    const response = await axios.get(`${API_URL}/get-color-details/${ColorId}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching color detail for ColorId ${ColorId}:`, error);

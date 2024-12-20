@@ -1,20 +1,4 @@
-const db = require("../db/database"); // Assuming this is the connection pool
-
-// Function to calculate total weight and time from JSON fields
-const calculateTotalWeightAndTime = (jsonData) => {
-  let totalWeight = 0;
-  let totalTime = 0;
-
-  // Loop through each item in the JSON and sum the weight and time
-  if (Array.isArray(jsonData)) {
-    jsonData.forEach((item) => {
-      totalWeight += item.weight || 0; // Add weight if present, otherwise 0
-      totalTime += item.time || 0; // Add time if present, otherwise 0
-    });
-  }
-
-  return { totalWeight, totalTime };
-};
+const db = require("../db/database");
 
 // Fetch data from Knitting_Details table
 const getKnittingDetails = async (req, res) => {
@@ -45,8 +29,11 @@ const addKnittingDetails = async (req, res) => {
     Kharcha1,
     Kharcha2,
     Kharcha3,
+    Total,
   } = req.body;
 
+  console.log(Total);
+  console.log("Alisha");
   // Validate input fields (for non-JSON fields)
   if (!RSN || !Size) {
     return res.status(400).json({ message: "RSN and Size are required." });
@@ -68,6 +55,7 @@ const addKnittingDetails = async (req, res) => {
     Kharcha1,
     Kharcha2,
     Kharcha3,
+    Total
   ];
 
   // Ensure each JSON field is valid (using `try/catch` to check JSON parsing)
@@ -84,37 +72,6 @@ const addKnittingDetails = async (req, res) => {
       .json({ message: `One or more JSON fields are invalid at index ${jsonFields.indexOf(error)}` });
   }
 
-  // Calculate the total weight and time for each field
-  const totalData = {
-    FrontRight: calculateTotalWeightAndTime(FrontRight),
-    FrontLeft: calculateTotalWeightAndTime(FrontLeft),
-    FrontComplete: calculateTotalWeightAndTime(FrontComplete),
-    BackRight: calculateTotalWeightAndTime(BackRight),
-    BackLeft: calculateTotalWeightAndTime(BackLeft),
-    BackComplete: calculateTotalWeightAndTime(BackComplete),
-    SleeveRight: calculateTotalWeightAndTime(SleeveRight),
-    SleeveLeft: calculateTotalWeightAndTime(SleeveLeft),
-    BothSleeves: calculateTotalWeightAndTime(BothSleeves),
-    Tape: calculateTotalWeightAndTime(Tape),
-    Collar: calculateTotalWeightAndTime(Collar),
-    Kharcha1: calculateTotalWeightAndTime(Kharcha1),
-    Kharcha2: calculateTotalWeightAndTime(Kharcha2),
-    Kharcha3: calculateTotalWeightAndTime(Kharcha3),
-  };
-
-  // Now calculate the total weight and time across all fields for the 'Total' column
-  const totalWeight = Object.values(totalData).reduce(
-    (sum, data) => sum + data.totalWeight,
-    0
-  );
-  const totalTime = Object.values(totalData).reduce(
-    (sum, data) => sum + data.totalTime,
-    0
-  );
-
-  // The Total field will now store a JSON object with the sum of weight and time
-  const total = JSON.stringify({ Weight: totalWeight, Time: totalTime });
-
   let connection;
   try {
     // Get a connection from the pool
@@ -127,7 +84,7 @@ const addKnittingDetails = async (req, res) => {
       [
         RSN,
         Size,
-        JSON.stringify(FrontRight), // Ensure that these fields are stored as JSON
+        JSON.stringify(FrontRight),
         JSON.stringify(FrontLeft),
         JSON.stringify(FrontComplete),
         JSON.stringify(BackRight),
@@ -141,7 +98,7 @@ const addKnittingDetails = async (req, res) => {
         JSON.stringify(Kharcha1),
         JSON.stringify(Kharcha2),
         JSON.stringify(Kharcha3),
-        total, // The calculated total as a JSON string
+        JSON.stringify(Total),
       ]
     );
 
@@ -183,7 +140,7 @@ const getKnittingDetailsByRSN = async (req, res) => {
       return res.status(404).json({ success: false, message: "Knitting record not found." });
     }
 
-    res.status(200).json({ success: true, data: rows[0] }); // Return the first record (should be unique by RSN)
+    res.status(200).json({ success: true, data: rows }); // Return the first record (should be unique by RSN)
   } catch (err) {
     console.error("Error fetching knitting details:", err);
     res.status(500).json({ success: false, message: "Error fetching knitting details.", error: err.message });
@@ -192,7 +149,7 @@ const getKnittingDetailsByRSN = async (req, res) => {
 
 // Controller to update knitting details by RSN
 const updateKnittingDetails = async (req, res) => {
-  const RSN = req.params.RSN; // Get RSN from URL parameters
+  const RSN = req.params.RSN;
   const {
     Size,
     FrontRight,
@@ -209,6 +166,7 @@ const updateKnittingDetails = async (req, res) => {
     Kharcha1,
     Kharcha2,
     Kharcha3,
+    Total
   } = req.body;
 
   // Validate required fields (e.g., Size and FrontRight are mandatory for the update)
@@ -220,7 +178,7 @@ const updateKnittingDetails = async (req, res) => {
   const jsonFields = [
     'FrontRight', 'FrontLeft', 'FrontComplete', 'BackRight', 'BackLeft', 
     'BackComplete', 'SleeveRight', 'SleeveLeft', 'BothSleeves', 'Tape', 
-    'Collar', 'Kharcha1', 'Kharcha2', 'Kharcha3'
+    'Collar', 'Kharcha1', 'Kharcha2', 'Kharcha3', 'Total',
   ];
 
   // Ensure all JSON fields are properly formatted
@@ -240,31 +198,6 @@ const updateKnittingDetails = async (req, res) => {
       }
     }
   });
-
-  // Calculate the total weight and time from the JSON fields
-  const totalData = {
-    FrontRight: calculateTotalWeightAndTime(jsonData.FrontRight),
-    FrontLeft: calculateTotalWeightAndTime(jsonData.FrontLeft),
-    FrontComplete: calculateTotalWeightAndTime(jsonData.FrontComplete),
-    BackRight: calculateTotalWeightAndTime(jsonData.BackRight),
-    BackLeft: calculateTotalWeightAndTime(jsonData.BackLeft),
-    BackComplete: calculateTotalWeightAndTime(jsonData.BackComplete),
-    SleeveRight: calculateTotalWeightAndTime(jsonData.SleeveRight),
-    SleeveLeft: calculateTotalWeightAndTime(jsonData.SleeveLeft),
-    BothSleeves: calculateTotalWeightAndTime(jsonData.BothSleeves),
-    Tape: calculateTotalWeightAndTime(jsonData.Tape),
-    Collar: calculateTotalWeightAndTime(jsonData.Collar),
-    Kharcha1: calculateTotalWeightAndTime(jsonData.Kharcha1),
-    Kharcha2: calculateTotalWeightAndTime(jsonData.Kharcha2),
-    Kharcha3: calculateTotalWeightAndTime(jsonData.Kharcha3),
-  };
-
-  // Calculate total weight and time across all fields
-  const totalWeight = Object.values(totalData).reduce((sum, data) => sum + data.totalWeight, 0);
-  const totalTime = Object.values(totalData).reduce((sum, data) => sum + data.totalTime, 0);
-
-  // Create the total field as a JSON object
-  const total = JSON.stringify({ Weight: totalWeight, Time: totalTime });
 
   let connection;
   try {
@@ -308,7 +241,7 @@ const updateKnittingDetails = async (req, res) => {
         JSON.stringify(jsonData.Kharcha1),
         JSON.stringify(jsonData.Kharcha2),
         JSON.stringify(jsonData.Kharcha3),
-        total, // The total weight and time
+        JSON.stringify(jsonData.Total),
         RSN // Update by RSN
       ]
     );

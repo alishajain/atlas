@@ -1,48 +1,30 @@
-import React, { useState } from "react";
-import "../Styles/WelcomeSample.css";
-import ShowSamples from "./ShowSamples";
-import UpdateSample from "./UpdateSample";
-import AddSample from "./AddSample";
+import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook from react-router-dom
 
 const WelcomeSample = () => {
-  const [selectedComponent, setSelectedComponent] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate for routing
 
-  const handleButtonClick = (component) => {
-    setSelectedComponent(component);
+  // Function to handle navigation to '/add-sample'
+  const handleAddSample = () => {
+    navigate("/add-sample");
   };
 
-  const renderComponent = () => {
-    switch (selectedComponent) {
-      case "ShowAll":
-        return <ShowSamples />;
-      case "NewRecord":
-        return <AddSample />;
-      case "UpdateRecord":
-        return <UpdateSample />;
-      default:
-        return <p>Please select the activity you want to perform.</p>;
-    }
+  // Function to handle navigation to '/get-RSN'
+  const handleShowSample = () => {
+    navigate("/get-RSN");
   };
-
-  if (selectedComponent) {
-    return <div className="welcome-container">{renderComponent()}</div>;
-  }
 
   return (
     <div className="welcome-container">
       <h1>Welcome to Sample Details Form</h1>
       <div className="button-group">
-        <button onClick={() => handleButtonClick("ShowAll")}>
-          Show All Sample Details
+        <button onClick={handleShowSample}>
+          Show Sample Details
         </button>
-        <button onClick={() => handleButtonClick("NewRecord")}>
+        <button onClick={handleAddSample}>
           Add New Sample Record
         </button>
-        <button onClick={() => handleButtonClick("UpdateRecord")}>
-          Update Existing Sample Record
-        </button>
       </div>
-      <div>{renderComponent()}</div>
     </div>
   );
 };

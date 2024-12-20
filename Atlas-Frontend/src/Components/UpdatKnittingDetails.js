@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getKnittingDetailsByRSN, updateKnittingDetails } from "../API/SampleApi";
 
-const UpdateKnittingRecord = ({ RSN }) => {
+const UpdateKnittingDetails = ({ RSN }) => {
   const [formData, setFormData] = useState({
     RSN: "",
     Size: "",
@@ -34,7 +34,7 @@ const UpdateKnittingRecord = ({ RSN }) => {
           const response = await getKnittingDetailsByRSN(RSN);
           setFormData({
             ...response.data,
-            Total: calculateTotal(response.data), // Calculate total from fetched data
+            Total: calculateTotal(response.data),
           });
         } catch (err) {
           setError("Failed to fetch knitting details.");
@@ -52,8 +52,6 @@ const UpdateKnittingRecord = ({ RSN }) => {
     setFormData((prevData) => {
       const newFormData = { ...prevData };
       newFormData[field][type] = value;
-
-      // Recalculate total weight and total time
       newFormData.Total = calculateTotal(newFormData);
       return newFormData;
     });
@@ -63,12 +61,11 @@ const UpdateKnittingRecord = ({ RSN }) => {
     let totalWeight = 0;
     let totalTime = 0;
 
-    // Iterate over the fields that contain weight and time
     Object.keys(data).forEach((key) => {
       if (key !== "RSN" && key !== "Size" && key !== "Total") {
         const { Weight, Time } = data[key];
-        totalWeight += parseFloat(Weight) || 0; // Add weight, default to 0 if not a valid number
-        totalTime += parseFloat(Time) || 0; // Add time, default to 0 if not a valid number
+        totalWeight += parseFloat(Weight) || 0;
+        totalTime += parseFloat(Time) || 0;
       }
     });
 
@@ -78,13 +75,12 @@ const UpdateKnittingRecord = ({ RSN }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate that all fields have both weight and time
     for (let field in formData) {
       if (typeof formData[field] === "object") {
         const { Weight, Time } = formData[field];
         if (Weight === "" || Time === "") {
           setError(`Both weight and time must be provided for ${field}`);
-          return; // Stop submission if any required field is missing
+          return;
         }
       }
     }
@@ -94,13 +90,10 @@ const UpdateKnittingRecord = ({ RSN }) => {
     setSuccess(null);
 
     try {
-      // Send the updated data to the backend via the API function
       const response = await updateKnittingDetails(RSN, formData);
       setSuccess("Knitting details updated successfully!");
     } catch (error) {
-      setError(
-        error.message || "An error occurred while updating knitting details"
-      );
+      setError(error.message || "An error occurred while updating knitting details");
     } finally {
       setLoading(false);
     }
@@ -109,8 +102,6 @@ const UpdateKnittingRecord = ({ RSN }) => {
   return (
     <div>
       <h1>Update Knitting Details</h1>
-
-      {/* Form to update knitting details */}
       <form onSubmit={handleSubmit}>
         <table border="1">
           <thead>
@@ -121,7 +112,6 @@ const UpdateKnittingRecord = ({ RSN }) => {
             </tr>
           </thead>
           <tbody>
-            {/* Static Fields (RSN and Size) */}
             <tr>
               <td>RSN:</td>
               <td colSpan="2">
@@ -135,15 +125,11 @@ const UpdateKnittingRecord = ({ RSN }) => {
                   type="text"
                   name="Size"
                   value={formData.Size}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Size: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, Size: e.target.value })}
                   required
                 />
               </td>
             </tr>
-
-            {/* JSON Fields (Dynamic fields like FrontRight, FrontLeft, etc.) */}
             {[
               "FrontRight",
               "FrontLeft",
@@ -182,8 +168,6 @@ const UpdateKnittingRecord = ({ RSN }) => {
                 </td>
               </tr>
             ))}
-
-            {/* Total Row */}
             <tr>
               <td>Total</td>
               <td>{formData.Total.Weight}</td>
@@ -197,11 +181,10 @@ const UpdateKnittingRecord = ({ RSN }) => {
         </button>
       </form>
 
-      {/* Display Success or Error Messages */}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
     </div>
   );
 };
 
-export default UpdateKnittingRecord;
+export default UpdateKnittingDetails;

@@ -136,6 +136,7 @@ const AddKnittingDetailsForm = () => {
     setError(null);
     setSuccess(null);
 
+    console.log(updatedFormData);
     try {
       // Send the data to the backend via the API function
       const response = await addKnittingDetails(updatedFormData);

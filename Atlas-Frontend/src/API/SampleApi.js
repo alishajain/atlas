@@ -33,6 +33,7 @@ export const addSampleDetails = async (data) => {
 
 // Adds Knitting Details
 export const addKnittingDetails = async (data) => {
+  
   try {
     const response = await axios.post(`${API_URL}/add-knitting`, data, {
       headers: { 'Content-Type': 'application/json' },
@@ -115,6 +116,7 @@ export const getKnittingDetailsByRSN = async (RSN) => {
   try {
     const url = `${API_URL}/knitting-details/${RSN}`;
     const response = await axios.get(url);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching knitting details:', error.response || error.message);

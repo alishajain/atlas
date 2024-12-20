@@ -1,22 +1,25 @@
-import React, { useState } from "react";
-import KnittingDetails from "../Components/KnittingDetails";
-import SampleDetails from "../Components/SampleDetails";
-import WelcomeSample from "./WelcomeSample";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom"; 
+import ShowSampleDetails from "../Components/ShowSampleDetails";
+import ShowKnittingDetails from "../Components/ShowKnittingDetails";
 
 const ShowSamples = () => {
-  const [backButton, setBackButton] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleBackButton = () => setBackButton(true);
+  const RSN = location.state? location.state.RSN : null;
+console.log(RSN);
+  const handleNextButton = () => {
+    navigate(`/show-color/${RSN}`, { state: { RSN: RSN } });
+  };
+
   return (
     <div>
-      {!backButton && (
-        <div>
-          <SampleDetails />
-          <KnittingDetails />
-          <button onClick={handleBackButton}>Go to Welcome Page</button>
-        </div>
-      )}
-      {backButton && <WelcomeSample />}
+      <div>
+        <ShowSampleDetails RSN={RSN} />
+        <ShowKnittingDetails RSN={RSN} />
+        <button onClick={handleNextButton}>Next</button>
+      </div>
     </div>
   );
 };

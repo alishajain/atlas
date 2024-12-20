@@ -24,7 +24,7 @@ router.get('/get-latest-rsn', sampleController.getLatestRSN);
 router.get('/KnittingDetails', knittingController.getKnittingDetails);
 router.post('/add-knitting', knittingController.addKnittingDetails);
 router.get('/knitting-details/:RSN', knittingController.getKnittingDetailsByRSN);
-router.put('/knitting-details/:RSN', knittingController.updateKnittingDetails);
+router.put('/update-knitting-details/:RSN', knittingController.updateKnittingDetails);
 
 // Routes for Yarn Master
 router.get('/YarnDetails', yarnController.getYarnDetails);
@@ -69,7 +69,7 @@ router.get('/get-colorId/:RSN/:MatchingName/:Panel', colorMatchingController.get
 // Routes for Color Details
 router.post('/add-color-detail', colorDetailsController.addColorDetail);
 router.get('/color-details', colorDetailsController.getAllColorDetails);
-router.get('/color-detail/:ColorId', colorDetailsController.getColorDetailByColorId);
+router.get('/get-color-details/:ColorId', colorDetailsController.getColorDetailByColorId);
 router.put('/update-color-detail/:ColorId', colorDetailsController.updateColorDetail);
 router.delete('/delete-color-detail/:ColorId', colorDetailsController.deleteColorDetail);
 

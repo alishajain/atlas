@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const RSNInput = ({ onSubmit }) => {
-  const [RSN, setRSN] = useState("");
+  const [RSN, setRSN] = useState(""); // State to hold RSN input
+  const navigate = useNavigate(); // Initialize useNavigate for routing
 
   const handleRSNSubmit = (e) => {
     e.preventDefault();
@@ -9,7 +11,11 @@ const RSNInput = ({ onSubmit }) => {
       alert("Please enter a valid RSN");
       return;
     }
-    onSubmit(RSN); // Pass RSN to the parent component
+    navigate(`/show-sample/${RSN}`, { state: { RSN: RSN } });
+  };
+
+  const handleBackButton = () => {
+    navigate("/welcome-sample");
   };
 
   return (
@@ -22,12 +28,16 @@ const RSNInput = ({ onSubmit }) => {
             type="text"
             id="RSN"
             value={RSN}
-            onChange={(e) => setRSN(e.target.value)}
+            onChange={(e) => setRSN(e.target.value)} // Update RSN state as user types
             placeholder="Enter RSN to fetch details"
             required
           />
         </div>
         <button type="submit">Submit</button>
+        <button type="button" onClick={handleBackButton}>
+          Back
+        </button>{" "}
+        {/* 'Back' button */}
       </form>
     </div>
   );

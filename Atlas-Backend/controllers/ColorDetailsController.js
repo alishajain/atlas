@@ -58,7 +58,6 @@ const addColorDetail = async (req, res) => {
   }
 };
 
-
 // Function to get all color details
 const getAllColorDetails = async (req, res) => {
   try {

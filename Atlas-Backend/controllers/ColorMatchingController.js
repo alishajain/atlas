@@ -56,7 +56,7 @@ const getColorMatchingByRSN = async (req, res) => {
         .json({ message: "Color matching entry not found" });
     }
 
-    res.status(200).json({ data: results[0] });
+    res.status(200).json({ data: results });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error fetching data" });
