@@ -17,12 +17,12 @@ export const addSampleDetails = async (data) => {
     if (error.response) {
       console.error('Response error:', error.response.data);
       throw new Error(`Error: ${error.response.status} - ${error.response.data}`);
-    } 
+    }
     // Check if the error is due to network issues or no response
     else if (error.request) {
       console.error('Request error:', error.request);
       throw new Error('No response received from the API');
-    } 
+    }
     // For other types of errors (e.g., misconfiguration)
     else {
       console.error('Error message:', error.message);
@@ -33,7 +33,6 @@ export const addSampleDetails = async (data) => {
 
 // Adds Knitting Details
 export const addKnittingDetails = async (data) => {
-  
   try {
     const response = await axios.post(`${API_URL}/add-knitting`, data, {
       headers: { 'Content-Type': 'application/json' },
@@ -53,12 +52,12 @@ export const addKnittingDetails = async (data) => {
     if (error.response) {
       console.error('Response error:', error.response.data);
       return { success: false, message: `Error: ${error.response.status} - ${error.response.data}` };
-    } 
+    }
     // Check if the error is due to network issues or no response
     else if (error.request) {
       console.error('Request error:', error.request);
       return { success: false, message: 'No response received from the API' };
-    } 
+    }
     // For other types of errors (e.g., misconfiguration)
     else {
       console.error('Error message:', error.message);
@@ -116,7 +115,6 @@ export const getKnittingDetailsByRSN = async (RSN) => {
   try {
     const url = `${API_URL}/knitting-details/${RSN}`;
     const response = await axios.get(url);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching knitting details:', error.response || error.message);
@@ -177,5 +175,39 @@ export const getMachineNos = async () => {
   } catch (error) {
     console.error('Error fetching model numbers:', error.response || error.message);
     throw error;
+  }
+};
+
+// Delete Sample Record by RSN
+export const deleteSample = async (RSN) => {
+  if (!RSN) {
+    throw new Error('RSN is required');
+  }
+
+  try {
+    const response = await axios.delete(`${API_URL}/delete-sample/${RSN}`); 
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Unexpected response status: ' + response.status);
+    }
+  } catch (error) {
+    console.error('Error deleting sample record:', error.response || error.message);
+
+
+    if (error.response) {
+      console.error('Response error:', error.response.data);
+      return { success: false, message: `Error: ${error.response.status} - ${error.response.data}` };
+    }
+    // Check if the error is due to network issues or no response
+    else if (error.request) {
+      console.error('Request error:', error.request);
+      return { success: false, message: 'No response received from the API' };
+    }
+    // For other types of errors (e.g., misconfiguration)
+    else {
+      console.error('Error message:', error.message);
+      return { success: false, message: error.message };
+    }
   }
 };

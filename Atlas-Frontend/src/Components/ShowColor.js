@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 import { getColorMatchingByRSN } from "../API/ColorApi";
 import { getColorDetailByColorId } from "../API/ColorDetailApi";
 
@@ -9,8 +9,8 @@ const isValidValue = (value) => {
 };
 
 const ShowColor = () => {
-  //const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const RSN = location.state ? location.state.RSN : null;
 
@@ -67,7 +67,7 @@ const ShowColor = () => {
 
   // Function to check and extract valid color details for each ColorId
   const renderColorDetail = (ColorId) => {
-    const details = colorDetails[ColorId]?.[0]; // Assuming the data is an array and we take the first element
+    const details = colorDetails[ColorId]?.[0];
     if (details) {
       const colorKeys = [
         "BaseColor",
@@ -139,6 +139,16 @@ const ShowColor = () => {
     return <td>Loading...</td>;
   };
 
+  // Function to handle navigation back
+  const handleBack = () => {
+    navigate(`/show-sample/${RSN}`, { state: { RSN } });
+  };
+
+  // Function to handle navigation next
+  const handleNext = () => {;
+    navigate(`/sample-actions/${RSN}`, { state: { RSN } });
+  };
+
   return (
     <div>
       <h1>Color Matching Details for RSN: {RSN}</h1>
@@ -162,7 +172,6 @@ const ShowColor = () => {
                       <td>{item.ColorId}</td>
                       <td>{item.Panel}</td>
                       {renderColorDetail(item.ColorId)}{" "}
-                      {/* Render color details in the same row */}
                     </tr>
                   );
                 })}
@@ -173,6 +182,12 @@ const ShowColor = () => {
       ) : (
         <p>No color matching details available for this RSN.</p>
       )}
+
+      {/* Back and Next buttons */}
+      <div>
+        <button onClick={handleBack}>Back</button>
+        <button onClick={handleNext}>Next</button>
+      </div>
     </div>
   );
 };

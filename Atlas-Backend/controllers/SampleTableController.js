@@ -196,10 +196,30 @@ const getLatestRSN = async (req, res) => {
   }
 };
 
+// Delete Sample Details by RSN
+const deleteSample = async (req, res) => {
+  const RSN = req.params.RSN;
+  try {
+    const query = "DELETE FROM sample_details WHERE RSN = ?";
+
+    const [result] = await db.execute(query, [RSN]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "Sample record not found." });
+    }
+
+    res.status(200).json({ success: true, message: "Sample record deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting sample record:", err);
+    res.status(500).json({ success: false, message: "Error deleting sample record", error: err.message });
+  }
+};
+
 module.exports = {
   getSampleDetailsData,
   addSampleDetails,
   updateSampleRecord,
   getSampleDetailsByRSN,
   getLatestRSN,
+  deleteSample,
 };

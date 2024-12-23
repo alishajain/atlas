@@ -19,6 +19,7 @@ router.post('/add-sample', sampleController.addSampleDetails);
 router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);
 router.put('/update-sample', sampleController.updateSampleRecord);
 router.get('/get-latest-rsn', sampleController.getLatestRSN);
+router.delete('/delete-sample/:RSN', sampleController.deleteSample);
 
 // Routes for Knitting Details
 router.get('/KnittingDetails', knittingController.getKnittingDetails);
@@ -72,8 +73,6 @@ router.get('/color-details', colorDetailsController.getAllColorDetails);
 router.get('/get-color-details/:ColorId', colorDetailsController.getColorDetailByColorId);
 router.put('/update-color-detail/:ColorId', colorDetailsController.updateColorDetail);
 router.delete('/delete-color-detail/:ColorId', colorDetailsController.deleteColorDetail);
-
-module.exports = router;
 
 // Export the router to use it in the main server file
 module.exports = router;
