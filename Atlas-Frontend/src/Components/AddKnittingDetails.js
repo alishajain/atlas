@@ -31,7 +31,7 @@ const AddKnittingDetailsForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [machineNos, setMachineNos] = useState([]); // State to store machine numbers
+  const [machineNos, setMachineNos] = useState([]);
 
   useEffect(() => {
     // Fetch machine numbers from the API
@@ -138,13 +138,9 @@ const AddKnittingDetailsForm = () => {
 
     console.log(updatedFormData);
     try {
-      // Send the data to the backend via the API function
       const response = await addKnittingDetails(updatedFormData);
-
-      // On success, display success message and clear form
       setSuccess("Knitting details added successfully!");
 
-      // Show ColorMatchingForm upon successful submission
       navigate(`/add-color-details/${RSN}`, {
         state: { RSN, selectedStates, size: formData.Size },
       });
@@ -183,16 +179,6 @@ const AddKnittingDetailsForm = () => {
       <h1>Add Knitting Details</h1>
       <form onSubmit={handleSubmit}>
         <table border="1">
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Weight</th>
-              <th>Time</th>
-              <th>Machine No</th> {/* Removed 'Machine Type' */}
-            </tr>
-          </thead>
-          <tbody>
-            {/* Static Fields (RSN and Size) */}
             <tr>
               <td>RSN:</td>
               <td colSpan="3">
@@ -207,7 +193,6 @@ const AddKnittingDetailsForm = () => {
                 />
               </td>
             </tr>
-
             <tr>
               <td>Size:</td>
               <td colSpan="3">
@@ -222,10 +207,18 @@ const AddKnittingDetailsForm = () => {
                 />
               </td>
             </tr>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Weight</th>
+              <th>Time</th>
+              <th>Machine No</th>
+            </tr>
+          </thead>
+          <tbody>
 
-            {/* Dynamic Fields Based on Selected States */}
             {Object.keys(selectedStates)
-              .filter((field) => selectedStates[field]) // Filter only selected fields
+              .filter((field) => selectedStates[field])
               .map((field) => (
                 <tr key={field}>
                   <td>{field}</td>

@@ -128,9 +128,7 @@ export const updateKnittingDetails = async (RSN, knittingData) => {
     throw new Error('RSN and knittingData are required');
   }
 
-  const url = `${API_URL}/knitting-details/${RSN}`;
-  console.log('Updating knitting details at:', url);
-  console.log('Knitting Data:', knittingData);
+  const url = `${API_URL}/update-knitting-details/${RSN}`;
 
   const response = await fetch(url, {
     method: 'PUT',
@@ -141,7 +139,7 @@ export const updateKnittingDetails = async (RSN, knittingData) => {
   });
 
   if (!response.ok) {
-    const errorText = await response.text(); // Get error response body
+    const errorText = await response.text();
     console.error('Error response:', errorText);
     throw new Error(`Failed to update knitting details: ${errorText}`);
   }

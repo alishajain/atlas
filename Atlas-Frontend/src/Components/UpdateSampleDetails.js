@@ -1,27 +1,63 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // For accessing passed state
 import { updateRecord } from "../API/SampleApi";
 
-const UpdateSampleDetails = ({ RSN, initialData }) => {
-  const [articleName, setArticleName] = useState(initialData.ArticleName || "");
-  const [designFileNo, setDesignFileNo] = useState(initialData.DesignFileNo || "");
-  const [seriesArticleFileNo, setSeriesArticleFileNo] = useState(initialData.SeriesArticleFileNo || "");
-  const [articleType, setArticleType] = useState(initialData.ArticleType || "");
-  const [gender, setGender] = useState(initialData.Gender || "");
-  const [machineSpeed, setMachineSpeed] = useState(initialData.MachineSpeed || "");
-  const [designer, setDesigner] = useState(initialData.Designer || "");
-  const [grapher, setGrapher] = useState(initialData.Grapher || "");
-  const [master, setMaster] = useState(initialData.SampleMaster || "");
-  const [sampleStatus, setSampleStatus] = useState(initialData.SampleStatus || "");
+const UpdateSampleDetails = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { sampleDetails } = location.state || {}; // Retrieve sample details from state
+
+  // Initialize form fields with the sampleDetails or set to empty if not available
+  const [articleName, setArticleName] = useState(
+    sampleDetails?.ArticleName || ""
+  );
+  const [designFileNo, setDesignFileNo] = useState(
+    sampleDetails?.DesignFileNo || ""
+  );
+  const [seriesArticleFileNo, setSeriesArticleFileNo] = useState(
+    sampleDetails?.SeriesArticleFileNo || ""
+  );
+  const [articleType, setArticleType] = useState(
+    sampleDetails?.ArticleType || ""
+  );
+  const [gender, setGender] = useState(sampleDetails?.Gender || "");
+  const [machineSpeed, setMachineSpeed] = useState(
+    sampleDetails?.MachineSpeed || ""
+  );
+  const [designer, setDesigner] = useState(sampleDetails?.Designer || "");
+  const [grapher, setGrapher] = useState(sampleDetails?.Grapher || "");
+  const [master, setMaster] = useState(sampleDetails?.SampleMaster || "");
+  const [sampleStatus, setSampleStatus] = useState(
+    sampleDetails?.SampleStatus || ""
+  );
+
+  const [RSN] = useState(sampleDetails?.RSN || ""); // RSN should not be changed, so it's stored but not set via state
+
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Validate form data before submitting
+  const validateForm = () => {
+    if (!articleName || !designFileNo || !seriesArticleFileNo) {
+      return "Article Name, Design File No, and Series Article File No are required.";
+    }
+    return "";
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Form validation
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     const data = {
-      RSN,
+      RSN, // Do not modify RSN
       articleName,
       designFileNo,
       seriesArticleFileNo,
@@ -36,15 +72,22 @@ const UpdateSampleDetails = ({ RSN, initialData }) => {
 
     setLoading(true);
     try {
-      const result = await updateRecord(data);
-      setSuccessMessage(result.message);
-      setError("");
+      const result = await updateRecord(data); // Assuming updateRecord API call
+      if (result.success) {
+        setSuccessMessage(result.message);
+        setError("");
+      } else {
+        setError(result.message || "Failed to update the record.");
+        setSuccessMessage("");
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Error updating the record.");
       setSuccessMessage("");
     } finally {
       setLoading(false);
     }
+
+    navigate(`/show-sample/${RSN}`, { state: { RSN } });
   };
 
   return (
@@ -56,7 +99,7 @@ const UpdateSampleDetails = ({ RSN, initialData }) => {
       <form onSubmit={handleSubmit}>
         <div>
           <label>RSN:</label>
-          <input type="number" value={RSN} readOnly />
+          <input type="number" value={RSN} readOnly /> {/* RSN is read-only */}
         </div>
         <div>
           <label>Article Name:</label>
@@ -139,7 +182,7 @@ const UpdateSampleDetails = ({ RSN, initialData }) => {
           />
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? "Updating..." : "Update Record"}
+          {loading ? "Updating..." : "Update File Details"}
         </button>
       </form>
     </div>

@@ -106,10 +106,9 @@ const AddSampleDetails = () => {
       const result = await addSampleDetails(data);
       setMessage(result.message || "Sample details added successfully.");
 
-      // Redirect to PanelSelection with RSN passed as a state
       navigate(`/panel-selection/${result.RSN}`, {
-        state: { RSN: result.RSN },
-      }); // Navigate to PanelSelection with RSN as state
+        state: { RSN: result.RSN, action: "Add" },
+      });
     } catch (error) {
       setMessage(
         error.message || "An error occurred while adding the sample details."

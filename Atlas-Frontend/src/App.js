@@ -11,6 +11,8 @@ import SampleActions from "./Pages/SampleActions";
 import RSNInput from "./Components/RSNInput";
 import ShowSamples from "./Pages/ShowSamples";
 import DeleteSample from "./Pages/DeleteSample";
+import UpdateSampleDetails from "./Components/UpdateSampleDetails";
+import UpdateKnittingDetails from "./Components/UpdateKnittingDetails";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Update for React Router v6
 
@@ -42,6 +44,14 @@ const App = () => {
           {/* Routes for further sample actions */}
           <Route path="/sample-actions/:RSN" element={<SampleActions />} />
           <Route path="/delete-sample/:RSN" element={<DeleteSample />} />
+          <Route
+            path="/update-sample-details/:RSN"
+            element={<UpdateSampleDetails />}
+          />
+          <Route
+            path="/update-knitting/:RSN"
+            element={<UpdateKnittingDetails />}
+          />
         </Routes>
       </div>
     </Router>

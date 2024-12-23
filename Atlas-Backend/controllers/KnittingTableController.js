@@ -32,14 +32,11 @@ const addKnittingDetails = async (req, res) => {
     Total,
   } = req.body;
 
-  console.log(Total);
-  console.log("Alisha");
   // Validate input fields (for non-JSON fields)
   if (!RSN || !Size) {
     return res.status(400).json({ message: "RSN and Size are required." });
   }
 
-  // Optionally, validate JSON fields (if you want to ensure they are valid JSON objects)
   const jsonFields = [
     FrontRight,
     FrontLeft,
@@ -62,7 +59,6 @@ const addKnittingDetails = async (req, res) => {
   try {
     jsonFields.forEach((field, index) => {
       if (field && typeof field === "string") {
-        // If the field is a string, try parsing it into a JSON object
         JSON.parse(field);
       }
     });
@@ -74,7 +70,6 @@ const addKnittingDetails = async (req, res) => {
 
   let connection;
   try {
-    // Get a connection from the pool
     connection = await db.getConnection();
     await connection.beginTransaction(); // Begin a transaction
 
@@ -169,7 +164,6 @@ const updateKnittingDetails = async (req, res) => {
     Total
   } = req.body;
 
-  // Validate required fields (e.g., Size and FrontRight are mandatory for the update)
   if (!Size) {
     return res.status(400).json({ success: false, message: "Size is required." });
   }
@@ -181,11 +175,9 @@ const updateKnittingDetails = async (req, res) => {
     'Collar', 'Kharcha1', 'Kharcha2', 'Kharcha3', 'Total',
   ];
 
-  // Ensure all JSON fields are properly formatted
   const jsonData = {};
   jsonFields.forEach(field => {
     if (req.body[field]) {
-      // If it's a string, try parsing it
       if (typeof req.body[field] === 'string') {
         try {
           jsonData[field] = JSON.parse(req.body[field]);
@@ -193,7 +185,6 @@ const updateKnittingDetails = async (req, res) => {
           return res.status(400).json({ success: false, message: `${field} must be a valid JSON.` });
         }
       } else {
-        // If it's already an object (not a string), use it as is
         jsonData[field] = req.body[field];
       }
     }
@@ -201,11 +192,9 @@ const updateKnittingDetails = async (req, res) => {
 
   let connection;
   try {
-    // Get a connection from the pool
     connection = await db.getConnection();
-    await connection.beginTransaction(); // Start transaction
+    await connection.beginTransaction();
 
-    // Update the knitting details
     const [result] = await connection.query(
       `UPDATE knitting_details SET 
         Size = ?, 
@@ -242,11 +231,11 @@ const updateKnittingDetails = async (req, res) => {
         JSON.stringify(jsonData.Kharcha2),
         JSON.stringify(jsonData.Kharcha3),
         JSON.stringify(jsonData.Total),
-        RSN // Update by RSN
+        RSN 
       ]
     );
 
-    // Commit the transaction
+    console.log("Alisha", result);
     await connection.commit();
 
     if (result.affectedRows === 0) {
@@ -255,7 +244,6 @@ const updateKnittingDetails = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Knitting details updated successfully." });
   } catch (err) {
-    // Rollback if error occurs
     if (connection) {
       await connection.rollback();
     }
@@ -266,7 +254,6 @@ const updateKnittingDetails = async (req, res) => {
       error: err.message,
     });
   } finally {
-    // Always release the connection back to the pool
     if (connection) {
       connection.release();
     }

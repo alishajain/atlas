@@ -4,24 +4,17 @@ import { getColorId } from "../API/ColorApi";
 import { getYarnIds } from "../API/YarnApi";
 
 const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
-  // Initial state for a row in the table
   const initialRowState = {
     ColorId: "",
     Size: size,
     BaseColor: { Name: "", Weight: "" },
-    colors: Array(14).fill({ Name: "", Weight: "" }), // Initialize colors array with 14 colors
+    yarnCount: 0,
+    colors: [],
   };
 
-  // State for form data (this will be an array of rows)
   const [formData, setFormData] = useState([]);
-
-  // State to store ColorIds fetched from the API
   const [colorIds, setColorIds] = useState({});
-
-  // State to store YarnIds for the dropdown
   const [yarnIds, setYarnIds] = useState({});
-
-  // State to handle success and error messages
   const [message, setMessage] = useState({ type: "", content: "" });
 
   // Extract selected panels from selectedStates
@@ -34,7 +27,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     setFormData(
       selectedPanels.map((panelName) => ({
         ...initialRowState,
-        ColorId: panelName, // Assign the panel name to ColorId
+        ColorId: panelName,
       }))
     );
   }, [selectedStates]);
@@ -46,7 +39,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
 
       for (const Panel of selectedPanels) {
         const data = await getColorId(RSN, matchingName, Panel);
-        newColorIds[Panel] = data.ColorId; // Use only Panel as the key
+        newColorIds[Panel] = data.ColorId;
       }
 
       // Update formData with the fetched ColorIds
@@ -67,14 +60,15 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
   const fetchYarnIds = async () => {
     try {
       const response = await getYarnIds();
-      console.log("YarnIds Response:", response); // Log the response for debugging
 
-      // Check if the response contains the `data` property and is an object
       if (response && response.data && typeof response.data === "object") {
-        setYarnIds(response.data); // Set the yarnIds object to state
+        setYarnIds(response.data);
       } else {
         console.error("Error: YarnIds response is not an object", response);
-        setMessage({ type: "error", content: "Invalid data format for YarnIds." });
+        setMessage({
+          type: "error",
+          content: "Invalid data format for YarnIds.",
+        });
       }
     } catch (error) {
       console.error("Error fetching YarnIds:", error);
@@ -82,38 +76,61 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     }
   };
 
+  // Handle the number of yarns input change
+  const handleYarnCountChange = (e, rowIndex) => {
+    const yarnCount = parseInt(e.target.value, 10);
+    const updatedFormData = formData.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          yarnCount: yarnCount, // Update the yarn count for this row
+          colors: Array(yarnCount).fill({ Name: "", Weight: "" }), // Adjust the colors array size based on yarn count
+        };
+      }
+      return row;
+    });
+    setFormData(updatedFormData);
+  };
+
+  // Helper function to calculate the total weight for a row
+  const calculateTotalWeight = (row) => {
+    const baseWeight = parseFloat(row.BaseColor.Weight) || 0;
+    const yarnsWeight = row.colors.reduce((sum, color) => {
+      return sum + (parseFloat(color.Weight) || 0);
+    }, 0);
+
+    return baseWeight + yarnsWeight; // Sum base color weight and yarns' weights
+  };
+
   // Handle input changes (BaseColor, Color1, Color2, etc.)
   const handleInputChange = (e, rowIndex, field, colorIndex = null) => {
     const { name, value } = e.target;
 
-    // Create a new array by mapping over formData
     const updatedFormData = formData.map((row, index) => {
       if (index === rowIndex) {
-        // Only update the row that was modified
         const updatedRow = { ...row };
 
         if (field === "colors" && colorIndex !== null) {
-          // Update specific color field (either name or weight)
           updatedRow.colors = updatedRow.colors.map((color, idx) =>
-            idx === colorIndex
-              ? { ...color, [name]: value } // Update the color field (Name or Weight)
-              : color
+            idx === colorIndex ? { ...color, [name]: value } : color
           );
         } else if (field === "BaseColor") {
           updatedRow.BaseColor = {
-            ...updatedRow.BaseColor, // Copy BaseColor object
-            [name]: value, // Update BaseColor field (name or weight)
+            ...updatedRow.BaseColor,
+            [name]: value,
           };
         } else {
-          updatedRow[name] = value; // Update other fields like ColorId, Size
+          updatedRow[name] = value;
         }
 
-        return updatedRow; // Return the updated row
+        // Recalculate total weight after input change
+        updatedRow.totalWeight = calculateTotalWeight(updatedRow);
+
+        return updatedRow;
       }
-      return row; // For other rows, return the original unchanged row
+      return row;
     });
 
-    // Update formData with the modified array
     setFormData(updatedFormData);
   };
 
@@ -136,19 +153,16 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     });
 
     try {
-      // Send the data to the backend via the addColorDetail API, making separate API calls for each row
       const responses = await Promise.all(
         colorData.map((data) => addColorDetail(data))
       );
       setMessage({ type: "success", content: "Data submitted successfully!" });
-      console.log(responses); // Log the successful responses for all panels
     } catch (error) {
       console.error("Error submitting form:", error);
       setMessage({ type: "error", content: "Error submitting the form." });
     }
   };
 
-  // Fetch YarnIds when component mounts
   useEffect(() => {
     fetchYarnIds();
   }, []);
@@ -157,8 +171,6 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     <div>
       <h3>{matchingName}</h3>
       <button onClick={fetchColorId}>Fetch ColorIds</button>
-
-      {/* Show success/error message */}
       {message.content && (
         <div
           style={{
@@ -176,23 +188,29 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
           <thead>
             <tr>
               <th style={{ width: "4%" }}>Panel</th>
-              <th style={{ width: "4%" }}>Base Color</th>
+              <th style={{ width: "4%" }}>Total Weight</th> {/* Move Total Weight column here */}
+              <th style={{ width: "4%" }}>Base Yarn</th>
+              <th style={{ width: "4%" }}>Yarns Used</th>{" "}
               {[...Array(14)].map((_, index) => (
                 <th key={index} style={{ width: "6%" }}>
-                  Color {index + 1}
+                  Yarn {index + 1}
                 </th>
               ))}
-              <th rowSpan="2" style={{ width: "4%" }}>
-                Total Weight
-              </th>
             </tr>
           </thead>
           <tbody>
             {formData.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 <td>{row.ColorId}</td>
-
-                {/* Base Color */}
+                <td>
+                  <input
+                    type="number"
+                    name="totalWeight"
+                    value={row.totalWeight || ""}
+                    readOnly
+                    style={{ backgroundColor: "#f0f0f0" }}
+                  />
+                </td>
                 <td>
                   <select
                     name="Name"
@@ -217,55 +235,52 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                     name="Weight"
                     value={row.BaseColor.Weight || ""}
                     placeholder="Base Color Weight"
-                    onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
+                    onChange={(e) =>
+                      handleInputChange(e, rowIndex, "BaseColor")
+                    }
                   />
                 </td>
-
-                {/* Color columns */}
-                {row.colors.map((color, colorIndex) => (
-                  <React.Fragment key={colorIndex}>
-                    <td>
-                      <select
-                        name="Name"
-                        value={color.Name || ""}
-                        onChange={(e) =>
-                          handleInputChange(e, rowIndex, "colors", colorIndex)
-                        }
-                      >
-                        <option value="">Select Yarn</option>
-                        {Object.values(yarnIds).length === 0 ? (
-                          <option value="">No Yarn available</option>
-                        ) : (
-                          Object.values(yarnIds).map((yarn) => (
-                            <option key={yarn.YarnId} value={yarn.Name}>
-                              {yarn.YarnId}
-                            </option>
-                          ))
-                        )}
-                      </select>
-                      <input
-                        type="number"
-                        name="Weight"
-                        value={color.Weight || ""}
-                        placeholder={`Color ${colorIndex + 1} Weight`}
-                        onChange={(e) =>
-                          handleInputChange(e, rowIndex, "colors", colorIndex)
-                        }
-                      />
-                    </td>
-                  </React.Fragment>
-                ))}
-
-                {/* Total Weight */}
                 <td>
                   <input
                     type="number"
-                    name="totalWeight"
-                    value={row.totalWeight || ""}
-                    readOnly
-                    style={{ backgroundColor: "#f0f0f0" }}
+                    value={row.yarnCount || 0}
+                    onChange={(e) => handleYarnCountChange(e, rowIndex)}
+                    min={0}
+                    max={14}
+                    placeholder="Number of Yarns"
                   />
                 </td>
+                {row.colors.map((color, colorIndex) => (
+                  <td key={colorIndex}>
+                    <select
+                      name="Name"
+                      value={color.Name || ""}
+                      onChange={(e) =>
+                        handleInputChange(e, rowIndex, "colors", colorIndex)
+                      }
+                    >
+                      <option value="">Select Yarn</option>
+                      {Object.values(yarnIds).length === 0 ? (
+                        <option value="">No Yarn available</option>
+                      ) : (
+                        Object.values(yarnIds).map((yarn) => (
+                          <option key={yarn.YarnId} value={yarn.Name}>
+                            {yarn.YarnId}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    <input
+                      type="number"
+                      name="Weight"
+                      value={color.Weight || ""}
+                      placeholder={`Color ${colorIndex + 1} Weight`}
+                      onChange={(e) =>
+                        handleInputChange(e, rowIndex, "colors", colorIndex)
+                      }
+                    />
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

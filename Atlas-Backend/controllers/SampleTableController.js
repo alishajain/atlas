@@ -215,6 +215,10 @@ const deleteSample = async (req, res) => {
   }
 };
 
+const updateArticleNo = async (req, res) => {
+
+}
+
 module.exports = {
   getSampleDetailsData,
   addSampleDetails,
@@ -222,4 +226,5 @@ module.exports = {
   getSampleDetailsByRSN,
   getLatestRSN,
   deleteSample,
+  updateArticleNo,
 };

@@ -9,17 +9,12 @@ const SampleActions = () => {
 
   const [selectedOption, setSelectedOption] = useState(null);
 
-  // Handler for when an option is selected
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     
-    // Based on the option selected, navigate to a different route or perform actions
     switch (option) {
       case "allocate":
         navigate(`/allocate-article/${RSN}`, { state: { RSN }});
-        break;
-      case "update":
-        navigate(`/update-sample/${RSN}`, { state: { RSN }});
         break;
       case "delete":
         navigate(`/delete-sample/${RSN}`, { state: { RSN }});
@@ -34,7 +29,6 @@ const SampleActions = () => {
       <h1>Please select an action</h1>
       <div>
         <button onClick={() => handleOptionSelect("allocate")}>Allocate Article Number</button>
-        <button onClick={() => handleOptionSelect("update")}>Update Sample Details</button>
         <button onClick={() => handleOptionSelect("delete")}>Delete Sample Details</button>
       </div>
 

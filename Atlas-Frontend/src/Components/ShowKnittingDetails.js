@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { getKnittingDetailsByRSN } from "../API/SampleApi";
 
 const ShowKnittingDetails = ({ RSN }) => {
   const [knittingData, setKnittingData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     if (RSN) {
@@ -12,7 +14,7 @@ const ShowKnittingDetails = ({ RSN }) => {
         setLoading(true);
         try {
           const response = await getKnittingDetailsByRSN(RSN);
-          setKnittingData(response.data); // Assuming the response contains an array of knitting details
+          setKnittingData(response.data);
         } catch (err) {
           setError("Failed to fetch knitting details.");
         } finally {
@@ -29,20 +31,23 @@ const ShowKnittingDetails = ({ RSN }) => {
 
   // Function to check for non-null, non-zero, and non-empty values
   const isNonZero = (value) => {
-    // Check if value is an object (contains Weight and Time)
     if (typeof value === "object" && value !== null) {
       return (
-        (value.Weight && value.Weight !== 0) || // Weight is non-zero
-        (value.Time && value.Time !== 0) // Time is non-zero
+        (value.Weight && value.Weight !== 0) ||
+        (value.Time && value.Time !== 0)
       );
     }
-    // Otherwise, check if it's not 0, empty string, null, or undefined
     return value !== 0 && value !== "" && value !== null && value !== undefined;
   };
 
-  // Filter out fields with null, zero, or empty values
   const isNonZeroData = (data) => {
     return Object.entries(data).filter(([key, value]) => isNonZero(value));
+  };
+
+  const handleUpdateClick = () => {
+    navigate(`/panel-selection/${RSN}`, {
+      state: { RSN: RSN, action: "Update" },
+    })
   };
 
   return (
@@ -53,7 +58,6 @@ const ShowKnittingDetails = ({ RSN }) => {
           const nonZeroData = isNonZeroData(data);
           return (
             <div key={index} style={{ marginBottom: "30px" }}>
-              <h2>Knitting Details for Record {index + 1}</h2>
               {nonZeroData.length > 0 ? (
                 <table border="1" style={{ width: "100%" }}>
                   <thead>
@@ -65,7 +69,6 @@ const ShowKnittingDetails = ({ RSN }) => {
                   </thead>
                   <tbody>
                     {nonZeroData.map(([key, value]) => {
-                      // If the value is an object (i.e., contains Weight and Time)
                       if (typeof value === "object" && value !== null) {
                         return (
                           <tr key={key}>
@@ -75,11 +78,10 @@ const ShowKnittingDetails = ({ RSN }) => {
                           </tr>
                         );
                       }
-                      // For non-object values (if the value is just a number, string, etc.)
                       return (
                         <tr key={key}>
                           <td>{key}</td>
-                          <td colSpan="2">{value}</td> {/* Render non-object values */}
+                          <td colSpan="2">{value}</td>
                         </tr>
                       );
                     })}
@@ -94,6 +96,10 @@ const ShowKnittingDetails = ({ RSN }) => {
       ) : (
         <p>No knitting details available</p>
       )}
+
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={handleUpdateClick}>Update Knitting Details</button>
+      </div>
     </div>
   );
 };
