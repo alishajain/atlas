@@ -178,35 +178,34 @@ const AddKnittingDetailsForm = () => {
     <div>
       <h1>Add Knitting Details</h1>
       <form onSubmit={handleSubmit}>
+        {/* RSN and Size outside the table */}
+        <div>
+          <label>RSN:</label>
+          <input
+            type="text"
+            name="RSN"
+            value={formData.RSN}
+            onChange={(e) =>
+              setFormData({ ...formData, RSN: e.target.value })
+            }
+            required
+            readOnly
+          />
+        </div>
+        <div>
+          <label>Size:</label>
+          <input
+            type="text"
+            name="Size"
+            value={formData.Size}
+            onChange={(e) =>
+              setFormData({ ...formData, Size: e.target.value })
+            }
+            required
+          />
+        </div>
+
         <table border="1">
-            <tr>
-              <td>RSN:</td>
-              <td colSpan="3">
-                <input
-                  type="text"
-                  name="RSN"
-                  value={formData.RSN}
-                  onChange={(e) =>
-                    setFormData({ ...formData, RSN: e.target.value })
-                  }
-                  required
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>Size:</td>
-              <td colSpan="3">
-                <input
-                  type="text"
-                  name="Size"
-                  value={formData.Size}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Size: e.target.value })
-                  }
-                  required
-                />
-              </td>
-            </tr>
           <thead>
             <tr>
               <th>Field</th>
@@ -216,7 +215,6 @@ const AddKnittingDetailsForm = () => {
             </tr>
           </thead>
           <tbody>
-
             {Object.keys(selectedStates)
               .filter((field) => selectedStates[field])
               .map((field) => (
