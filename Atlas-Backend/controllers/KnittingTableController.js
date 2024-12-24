@@ -71,9 +71,7 @@ const addKnittingDetails = async (req, res) => {
   let connection;
   try {
     connection = await db.getConnection();
-    await connection.beginTransaction(); // Begin a transaction
-
-    // Insert into the knitting_details table (treating JSON columns as strings)
+    await connection.beginTransaction();
     const [newKnittingDetails] = await connection.query(
       "INSERT INTO knitting_details (RSN, Size, FrontRight, FrontLeft, FrontComplete, BackRight, BackLeft, BackComplete, SleeveRight, SleeveLeft, BothSleeves, Tape, Collar, Kharcha1, Kharcha2, Kharcha3, Total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
@@ -96,8 +94,6 @@ const addKnittingDetails = async (req, res) => {
         JSON.stringify(Total),
       ]
     );
-
-    // Commit the transaction
     await connection.commit();
 
     // Send a successful response
@@ -107,17 +103,15 @@ const addKnittingDetails = async (req, res) => {
       RSN: newKnittingDetails.insertId,
     });
   } catch (error) {
-    // Rollback if an error occurs
     if (connection) {
       await connection.rollback();
     }
-    console.error("Error inserting Knitting data:", error); // Log the detailed error for debugging
+    console.error("Error inserting Knitting data:", error);
     res.status(500).json({
       success: false,
       message: `Error inserting Knitting data: ${error.message}`,
     });
   } finally {
-    // Always release the connection back to the pool
     if (connection) {
       connection.release();
     }
@@ -235,7 +229,6 @@ const updateKnittingDetails = async (req, res) => {
       ]
     );
 
-    console.log("Alisha", result);
     await connection.commit();
 
     if (result.affectedRows === 0) {

@@ -6,10 +6,7 @@ import AddColorDetails from "./AddColorDetails";
 const AddColorMatching = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const selectedStates = location.state?.selectedStates || {};
-  const RSN = location.state?.RSN || "";
-  const size = location.state?.size;
-  const action = location.state?.action;
+  const { RSN, selectedStates, action, size} = location.state || {};
 
   const [numColors, setNumColors] = useState(0);
   const [matchingName, setMatchingName] = useState([]);
@@ -102,6 +99,7 @@ const AddColorMatching = () => {
             Panel: panel,
           };
 
+          console.log(colorData);
           // Push API call promises into the array
           apiCalls.push(addColorMatching(colorData));
         });
@@ -154,7 +152,7 @@ const AddColorMatching = () => {
 
         {Array.from({ length: numColors }).map((_, index) => (
           <div key={index}>
-            <label>Color Match {index + 1}:</label>
+            <label>Color Matching {index + 1}:</label>
             <input
               type="text"
               value={matchingName[index] || ""}

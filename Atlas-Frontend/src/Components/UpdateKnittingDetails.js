@@ -7,7 +7,6 @@ const UpdateKnittingDetails = () => {
   const navigate = useNavigate();
 
   const { RSN, selectedStates, action } = location.state || {};
-
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

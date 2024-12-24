@@ -15,6 +15,7 @@ const addColorMatching = async (colorData) => {
       }
     );
 
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(

@@ -40,7 +40,7 @@ export const addKnittingDetails = async (data) => {
 
     // Check for a successful response (e.g., status 200)
     if (response.status === 200) {
-      return response.data; // Return response data to the caller
+      return response.data;
     } else {
       throw new Error('Unexpected response status: ' + response.status);
     }

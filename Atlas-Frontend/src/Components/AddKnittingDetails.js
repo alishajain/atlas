@@ -1,40 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addKnittingDetails, getMachineNos } from "../API/SampleApi";
+import { addKnittingDetails, updateKnittingDetails, getMachineNos } from "../API/SampleApi";
 
 const AddKnittingDetailsForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedStates = location.state?.selectedFields || {};
-  const RSN = location.state?.RSN || "";
 
-  const [formData, setFormData] = useState({
-    RSN: RSN,
-    Size: "",
-    FrontRight: { Weight: "", Time: "", MachineNo: "" },
-    FrontLeft: { Weight: "", Time: "", MachineNo: "" },
-    FrontComplete: { Weight: "", Time: "", MachineNo: "" },
-    BackRight: { Weight: "", Time: "", MachineNo: "" },
-    BackLeft: { Weight: "", Time: "", MachineNo: "" },
-    BackComplete: { Weight: "", Time: "", MachineNo: "" },
-    SleeveRight: { Weight: "", Time: "", MachineNo: "" },
-    SleeveLeft: { Weight: "", Time: "", MachineNo: "" },
-    BothSleeves: { Weight: "", Time: "", MachineNo: "" },
-    Tape: { Weight: "", Time: "", MachineNo: "" },
-    Collar: { Weight: "", Time: "", MachineNo: "" },
-    Kharcha1: { Weight: "", Time: "", MachineNo: "" },
-    Kharcha2: { Weight: "", Time: "", MachineNo: "" },
-    Kharcha3: { Weight: "", Time: "", MachineNo: "" },
-    Total: { Weight: 0, Time: 0 },
-  });
-
+  const { RSN, selectedStates, action } = location.state || {};
+  const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [machineNos, setMachineNos] = useState([]);
 
+  // Fetch machine numbers and initial form data (if action is "Update")
   useEffect(() => {
-    // Fetch machine numbers from the API
+    if (!RSN) {
+      setError("RSN is missing.");
+      return;
+    }
+
     const fetchMachineNos = async () => {
       try {
         const response = await getMachineNos();
@@ -45,63 +30,27 @@ const AddKnittingDetailsForm = () => {
     };
 
     fetchMachineNos();
-  }, []);
+  }, [RSN, selectedStates, action]);
 
-  useEffect(() => {
-    setFormData((prevData) => {
-      const newFormData = { ...prevData };
-      Object.keys(newFormData).forEach((key) => {
-        if (selectedStates[key]) {
-          newFormData[key] = {
-            Weight: "",
-            Time: "",
-            MachineNo: "",
-          };
-        }
-      });
-      return newFormData;
-    });
-  }, [selectedStates]);
-
-  // Function to handle change in any input field (weight, time, machine model)
+  // Handle input changes for Weight, Time, and MachineNo
   const handleChange = (e, field, type) => {
     const { value } = e.target;
-
-    // Ensure the value is not negative for weight and time fields
-    const validValue = type === "Weight" || type === "Time"
-      ? Math.max(0, parseFloat(value))
-      : value;
-
     setFormData((prevData) => {
       const newFormData = { ...prevData };
+      if (!newFormData[field]) newFormData[field] = {};
+      newFormData[field][type] = value;
 
-      if (!newFormData[field]) {
-        newFormData[field] = {
-          Weight: "",
-          Time: "",
-          MachineNo: "",
-        };
-      }
-
-      // Set value to 0 if it's empty for weight/time or empty string for machine fields
-      if (type === "Weight" || type === "Time") {
-        newFormData[field][type] = validValue || 0;
-      } else {
-        newFormData[field][type] = value === "" ? "" : value;
-      }
-
-      // Recalculate total weight and total time
+      // Recalculate total
       newFormData.Total = calculateTotal(newFormData);
       return newFormData;
     });
   };
 
-  // Function to calculate the total weight and total time
   const calculateTotal = (data) => {
     let totalWeight = 0;
     let totalTime = 0;
 
-    // Iterate over the fields that contain weight and time
+    // Calculate total weight and time for all relevant fields
     Object.keys(data).forEach((key) => {
       if (key !== "RSN" && key !== "Size" && key !== "Total") {
         const { Weight, Time } = data[key];
@@ -116,93 +65,45 @@ const AddKnittingDetailsForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure all fields have weight, time, and machine number
-    const updatedFormData = { ...formData };
-
-    Object.keys(updatedFormData).forEach((field) => {
-      if (typeof updatedFormData[field] === "object") {
-        const { Weight, Time, MachineNo } = updatedFormData[field];
-
-        // Set to 0 if Weight or Time is empty
-        if (Weight === "") updatedFormData[field].Weight = 0;
-        if (Time === "") updatedFormData[field].Time = 0;
-        if (MachineNo === "") updatedFormData[field].MachineNo = ""; 
+    // Validate if both Weight and Time are provided for each field
+    for (let field in formData) {
+      if (typeof formData[field] === "object") {
+        const { Weight, Time, MachineNo } = formData[field];
+        if (Weight === "" || Time === "" || MachineNo === "") {
+          setError(`Weight, Time, and MachineNo must be provided for ${field}`);
+          return;
+        }
       }
-    });
+    }
 
-    // Start loading indicator
     setLoading(true);
     setError(null);
     setSuccess(null);
 
-    console.log(updatedFormData);
     try {
-      const response = await addKnittingDetails(updatedFormData);
-      setSuccess("Knitting details added successfully!");
-
-      navigate(`/add-color-details/${RSN}`, {
-        state: { RSN, selectedStates, size: formData.Size, action: 'add' },
-      });
-
-      setFormData({
-        RSN: "",
-        Size: "",
-        FrontRight: { Weight: "", Time: "", MachineNo: "" },
-        FrontLeft: { Weight: "", Time: "", MachineNo: "" },
-        FrontComplete: { Weight: "", Time: "", MachineNo: "" },
-        BackRight: { Weight: "", Time: "", MachineNo: "" },
-        BackLeft: { Weight: "", Time: "", MachineNo: "" },
-        BackComplete: { Weight: "", Time: "", MachineNo: "" },
-        SleeveRight: { Weight: "", Time: "", MachineNo: "" },
-        SleeveLeft: { Weight: "", Time: "", MachineNo: "" },
-        BothSleeves: { Weight: "", Time: "", MachineNo: "" },
-        Tape: { Weight: "", Time: "", MachineNo: "" },
-        Collar: { Weight: "", Time: "", MachineNo: "" },
-        Kharcha1: { Weight: "", Time: "", MachineNo: "" },
-        Kharcha2: { Weight: "", Time: "", MachineNo: "" },
-        Kharcha3: { Weight: "", Time: "", MachineNo: "" },
-        Total: { Weight: 0, Time: 0 },
-      });
+      if (action === "Add") {
+        // Add RSN to the form data for the Add operation
+        const response = await addKnittingDetails({ RSN, ...formData });
+        setSuccess("Knitting details added successfully!");
+      } else if (action === "Update") {
+        // Add RSN to the form data for the Update operation
+        const response = await updateKnittingDetails(RSN, formData);
+        setSuccess("Knitting details updated successfully!");
+      }
     } catch (error) {
-      // Handle errors if the API request fails
-      setError(
-        error.message || "An error occurred while adding knitting details"
-      );
+      setError(error.message || "An error occurred while submitting knitting details");
     } finally {
       setLoading(false);
     }
+
+    // Redirect to the next page
+    navigate(`/add-color-details/${RSN}`, { state: { RSN, selectedStates, action, size: formData.Size } });
   };
 
   return (
     <div>
-      <h1>Add Knitting Details</h1>
+      <h1>{action === "Add" ? "Add Knitting Details" : "Update Knitting Details"}</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>RSN:</label>
-          <input
-            type="text"
-            name="RSN"
-            value={formData.RSN}
-            onChange={(e) =>
-              setFormData({ ...formData, RSN: e.target.value })
-            }
-            required
-            readOnly
-          />
-        </div>
-        <div>
-          <label>Size:</label>
-          <input
-            type="text"
-            name="Size"
-            value={formData.Size}
-            onChange={(e) =>
-              setFormData({ ...formData, Size: e.target.value })
-            }
-            required
-          />
-        </div>
-
         <table border="1">
           <thead>
             <tr>
@@ -213,9 +114,26 @@ const AddKnittingDetailsForm = () => {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(selectedStates)
-              .filter((field) => selectedStates[field])
-              .map((field) => (
+            <tr>
+              <td>RSN:</td>
+              <td colSpan="3">
+                <input type="text" name="RSN" value={formData.RSN || RSN} disabled />
+              </td>
+            </tr>
+            <tr>
+              <td>Size:</td>
+              <td colSpan="3">
+                <input
+                  type="text"
+                  name="Size"
+                  value={formData.Size || ""}
+                  onChange={(e) => setFormData({ ...formData, Size: e.target.value })}
+                  required
+                />
+              </td>
+            </tr>
+            {Object.keys(selectedStates).map((field) =>
+              selectedStates[field] ? (
                 <tr key={field}>
                   <td>{field}</td>
                   <td>
@@ -251,12 +169,12 @@ const AddKnittingDetailsForm = () => {
                     </select>
                   </td>
                 </tr>
-              ))}
-
+              ) : null
+            )}
             <tr>
               <td>Total</td>
-              <td>{formData.Total.Weight}</td>
-              <td>{formData.Total.Time}</td>
+              <td>{formData.Total?.Weight || 0}</td>
+              <td>{formData.Total?.Time || 0}</td>
               <td></td>
             </tr>
           </tbody>
@@ -266,6 +184,7 @@ const AddKnittingDetailsForm = () => {
           {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
+
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
     </div>
