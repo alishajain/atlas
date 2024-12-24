@@ -146,6 +146,26 @@ const getColorId = async (req, res) => {
   }
 };
 
+const getColorPanelByRSN = async (req, res) => {
+  const { RSN } = req.params;
+
+  try {
+    const query = "SELECT distinct Panel FROM color_matching WHERE RSN = ?";
+
+    const [results] = await db.query(query, [RSN]);
+    console.log(results);
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Color matching entry not found" });
+    }
+
+    res.status(200).json({ data: results });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching data" });
+  }
+};
 
 // Export functions using module.exports
 module.exports = {
@@ -155,4 +175,5 @@ module.exports = {
   updateColorMatching,
   deleteColorMatching,
   getColorId,
+  getColorPanelByRSN,
 };

@@ -6,7 +6,7 @@ const ShowKnittingDetails = ({ RSN }) => {
   const [knittingData, setKnittingData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (RSN) {
@@ -21,7 +21,6 @@ const ShowKnittingDetails = ({ RSN }) => {
           setLoading(false);
         }
       };
-
       fetchData();
     }
   }, [RSN]);
@@ -46,7 +45,7 @@ const ShowKnittingDetails = ({ RSN }) => {
 
   const handleUpdateClick = () => {
     navigate(`/panel-selection/${RSN}`, {
-      state: { RSN: RSN, action: "Update" },
+      state: { RSN: RSN, action: "update" },
     })
   };
 

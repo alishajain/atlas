@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
-import { getColorMatchingByRSN } from "../API/ColorApi";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getColorMatchingByRSN, getPanel } from "../API/ColorApi";
 import { getColorDetailByColorId } from "../API/ColorDetailApi";
 
-// Utility function to check for non-null, non-zero values
 const isValidValue = (value) => {
   return value !== null && value !== "" && value !== 0;
 };
@@ -18,13 +17,16 @@ const ShowColor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [colorDetails, setColorDetails] = useState({});
+  const [selectedPanels, setSelectedPanels] = useState(null);
+  const [selectedStates, setSelectedStates] = useState({}); // State to store selectedStates
 
+  // First useEffect for fetching color matching data
   useEffect(() => {
     const fetchColorMatchingData = async () => {
       setLoading(true);
       try {
         const response = await getColorMatchingByRSN(RSN);
-        setColorMatchingData(response.data); // Store color matching data
+        setColorMatchingData(response.data);
       } catch (err) {
         setError("Failed to fetch color matching details.");
       } finally {
@@ -37,9 +39,9 @@ const ShowColor = () => {
     }
   }, [RSN]);
 
+  // Fetch color detail by ColorId
   const fetchColorDetail = async (ColorId) => {
     if (!colorDetails[ColorId]) {
-      // If not already fetched
       try {
         const response = await getColorDetailByColorId(ColorId);
         setColorDetails((prevDetails) => ({
@@ -51,6 +53,33 @@ const ShowColor = () => {
       }
     }
   };
+
+  // Fetch selected panels and update selectedStates when panels are fetched
+  useEffect(() => {
+    const fetchPanelData = async () => {
+      try {
+        const response = await getPanel(RSN);
+        setSelectedPanels(response.data);
+
+        // Format selectedPanels as selectedStates (object with values as keys and true as values)
+        const states = response.data.reduce((acc, panel) => {
+          const panelKey = panel.Panel;
+          if (panelKey) {
+            acc[panelKey] = true;
+          }
+          return acc;
+        }, {});
+        
+        setSelectedStates(states);
+      } catch (err) {
+        console.error("Failed to fetch panel data:", err);
+      }
+    };
+
+    if (RSN && !selectedPanels) {
+      fetchPanelData();
+    }
+  }, [RSN, selectedPanels]);
 
   if (loading) return <p>Loading color matching data...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -65,7 +94,7 @@ const ShowColor = () => {
     return acc;
   }, {});
 
-  // Function to check and extract valid color details for each ColorId
+  // Function to render color details for each ColorId
   const renderColorDetail = (ColorId) => {
     const details = colorDetails[ColorId]?.[0];
     if (details) {
@@ -97,7 +126,6 @@ const ShowColor = () => {
         );
       });
 
-      // Extract 'Name' and 'Weight' for valid color fields
       const names = validColorKeys.map((colorKey) => details[colorKey].Name);
       const weights = validColorKeys.map(
         (colorKey) => details[colorKey].Weight
@@ -106,7 +134,7 @@ const ShowColor = () => {
       return (
         <td>
           {validColorKeys.length > 0 ? (
-            <table border="1" style={{ width: "100%", marginTop: "10px" }}>
+            <table border="1" style={{ width: "100%" }}>
               <thead>
                 <tr>
                   <th>Property</th>
@@ -145,8 +173,17 @@ const ShowColor = () => {
   };
 
   // Function to handle navigation next
-  const handleNext = () => {;
+  const handleNext = () => {
     navigate(`/sample-actions/${RSN}`, { state: { RSN } });
+  };
+
+  // Function to handle Add Color button click
+  const handleAddColor = async () => {
+    if (!selectedPanels) {
+      console.log("Panels are not loaded yet, please try again later.");
+      return;
+    }
+    navigate(`/add-color-details/${RSN}`, { state: { RSN, selectedStates, size: 'M', action: 'addUpdate' } });
   };
 
   return (
@@ -161,12 +198,12 @@ const ShowColor = () => {
                 <tr>
                   <th>ColorId</th>
                   <th>Panel</th>
-                  <th>Color Details</th> {/* Column for color details */}
+                  <th>Color Details</th>
                 </tr>
               </thead>
               <tbody>
                 {groupedData[matchingName].map((item, itemIndex) => {
-                  fetchColorDetail(item.ColorId); // Fetch color details if not already done
+                  fetchColorDetail(item.ColorId);
                   return (
                     <tr key={itemIndex}>
                       <td>{item.ColorId}</td>
@@ -182,8 +219,9 @@ const ShowColor = () => {
       ) : (
         <p>No color matching details available for this RSN.</p>
       )}
-
-      {/* Back and Next buttons */}
+      <div>
+        <button onClick={handleAddColor}>Add Color Matching</button>
+      </div>
       <div>
         <button onClick={handleBack}>Back</button>
         <button onClick={handleNext}>Next</button>

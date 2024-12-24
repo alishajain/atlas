@@ -95,6 +95,22 @@ const getColorId = async (RSN, MatchingName, Panel) => {
   }
 };
 
+// Get Panels by RSN
+const getPanel = async (RSN) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/color-panel/${RSN}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching color ID for RSN ${RSN}:`,
+      error
+    );
+    throw error;
+  }
+};
+
 export {
   addColorMatching,
   getAllColorMatching,
@@ -102,4 +118,5 @@ export {
   updateColorMatching,
   deleteColorMatching,
   getColorId,
+  getPanel,
 };

@@ -66,6 +66,7 @@ router.get('/color-matching/:RSN', colorMatchingController.getColorMatchingByRSN
 router.put('/update-color-matching/:RSN', colorMatchingController.updateColorMatching);
 router.delete('/delete-color-matching/:RSN', colorMatchingController.deleteColorMatching);
 router.get('/get-colorId/:RSN/:MatchingName/:Panel', colorMatchingController.getColorId);
+router.get('/color-panel/:RSN', colorMatchingController.getColorPanelByRSN);
 
 // Routes for Color Details
 router.post('/add-color-detail', colorDetailsController.addColorDetail);

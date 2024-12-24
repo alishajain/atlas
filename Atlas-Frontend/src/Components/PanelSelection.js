@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const PanelSelection = () => {
-  const [selectedFields, setSelectedFields] = useState({
+  const [selectedStates, setSelectedStates] = useState({
     FrontRight: false,
     FrontLeft: false,
     FrontComplete: false,
@@ -27,7 +27,7 @@ const PanelSelection = () => {
 
   const handleChange = (e) => {
     const { name, checked } = e.target;
-    setSelectedFields((prev) => ({
+    setSelectedStates((prev) => ({
       ...prev,
       [name]: checked,
     }));
@@ -45,7 +45,7 @@ const PanelSelection = () => {
         : `/update-knitting/${RSN}`;
 
     navigate(navigateTo, {
-      state: { RSN, selectedFields }, // Pass both RSN and selectedFields in state
+      state: { RSN, selectedStates, action },
     });
   };
 
@@ -54,13 +54,13 @@ const PanelSelection = () => {
       <h1>Panel Selection</h1>
       {RSN && <p>RSN: {RSN}</p>}
       <div>
-        {Object.keys(selectedFields).map((field) => (
+        {Object.keys(selectedStates).map((field) => (
           <div key={field}>
             <label>
               <input
                 type="checkbox"
                 name={field}
-                checked={selectedFields[field]}
+                checked={selectedStates[field]}
                 onChange={handleChange}
               />
               {field}

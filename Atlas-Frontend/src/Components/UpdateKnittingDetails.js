@@ -6,7 +6,8 @@ const UpdateKnittingDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { RSN, selectedFields, knittingData, action } = location.state || {};
+  const { RSN, selectedStates, action } = location.state || {};
+
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,21 +21,6 @@ const UpdateKnittingDetails = () => {
       return;
     }
 
-    // Initialize formData depending on action and selectedFields
-    if (action === "Add") {
-      // Initialize formData for 'Add' action with selected fields only
-      const initialData = Object.keys(selectedFields).reduce((acc, field) => {
-        if (selectedFields[field]) {
-          acc[field] = { Weight: "", Time: "", MachineNo: "" };
-        }
-        return acc;
-      }, {});
-      setFormData(initialData);
-    } else if (action === "Update" && knittingData) {
-      // Initialize formData for 'Update' action with knittingData if available
-      setFormData(knittingData);
-    }
-
     const fetchMachineNos = async () => {
       try {
         const response = await getMachineNos();
@@ -45,7 +31,7 @@ const UpdateKnittingDetails = () => {
     };
 
     fetchMachineNos();
-  }, [RSN, selectedFields, knittingData, action]);
+  }, [RSN, selectedStates, action]);
 
   // Handle input changes for Weight, Time, and MachineNo
   const handleChange = (e, field, type) => {
@@ -104,7 +90,7 @@ const UpdateKnittingDetails = () => {
       setLoading(false);
     }
 
-    navigate(`/show-sample/${RSN}`, { state: { RSN } });
+    navigate(`/add-color-details/${RSN}`, { state: { RSN, selectedStates, action, size: formData.Size } });
   };
 
   return (
@@ -139,8 +125,8 @@ const UpdateKnittingDetails = () => {
                 />
               </td>
             </tr>
-            {Object.keys(selectedFields).map((field) =>
-              selectedFields[field] ? (
+            {Object.keys(selectedStates).map((field) =>
+              selectedStates[field] ? (
                 <tr key={field}>
                   <td>{field}</td>
                   <td>

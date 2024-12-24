@@ -134,7 +134,6 @@ const UpdateMachine = ({ machine, goBack }) => {
         <button type="submit">Update Machine</button>
       </form>
 
-      {/* Go Back Button */}
       <button onClick={goBack}>Go Back</button>
     </div>
   );

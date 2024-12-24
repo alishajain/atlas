@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addColorMatching } from "../API/ColorApi";
+import { addColorMatching, deleteColorMatching } from "../API/ColorApi";
 import AddColorDetails from "./AddColorDetails";
-import AddSample from '../Pages/AddSample';
 
 const AddColorMatching = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
   const selectedStates = location.state?.selectedStates || {};
   const RSN = location.state?.RSN || "";
   const size = location.state?.size;
+  const action = location.state?.action;
 
   const [numColors, setNumColors] = useState(0);
   const [matchingName, setMatchingName] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
-  const [showColorDetails, setShowColorDetails] = useState(false); // State to control when AddColorDetails is shown
+  const [showColorDetails, setShowColorDetails] = useState(false);
 
   // Handle number of color matches input change
   const handleNumColorsChange = (e) => {
@@ -29,9 +29,9 @@ const AddColorMatching = () => {
 
     // Allow only numbers greater than 0
     if (num && num > 0) {
-      setError(""); // Clear error if the number is valid
+      setError("");
       setNumColors(num);
-      setMatchingName(Array(num).fill("")); // Reset color matches array based on number of matches
+      setMatchingName(Array(num).fill(""));
     } else {
       setNumColors(num);
     }
@@ -63,23 +63,26 @@ const AddColorMatching = () => {
       return;
     }
 
-    // Step 1: Get panels whose value is true and convert them to uppercase
     const selectedPanels = Object.entries(selectedStates)
       .filter(([key, value]) => value === true)
       .map(([key]) => key);
 
     if (selectedPanels.length === 0) {
       setError("No valid panels selected.");
-      return; // Return early if no panels are selected
+      return;
     }
 
     setLoading(true);
-    setError(""); // Clear any previous errors
-    setSuccess(""); // Clear any previous success message
+    setError("");
+    setSuccess("");
 
     try {
-      // Create an array to store the API call promises
       const apiCalls = [];
+
+      // If action is 'update', first delete existing color matching records by RSN
+      if (action === "update") {
+        apiCalls.push(deleteColorMatching(RSN));
+      }
 
       // Loop through each matchingName and create API calls for each selected panel
       matchingName.forEach((colorName) => {
@@ -91,7 +94,9 @@ const AddColorMatching = () => {
               .reduce(
                 (acc, char) => (/[A-Z0-9]/.test(char) ? acc + char : acc),
                 ""
-              )}${RSN}${colorName[0].toUpperCase()}${colorName[1].toUpperCase()}${colorName[colorName.length - 1].toUpperCase()}`,
+              )}${RSN}${colorName[0].toUpperCase()}${colorName[1].toUpperCase()}${colorName[
+              colorName.length - 1
+            ].toUpperCase()}${size}`,
             RSN: RSN,
             MatchingName: colorName,
             Panel: panel,
@@ -118,15 +123,22 @@ const AddColorMatching = () => {
 
   // Function to handle "Next" button click - Navigate to /add-new-sample
   const handleNextClick = () => {
-    navigate("/add-sample"); // Navigate to the AddNewSample component
+    if (action === "addUpdate") {
+      navigate(`/show-color/${RSN}`, { state: { RSN } });
+    } else if (action === "update") {
+      navigate(`/show-sample/${RSN}`, { state: { RSN } });      
+    } else {
+      navigate("/add-sample");
+    }
   };
 
   return (
     <div>
-      <h2>Add Color Matching</h2>
+      <h2>
+        {action === "update" ? "Update Color Matching" : "Add Color Matching"}
+      </h2>
 
       <form onSubmit={handleSubmit}>
-        {/* Step 1: Input for the number of color matches */}
         <div>
           <label>Number of color matches: </label>
           <input
@@ -138,10 +150,8 @@ const AddColorMatching = () => {
           />
         </div>
 
-        {/* Display error if the number of colors is not valid */}
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {/* Step 2: Render input fields for each color match */}
         {Array.from({ length: numColors }).map((_, index) => (
           <div key={index}>
             <label>Color Match {index + 1}:</label>
@@ -156,7 +166,11 @@ const AddColorMatching = () => {
 
         {/* Submit Button */}
         <button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Add Color Matching"}
+          {loading
+            ? "Submitting..."
+            : action === "update"
+            ? "Update Color Matching"
+            : "Add Color Matching"}
         </button>
       </form>
 
@@ -168,14 +182,13 @@ const AddColorMatching = () => {
         matchingName.map((colorName, index) => (
           <AddColorDetails
             key={index}
-            matchingName={colorName} // Pass the specific color name to AddColorDetails
+            matchingName={colorName}
             RSN={RSN}
             size={size}
             selectedStates={selectedStates}
           />
         ))}
 
-      {/* Next button - visible only after color matchings are added successfully */}
       {success && (
         <button onClick={handleNextClick} style={{ marginTop: "20px" }}>
           Next

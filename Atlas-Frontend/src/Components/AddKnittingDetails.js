@@ -5,8 +5,8 @@ import { addKnittingDetails, getMachineNos } from "../API/SampleApi";
 const AddKnittingDetailsForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedStates = location.state?.selectedFields || {}; // Access selected fields
-  const RSN = location.state?.RSN || ""; // Access RSN
+  const selectedStates = location.state?.selectedFields || {};
+  const RSN = location.state?.RSN || "";
 
   const [formData, setFormData] = useState({
     RSN: RSN,
@@ -38,17 +38,16 @@ const AddKnittingDetailsForm = () => {
     const fetchMachineNos = async () => {
       try {
         const response = await getMachineNos();
-        setMachineNos(response.data); // Set the machine numbers to state
+        setMachineNos(response.data);
       } catch (error) {
         setError("Failed to fetch machine numbers");
       }
     };
 
     fetchMachineNos();
-  }, []); // Only run once on component mount
+  }, []);
 
   useEffect(() => {
-    // Initialize formData based on selectedStates
     setFormData((prevData) => {
       const newFormData = { ...prevData };
       Object.keys(newFormData).forEach((key) => {
@@ -56,13 +55,13 @@ const AddKnittingDetailsForm = () => {
           newFormData[key] = {
             Weight: "",
             Time: "",
-            MachineNo: "", // No longer handling MachineType
-          }; // Initialize with new fields
+            MachineNo: "",
+          };
         }
       });
       return newFormData;
     });
-  }, [selectedStates]); // Re-run when selectedStates change
+  }, [selectedStates]);
 
   // Function to handle change in any input field (weight, time, machine model)
   const handleChange = (e, field, type) => {
@@ -70,7 +69,7 @@ const AddKnittingDetailsForm = () => {
 
     // Ensure the value is not negative for weight and time fields
     const validValue = type === "Weight" || type === "Time"
-      ? Math.max(0, parseFloat(value)) // Ensure non-negative values
+      ? Math.max(0, parseFloat(value))
       : value;
 
     setFormData((prevData) => {
@@ -80,15 +79,15 @@ const AddKnittingDetailsForm = () => {
         newFormData[field] = {
           Weight: "",
           Time: "",
-          MachineNo: "", // No longer handling MachineType
-        }; // Initialize if undefined
+          MachineNo: "",
+        };
       }
 
       // Set value to 0 if it's empty for weight/time or empty string for machine fields
       if (type === "Weight" || type === "Time") {
-        newFormData[field][type] = validValue || 0; // Use validated value (or 0 if empty)
+        newFormData[field][type] = validValue || 0;
       } else {
-        newFormData[field][type] = value === "" ? "" : value; // Set to empty string if empty
+        newFormData[field][type] = value === "" ? "" : value;
       }
 
       // Recalculate total weight and total time
@@ -127,7 +126,7 @@ const AddKnittingDetailsForm = () => {
         // Set to 0 if Weight or Time is empty
         if (Weight === "") updatedFormData[field].Weight = 0;
         if (Time === "") updatedFormData[field].Time = 0;
-        if (MachineNo === "") updatedFormData[field].MachineNo = ""; // No longer handling MachineType
+        if (MachineNo === "") updatedFormData[field].MachineNo = ""; 
       }
     });
 
@@ -142,7 +141,7 @@ const AddKnittingDetailsForm = () => {
       setSuccess("Knitting details added successfully!");
 
       navigate(`/add-color-details/${RSN}`, {
-        state: { RSN, selectedStates, size: formData.Size },
+        state: { RSN, selectedStates, size: formData.Size, action: 'add' },
       });
 
       setFormData({
@@ -178,7 +177,6 @@ const AddKnittingDetailsForm = () => {
     <div>
       <h1>Add Knitting Details</h1>
       <form onSubmit={handleSubmit}>
-        {/* RSN and Size outside the table */}
         <div>
           <label>RSN:</label>
           <input
@@ -255,7 +253,6 @@ const AddKnittingDetailsForm = () => {
                 </tr>
               ))}
 
-            {/* Total Row */}
             <tr>
               <td>Total</td>
               <td>{formData.Total.Weight}</td>
