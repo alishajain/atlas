@@ -50,6 +50,20 @@ const addEmployee = async (req, res) => {
   }
 
   try {
+    const dobDate = new Date(DOB);
+    const joiningDate = new Date(JoiningDate);
+    const anniversaryDate = Anniversary ? new Date(Anniversary) : null;
+
+    if (
+      isNaN(dobDate) ||
+      isNaN(joiningDate) ||
+      (anniversaryDate && isNaN(anniversaryDate))
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid date format" });
+    }
+
     // Prepare SQL query to insert a new employee
     const query = `
             INSERT INTO employee_details (EmpId, EmpName, Address, EmailId, ContactNo, AltContactNo, DOB, Age, JoiningDate, Designation, Anniversary)
@@ -64,13 +78,13 @@ const addEmployee = async (req, res) => {
       EmailId,
       ContactNo,
       AltContactNo,
-      DOB,
+      dobDate.toISOString().split("T")[0],
       Age,
-      JoiningDate,
+      joiningDate.toISOString().split("T")[0],
       Designation,
-      Anniversary,
+      anniversaryDate ? anniversaryDate.toISOString().split("T")[0] : null,
     ]);
-    // Return a success response with the inserted record details
+    
     res.status(201).json({
       success: true,
       message: "Employee added successfully",
@@ -148,15 +162,36 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-
 // Function to update an employee's details by EmpId
 const updateEmployee = async (req, res) => {
   const { EmpId } = req.params;
-  const { EmpName, Address, EmailId, ContactNo, AltContactNo, DOB, Age, JoiningDate, Designation, Anniversary } = req.body;
+  const {
+    EmpName,
+    Address,
+    EmailId,
+    ContactNo,
+    AltContactNo,
+    DOB,
+    Age,
+    JoiningDate,
+    Designation,
+    Anniversary,
+  } = req.body;
 
   // Check if all required fields are present
-  if (!EmpName || !Address || !EmailId || !ContactNo || !DOB || !Age || !JoiningDate || !Designation) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+  if (
+    !EmpName ||
+    !Address ||
+    !EmailId ||
+    !ContactNo ||
+    !DOB ||
+    !Age ||
+    !JoiningDate ||
+    !Designation
+  ) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing required fields" });
   }
 
   // Ensure dates are in the correct format
@@ -165,8 +200,14 @@ const updateEmployee = async (req, res) => {
     const joiningDate = new Date(JoiningDate);
     const anniversaryDate = Anniversary ? new Date(Anniversary) : null;
 
-    if (isNaN(dobDate) || isNaN(joiningDate) || (anniversaryDate && isNaN(anniversaryDate))) {
-      return res.status(400).json({ success: false, message: "Invalid date format" });
+    if (
+      isNaN(dobDate) ||
+      isNaN(joiningDate) ||
+      (anniversaryDate && isNaN(anniversaryDate))
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid date format" });
     }
 
     // Update employee details in the database
@@ -194,10 +235,13 @@ const updateEmployee = async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating employee:", error);
-    res.status(500).json({ success: false, message: "Error updating employee", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Error updating employee",
+      error: error.message,
+    });
   }
 };
-
 
 module.exports = {
   getEmployeeDetails,

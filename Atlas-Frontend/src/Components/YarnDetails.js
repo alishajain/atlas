@@ -47,7 +47,7 @@ const YarnDetails = () => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(yarnDetails) && yarnDetails.map((yarn) => (  // Ensure sampleDetails is an array
+          {Array.isArray(yarnDetails) && yarnDetails.map((yarn) => (
             <tr key={yarn.YarnID}>
               <td>{yarn.YarnID}</td>
               <td>{yarn.YarnType}</td>

@@ -13,21 +13,36 @@ import ShowSamples from "./Pages/ShowSamples";
 import DeleteSample from "./Pages/DeleteSample";
 import UpdateSampleDetails from "./Components/UpdateSampleDetails";
 import UpdateKnittingDetails from "./Components/UpdateKnittingDetails";
+import AddYarnDetails from "./Components/AddYarnDetails";
+import AddYarnStockDetails from "./Components/AddYarnStockDetails";
+import YarnDetails from "./Components/YarnDetails";
+import YarnStockDetails from "./Components/YarnStockDetails";
+import SearchEmployee from "./Components/SearchEmployee";
+import AddEmployeeDetails from "./Components/AddEmployeeDetails";
+import Employee from "./Pages/Employee";
+import SignIn from "./Pages/Signin";
+import Home from "./Pages/Home";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Update for React Router v6
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; 
 
 const App = () => {
   return (
     <Router>
-      <div>
-        <Routes>
-          <Route path="/" element={<WelcomeSample />} />
+      <h1>Welcome to Atlas</h1>
+       <div>
+         <Routes>
+           {/* Route for signin page */}
+           <Route path="/" element={<SignIn />} />
 
-          {/* Routes for adding sample details */}
-          <Route path="/add-sample" element={<AddSample />} />
-          <Route path="/add-sample-details" element={<AddSampleDetails />} />
-          <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
-          <Route
+           <Route path="/home" element={<Home />} />
+
+           <Route path="/sample" element={<WelcomeSample />} />
+
+           {/* Routes for adding sample details */}
+           <Route path="/add-sample" element={<AddSample />} />
+           <Route path="/add-sample-details" element={<AddSampleDetails />} />
+           <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
+           <Route
             path="/add-knitting-details/:RSN"
             element={<AddKnittingDetailsForm />}
           />
@@ -52,6 +67,17 @@ const App = () => {
             path="/update-knitting/:RSN"
             element={<UpdateKnittingDetails />}
           />
+
+          {/* Routes for Yarn Management */}
+          <Route path="/add-yarn" element={<AddYarnDetails />} />
+          <Route path="/show-yarn" element={<YarnDetails />} />
+          <Route path="/add-yarn-stock" element={<AddYarnStockDetails />} />
+          <Route path="/yarn-stock" element={<YarnStockDetails />} />
+          
+          {/* Routes for Employee Management */}
+          <Route path="/employee" element={<Employee />} />
+          <Route path="/add-employee" element={<AddEmployeeDetails />} />
+          <Route path="/search-employee" element={<SearchEmployee />} />
         </Routes>
       </div>
     </Router>

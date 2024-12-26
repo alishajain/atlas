@@ -120,7 +120,7 @@ const addKnittingDetails = async (req, res) => {
 
 // Controller to fetch knitting details by RSN
 const getKnittingDetailsByRSN = async (req, res) => {
-  const RSN = req.params.RSN; // Get RSN from URL parameters
+  const RSN = req.params.RSN;
 
   try {
     const [rows] = await db.query('SELECT * FROM knitting_details WHERE RSN = ?', [RSN]);

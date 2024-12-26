@@ -30,6 +30,8 @@ router.put('/update-knitting-details/:RSN', knittingController.updateKnittingDet
 // Routes for Yarn Master
 router.get('/YarnDetails', yarnController.getYarnDetails);
 router.post('/add-yarn', yarnController.addYarnDetails);
+router.get('/search-yarn/:YarnId', yarnController.getYarnDetailsByYarnId);
+router.put('/update-yarn/:YarnId', yarnController.updateYarnDetails);
 
 // Routes for Yarn Stock
 router.get('/YarnStock', yarnStockController.getYarnStockDetails);
