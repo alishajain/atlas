@@ -5,10 +5,28 @@ const API_URL = "http://localhost:5000/api";
 // Add a new color detail
 const addColorDetail = async (colorData) => {
   try {
-    const response = await axios.post(`${API_URL}/add-color-detail`, colorData);
+    const response = await axios.post(`${API_URL}/add-color-detail`, colorData, {
+      headers: {
+        'Content-Type': 'application/json', // Ensure correct header
+      }
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error adding color detail:", error);
+    // Check if the error is due to a response (e.g., status 400)
+    if (error.response) {
+      console.error("Response error:", error.response.data);
+      throw new Error(`Error: ${error.response.status} - ${error.response.data.message}`);
+    }
+
+    // Check if the error was a network error (no response)
+    if (error.request) {
+      console.error("Request error:", error.request);
+      throw new Error("No response received from the server.");
+    }
+
+    // For any other errors
+    console.error("Error message:", error.message);
     throw error;
   }
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { searchEmployee, deleteEmployee } from "../API/EmployeeApi"; // Import necessary functions
-import UpdateEmployee from "./UpdateEmployee"; // Import the UpdateEmployee component
+import { searchEmployee, deleteEmployee } from "../API/EmployeeApi"; 
+import UpdateEmployee from "./UpdateEmployee"; 
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const formatDate = (date) => {
   const jsDate = new Date(date);
@@ -19,6 +20,8 @@ const SearchEmployee = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleSearch = async () => {
     setLoading(true);
@@ -64,6 +67,11 @@ const SearchEmployee = () => {
       )
     );
     setSelectedEmployee(null); // Reset the selected employee
+  };
+
+  // handleBack function to navigate to /employee
+  const handleBack = () => {
+    navigate("/employee"); // Navigate back to /employee route
   };
 
   return (
@@ -122,7 +130,9 @@ const SearchEmployee = () => {
                 <td>{formatDate(emp.Anniversary)}</td>
                 <td>
                   <button onClick={() => handleUpdate(emp)}>Update</button>
-                  <button onClick={() => handleDelete(emp.EmpId)}>Delete</button>
+                  <button onClick={() => handleDelete(emp.EmpId)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))
@@ -141,6 +151,10 @@ const SearchEmployee = () => {
           onCancel={handleCancelUpdate}
         />
       )}
+
+      <div>
+        <button onClick={handleBack}>Back</button> {/* Back Button */}
+      </div>
     </div>
   );
 };

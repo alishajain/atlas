@@ -2,18 +2,18 @@ const db = require("../db/database");
 
 // Create a new color matching entry
 const addColorMatching = async (req, res) => {
-  const { ColorId, RSN, MatchingName, Panel } = req.body;
+  const { ColorId, RSN, MatchingName, Panel, userId } = req.body;
 
   // Validate input data
-  if (!ColorId || !RSN || !MatchingName || !Panel) {
+  if (!ColorId || !RSN || !MatchingName || !Panel || !userId) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const query = `INSERT INTO color_matching (ColorId, RSN, MatchingName, Panel) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO color_matching (ColorId, RSN, MatchingName, Panel, userId) VALUES (?, ?, ?, ?, ?)`;
 
     // Await the database query
-    const [results] = await db.query(query, [ColorId, RSN, MatchingName, Panel]);
+    const [results] = await db.query(query, [ColorId, RSN, MatchingName, Panel, userId]);
 
     res.status(201).json({
       message: "Color matching entry created successfully",
@@ -66,18 +66,18 @@ const getColorMatchingByRSN = async (req, res) => {
 // Update an existing color matching entry
 const updateColorMatching = async (req, res) => {
   const { RSN } = req.params;
-  const { ColorId, MatchingName, Panel } = req.body;
+  const { ColorId, MatchingName, Panel, userId } = req.body;
 
   // Validate input data
-  if (!ColorId || !MatchingName || !Panel) {
+  if (!ColorId || !MatchingName || !Panel || !userId) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const query = `UPDATE color_matching SET ColorId = ?, MatchingName = ?, Panel = ? WHERE RSN = ?`;
+    const query = `UPDATE color_matching SET ColorId = ?, MatchingName = ?, Panel = ?, userId = ? WHERE RSN = ?`;
 
     // Await the database query
-    const [results] = await db.query(query, [ColorId, MatchingName, Panel, RSN]);
+    const [results] = await db.query(query, [ColorId, MatchingName, Panel, userId, RSN]);
 
     if (results.affectedRows === 0) {
       return res

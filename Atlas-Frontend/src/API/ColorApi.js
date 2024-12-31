@@ -5,6 +5,7 @@ const API_URL = "http://localhost:5000/api";
 // Create a new color matching entry
 const addColorMatching = async (colorData) => {
   try {
+    console.log(colorData);
     const response = await axios.post(
       `${API_URL}/add-color-matching`,
       colorData,
@@ -15,7 +16,6 @@ const addColorMatching = async (colorData) => {
       }
     );
 
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(

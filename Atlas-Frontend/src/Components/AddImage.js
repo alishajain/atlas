@@ -1,57 +1,59 @@
 import React, { useState } from 'react';
-import { uploadImage } from '../API/ImageApi';
+import { uploadImage } from '../API/ImageApi'; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const AddImage = () => {
-  const [RSN, setRSN] = useState('');
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
 
-  // Handle image file selection
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const RSN =  location.state.RSN || {};
+  const userId = useSelector((state) => state.user.userId);
+
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
 
-  // Handle form submit (upload image)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!image || !imageName || !RSN) {
-      alert("Please provide an image, a name, and RSN.");
+    if (!image || !imageName) {
+      alert("Please provide an image and a name");
       return;
     }
 
-    setUploadStatus("Uploaded");
+    setUploadStatus("Uploading...");
 
     try {
-      // Ensure RSN is a number before sending it
-      const numericRSN = parseInt(RSN, 10);
-      if (isNaN(numericRSN)) {
-        throw new Error("Invalid RSN entered.");
-      }
+      console.log("Starting image upload...");
+      const result = await uploadImage(image, imageName, RSN, userId);
 
-      // Upload the image and pass RSN, imageName, and the image data
-      const result = await uploadImage(image, imageName, numericRSN);
-      setUploadStatus(`Image uploaded successfully! RSN: ${result.RSN}`);
+      console.log("Upload result:", result);
+
+      if (result && result.message) {
+        setUploadStatus(result.message); // Set the success message from the API response
+      } else {
+        setUploadStatus("Image uploaded, but no message returned.");
+      }
     } catch (error) {
+      console.error("Error during image upload:", error); // Debug log to see error details
       setUploadStatus(`Error uploading image: ${error.message}`);
     }
+  };
+
+  // Function to navigate to another path when the button is clicked
+  const handleNext = () => {
+    navigate(`/panel-selection/${RSN}`, { state: { RSN, action: 'Add'} });
   };
 
   return (
     <div>
       <h2>Upload an Image</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="RSN">RSN</label>
-          <input
-            type="number"
-            id="RSN"
-            value={RSN}
-            onChange={(e) => setRSN(e.target.value)}
-            required
-          />
-        </div>
         <div>
           <label htmlFor="imageName">Image Name</label>
           <input
@@ -67,6 +69,7 @@ const AddImage = () => {
           <input
             type="file"
             id="image"
+            name="image"
             onChange={handleImageChange}
             accept="image/*"
             required
@@ -75,6 +78,9 @@ const AddImage = () => {
         <button type="submit">Upload Image</button>
       </form>
       {uploadStatus && <p>{uploadStatus}</p>}
+
+      {/* Add the Navigate button */}
+      <button onClick={handleNext}>Next</button>
     </div>
   );
 };

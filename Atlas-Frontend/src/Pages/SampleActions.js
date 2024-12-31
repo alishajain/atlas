@@ -16,8 +16,13 @@ const SampleActions = () => {
       case "allocate":
         navigate(`/allocate-article/${RSN}`, { state: { RSN }});
         break;
+
       case "delete":
         navigate(`/delete-sample/${RSN}`, { state: { RSN }});
+        break;
+
+        case "home":
+        navigate(`/home`);
         break;
       default:
         break;
@@ -30,6 +35,7 @@ const SampleActions = () => {
       <div>
         <button onClick={() => handleOptionSelect("allocate")}>Allocate Article Number</button>
         <button onClick={() => handleOptionSelect("delete")}>Delete Sample Details</button>
+        <button onClick={() => handleOptionSelect("home")}>Go back to Home</button>
       </div>
 
       {selectedOption && (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { addColorDetail } from "../API/ColorDetailApi";
 import { getColorId } from "../API/ColorApi";
 import { getYarnIds } from "../API/YarnApi";
+import { useSelector } from "react-redux";
 
 const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
   const initialRowState = {
@@ -49,7 +50,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
           ColorId: newColorIds[row.ColorId] || row.ColorId,
         }))
       );
-      setColorIds(newColorIds); // Store all ColorIds in state
+      setColorIds(newColorIds);
     } catch (error) {
       console.error("Error fetching ColorId:", error);
       setMessage({ type: "error", content: "Error fetching ColorIds." });
@@ -134,6 +135,9 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
     setFormData(updatedFormData);
   };
 
+  // Fetch userId from Redux store (outside of the handleSubmit function)
+  const userId = useSelector((state) => state.user.userId); // Access userId directly inside the component
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,6 +152,8 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
         ColorId: row.ColorId,
         Size: row.Size,
         BaseColor: row.BaseColor,
+        UserId: userId,
+        
         ...colors,
       };
     });
@@ -188,7 +194,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
           <thead>
             <tr>
               <th style={{ width: "4%" }}>Panel</th>
-              <th style={{ width: "4%" }}>Total Weight</th> {/* Move Total Weight column here */}
+              <th style={{ width: "4%" }}>Total Weight</th>
               <th style={{ width: "4%" }}>Base Yarn</th>
               <th style={{ width: "4%" }}>Yarns Used</th>{" "}
               {[...Array(14)].map((_, index) => (
@@ -215,9 +221,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                   <select
                     name="Name"
                     value={row.BaseColor.Name || ""}
-                    onChange={(e) =>
-                      handleInputChange(e, rowIndex, "BaseColor")
-                    }
+                    onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
                   >
                     <option value="">Select Yarn</option>
                     {Object.values(yarnIds).length === 0 ? (
@@ -235,9 +239,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                     name="Weight"
                     value={row.BaseColor.Weight || ""}
                     placeholder="Base Color Weight"
-                    onChange={(e) =>
-                      handleInputChange(e, rowIndex, "BaseColor")
-                    }
+                    onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
                   />
                 </td>
                 <td>

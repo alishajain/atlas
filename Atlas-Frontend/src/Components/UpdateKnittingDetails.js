@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateKnittingDetails, getMachineNos } from "../API/SampleApi";
+import { useSelector } from "react-redux";
 
 const UpdateKnittingDetails = () => {
   const location = useLocation();
@@ -12,6 +13,8 @@ const UpdateKnittingDetails = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [machineNos, setMachineNos] = useState([]);
+
+  const userId = useSelector((state) => state.user.userId);
 
   // Fetch machine numbers
   useEffect(() => {
@@ -80,8 +83,10 @@ const UpdateKnittingDetails = () => {
     setError(null);
     setSuccess(null);
 
+    const formDataUserId = {...formData, userId};
+
     try {
-      const response = await updateKnittingDetails(RSN, formData);
+      const response = await updateKnittingDetails(RSN, formDataUserId);
       setSuccess("Knitting details updated successfully!");
     } catch (error) {
       setError(error.message || "An error occurred while updating knitting details");

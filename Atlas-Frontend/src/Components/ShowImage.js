@@ -11,18 +11,18 @@ const ShowImage = ({ RSN }) => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getImageByRSN(Number(RSN));
-        console.log("Image data received:", data.ImageData); // Debugging log
-        
-        if (data.ImageData) {
-          // Check if ImageData is already base64 encoded
-          setImageData(data.ImageData);  // Assuming it is in the correct format
+        const response = await getImageByRSN(Number(RSN));
+
+        // Check if response data contains image and handle it
+        if (response.data && response.data.length > 0 && response.data[0].ImageData) {
+          const imagePath = response.data[0].ImageData.replace(/\\/g, "/");
+          setImageData(imagePath);
         } else {
           throw new Error("No ImageData found in response.");
         }
       } catch (err) {
         setError("Error fetching image");
-        console.error("Error details:", err); // Log the error for debugging
+        console.error("Error details:", err);
       } finally {
         setLoading(false);
       }
@@ -43,7 +43,7 @@ const ShowImage = ({ RSN }) => {
     <div>
       {imageData ? (
         <img
-          src={imageData}  // If it is base64, this should work correctly now
+          src={`http://localhost:5000/${imageData}`} // Use the correct URL to access the image
           alt="Sample"
           style={{ width: "100%", maxWidth: "600px" }}
         />

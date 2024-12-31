@@ -46,8 +46,9 @@ router.put('/update-employee/:EmpId', employeeController.updateEmployee);
 router.delete('/delete-employee/:EmpId', employeeController.deleteEmployee);
 
 // Routes for User Master
-router.get('/login', userController.getUsers);
-router.post('/login', userController.addUser);
+router.get('/users', userController.getUsers);
+router.post('/signup', userController.addUser);
+router.post('/login', userController.loginUser);
 
 // Routes for Machine Master
 router.post('/add-machine', machineController.addMachine);
@@ -58,7 +59,7 @@ router.put('/update-machine/:MachineNo', machineController.updateMachine);
 router.get('/get-machineNo', machineController.getMachineNo);
 
 // Routes for Sample Image
-router.post('/upload-image', imageController.upload.single('image'), imageController.uploadImage);
+router.post('/upload-image', imageController.upload, imageController.uploadImage);
 router.get('/image/:RSN', imageController.getImage);
 
 // Routes for Color Matching

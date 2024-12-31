@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { getYarnIds, addYarnStockDetails } from "../API/YarnApi";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddYarnStockDetails = () => {
-  const [yarnIds, setYarnIds] = useState([]); // State to store Yarn IDs
-  const [selectedYarnId, setSelectedYarnId] = useState(""); // State for the selected YarnId
-  const [date, setDate] = useState(""); // State for the Date input
-  const [supplierName, setSupplierName] = useState(""); // State for Supplier Name
-  const [supplierCity, setSupplierCity] = useState(""); // State for Supplier City
-  const [weight, setWeight] = useState(""); // State for Weight
-  const [amount, setAmount] = useState(""); // State for Amount
-  const [billNo, setBillNo] = useState(""); // State for BillNo
-  const [message, setMessage] = useState(""); // State for success or error message
-  const [loading, setLoading] = useState(false); // State to track form submission loading
+  const [yarnIds, setYarnIds] = useState([]);
+  const [selectedYarnId, setSelectedYarnId] = useState("");
+  const [date, setDate] = useState("");
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierCity, setSupplierCity] = useState("");
+  const [weight, setWeight] = useState("");
+  const [amount, setAmount] = useState("");
+  const [billNo, setBillNo] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const userId = useSelector((state) => state.user.userId);
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     // Fetch Yarn IDs when the component mounts
@@ -39,6 +45,7 @@ const AddYarnStockDetails = () => {
       Weight: weight,
       Amount: amount,
       BillNo: billNo,
+      UserId: userId,
     };
 
     try {
@@ -56,11 +63,16 @@ const AddYarnStockDetails = () => {
     }
   };
 
+  // Function to navigate to home
+  const handleBack = () => {
+    navigate("/yarn");
+  };
+
   return (
     <div>
       <h2>Add Yarn Stock Details</h2>
 
-      {message && <p>{message}</p>} {/* Show message if there's any */}
+      {message && <p>{message}</p>}
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -151,6 +163,11 @@ const AddYarnStockDetails = () => {
           </button>
         </div>
       </form>
+
+      {/* Button to navigate to home */}
+      <div>
+        <button onClick={handleBack}>Back</button>
+      </div>
     </div>
   );
 };

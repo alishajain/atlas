@@ -12,23 +12,23 @@ const getYarnDetails = async (req, res) => {
 
 // Add Yarn Details
 const addYarnDetails = async (req, res) => {
-  const { YarnId, YarnType, YarnCount, ColorName, ColorCode } = req.body;
+  const { YarnId, YarnType, YarnCount, ColorName, ColorCode, UserId } = req.body;
 
   // Validate input fields
-  if (!YarnId || !YarnType || !YarnCount || !ColorName || !ColorCode) {
-    return res.status(400).json({ message: "All fields are required." }); // Return an error if any field is missing
+  if (!YarnId || !YarnType || !YarnCount || !ColorName || !ColorCode || !UserId) {
+    return res.status(400).json({ message: "All fields are required." });
   }
 
   let connection;
   try {
     // Get a connection from the pool
     connection = await db.getConnection();
-    await connection.beginTransaction(); // Begin a transaction
+    await connection.beginTransaction();
 
     // Insert into the sample_details table
     const [newYarnDetails] = await connection.query(
-      "INSERT INTO yarn_master (YarnId, YarnType, YarnCount, ColorName, ColorCode) VALUES (?, ?, ?, ?, ?)",
-      [YarnId, YarnType, YarnCount, ColorName, ColorCode]
+      "INSERT INTO yarn_master (YarnId, YarnType, YarnCount, ColorName, ColorCode, UserId) VALUES (?, ?, ?, ?, ?, ?)",
+      [YarnId, YarnType, YarnCount, ColorName, ColorCode, UserId]
     );
 
     // Commit the transaction
@@ -41,17 +41,15 @@ const addYarnDetails = async (req, res) => {
       YarnId: newYarnDetails.insertId,
     });
   } catch (error) {
-    // Rollback if an error occurs
     if (connection) {
       await connection.rollback();
     }
-    console.error("Error inserting yarn data:", error); // Log the detailed error for debugging
+    console.error("Error inserting yarn data:", error);
     res.status(500).json({
       success: false,
       message: `Error inserting yarn data: ${error.message}`,
-    }); // Send error response with message
+    });
   } finally {
-    // Always release the connection back to the pool
     if (connection) {
       connection.release();
     }
@@ -80,9 +78,9 @@ const getYarnDetailsByYarnId = async (req, res) => {
 // Update Yarn Details
 const updateYarnDetails = async (req, res) => {
   const { YarnId } = req.params;
-  const { YarnType, YarnCount, ColorName, ColorCode } = req.body;
+  const { YarnType, YarnCount, ColorName, ColorCode, UserId } = req.body;
 
-  if (!YarnType || !YarnCount || !ColorName || !ColorCode) {
+  if (!YarnType || !YarnCount || !ColorName || !ColorCode || !UserId) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
@@ -92,7 +90,7 @@ const updateYarnDetails = async (req, res) => {
     await connection.beginTransaction();
 
     const [result] = await connection.query(
-      "UPDATE yarn_master SET YarnType = ?, YarnCount = ?, ColorName = ?, ColorCode = ? WHERE YarnId = ?",
+      "UPDATE yarn_master SET YarnType = ?, YarnCount = ?, ColorName = ?, ColorCode = ?, UserId = ? WHERE YarnId = ?",
       [YarnType, YarnCount, ColorName, ColorCode, YarnId]
     );
 

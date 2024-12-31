@@ -22,10 +22,10 @@ const getYarnIds = async (req, res) => {
 
 // Add Yarn Stock Details and Update Yarn Master Table
 const addYarnStockDetails = async (req, res) => {
-  const { Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo } = req.body;
+  const { Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId } = req.body;
 
   // Validate input fields
-  if (!Date || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo) {
+  if (!Date || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo || !UserId) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
@@ -54,8 +54,8 @@ const addYarnStockDetails = async (req, res) => {
 
     // Insert yarn stock details into yarn_inventory table
     const [newYarnStockDetails] = await connection.query(
-      "INSERT INTO yarn_inventory (Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo]
+      "INSERT INTO yarn_inventory (Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId]
     );
     
     // Check if YarnId exists in yarn_master and update or insert weight

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ShowSampleDetails from "../Components/ShowSampleDetails";
 import ShowKnittingDetails from "../Components/ShowKnittingDetails";
+import ShowImage from "../Components/ShowImage";
 
 const ShowSamples = () => {
   const navigate = useNavigate();
@@ -20,9 +21,16 @@ const ShowSamples = () => {
 
   return (
     <div>
-      <div>
+      <div style={{margin: "2%"}}>
         <ShowSampleDetails RSN={RSN} />
-        <ShowKnittingDetails RSN={RSN} />
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "20px" }}>
+          <div style={{ flex: "0 0 65%" }}>
+            <ShowKnittingDetails RSN={RSN} />
+          </div>
+          <div style={{ flex: "0 0 35%" }}>
+            <ShowImage RSN={RSN} />
+          </div>
+        </div>
         <button onClick={handleBackButton}>Back</button>
         <button onClick={handleNextButton}>Next</button>
       </div>

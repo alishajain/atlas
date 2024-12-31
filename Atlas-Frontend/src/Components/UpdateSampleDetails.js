@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // For accessing passed state
+import { useLocation, useNavigate } from "react-router-dom";
 import { updateRecord } from "../API/SampleApi";
+import { useSelector } from "react-redux";
 
 const UpdateSampleDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { sampleDetails } = location.state || {}; // Retrieve sample details from state
+  const { sampleDetails } = location.state || {};
 
   // Initialize form fields with the sampleDetails or set to empty if not available
   const [articleName, setArticleName] = useState(
@@ -37,6 +38,8 @@ const UpdateSampleDetails = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const userId = useSelector((state) => state.user.userId);
+
   // Validate form data before submitting
   const validateForm = () => {
     if (!articleName || !designFileNo || !seriesArticleFileNo) {
@@ -57,7 +60,7 @@ const UpdateSampleDetails = () => {
     }
 
     const data = {
-      RSN, // Do not modify RSN
+      RSN,
       articleName,
       designFileNo,
       seriesArticleFileNo,
@@ -68,11 +71,12 @@ const UpdateSampleDetails = () => {
       grapher,
       master,
       sampleStatus,
+      userId,
     };
 
     setLoading(true);
     try {
-      const result = await updateRecord(data); // Assuming updateRecord API call
+      const result = await updateRecord(data);
       if (result.success) {
         setSuccessMessage(result.message);
         setError("");

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addColorMatching, deleteColorMatching } from "../API/ColorApi";
+import { addColorMatching, deleteColorMatching, getColorMatchingByRSN } from "../API/ColorApi"; // Assuming getColorMatchingByRSN is available
+import { useSelector } from "react-redux"; // Import useSelector to access Redux store
 import AddColorDetails from "./AddColorDetails";
 
 const AddColorMatching = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { RSN, selectedStates, action, size} = location.state || {};
+  const { RSN, selectedStates, action, size } = location.state || {};
 
   const [numColors, setNumColors] = useState(0);
   const [matchingName, setMatchingName] = useState([]);
@@ -14,6 +15,9 @@ const AddColorMatching = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [showColorDetails, setShowColorDetails] = useState(false);
+
+  // Fetch userId from Redux store
+  const userId = useSelector((state) => state.user.userId);
 
   // Handle number of color matches input change
   const handleNumColorsChange = (e) => {
@@ -39,6 +43,17 @@ const AddColorMatching = () => {
     const newColorMatches = [...matchingName];
     newColorMatches[index] = e.target.value;
     setMatchingName(newColorMatches);
+  };
+
+  // Function to check if color matching data exists
+  const checkColorMatchingExists = async (RSN) => {
+    try {
+      const response = await getColorMatchingByRSN(RSN);
+      return response && response.length > 0; // If response has data, return true
+    } catch (error) {
+      console.error("Error checking for existing data:", error);
+      return false; // In case of error, assume no data
+    }
   };
 
   // Handle form submission for Color Matching
@@ -76,9 +91,14 @@ const AddColorMatching = () => {
     try {
       const apiCalls = [];
 
-      // If action is 'update', first delete existing color matching records by RSN
+      // If action is 'update', first check if color matching exists and then delete existing records by RSN
       if (action === "update") {
-        apiCalls.push(deleteColorMatching(RSN));
+        // Check if existing color matching data exists for the RSN
+        const exists = await checkColorMatchingExists(RSN);
+
+        if (exists) {
+          apiCalls.push(deleteColorMatching(RSN)); // Delete existing data if found
+        }
       }
 
       // Loop through each matchingName and create API calls for each selected panel
@@ -91,15 +111,13 @@ const AddColorMatching = () => {
               .reduce(
                 (acc, char) => (/[A-Z0-9]/.test(char) ? acc + char : acc),
                 ""
-              )}${RSN}${colorName[0].toUpperCase()}${colorName[1].toUpperCase()}${colorName[
-              colorName.length - 1
-            ].toUpperCase()}${size}`,
+              )}${RSN}${colorName[0].toUpperCase()}${colorName[1].toUpperCase()}${colorName[colorName.length - 1].toUpperCase()}${size}`,
             RSN: RSN,
             MatchingName: colorName,
             Panel: panel,
+            userId: userId,
           };
 
-          console.log(colorData);
           // Push API call promises into the array
           apiCalls.push(addColorMatching(colorData));
         });
@@ -109,7 +127,6 @@ const AddColorMatching = () => {
       const responses = await Promise.all(apiCalls);
 
       setSuccess("Color matching added successfully!");
-
       setShowColorDetails(true);
     } catch (error) {
       setError("An error occurred while adding color matching.");
@@ -124,7 +141,7 @@ const AddColorMatching = () => {
     if (action === "addUpdate") {
       navigate(`/show-color/${RSN}`, { state: { RSN } });
     } else if (action === "update") {
-      navigate(`/show-sample/${RSN}`, { state: { RSN } });      
+      navigate(`/show-sample/${RSN}`, { state: { RSN } });
     } else {
       navigate("/add-sample");
     }

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux"; // Import useSelector hook from Redux
 import { updateMachineByMachineNo } from "../API/MachineApi";
 
 const UpdateMachine = ({ machine, goBack }) => {
+  // Fetch userId from Redux store
+  const userId = useSelector((state) => state.user.userId);
+  console.log(userId);
   const [updatedMachine, setUpdatedMachine] = useState({ ...machine });
-  const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUpdatedMachine((prevData) => ({
@@ -16,24 +19,21 @@ const UpdateMachine = ({ machine, goBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Adding userId to updatedMachine data
+    const machineWithUserId = { ...updatedMachine, UserId: userId };
+
     try {
-      const result = await updateMachineByMachineNo(
-        machine.MachineNo,
-        updatedMachine
-      );
-      if (result.success) {
-        setSuccessMessage("Machine updated successfully");
-        goBack(); // Go back to search after successful update
-      }
+      const result = await updateMachineByMachineNo(machine.MachineNo, machineWithUserId);
+      setSuccessMessage("Machine updated successfully");
     } catch (err) {
-      setError("Error updating machine");
+      setSuccessMessage("Machine details not updated");
     }
   };
 
   return (
     <div>
       <h2>Update Machine</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <table>
@@ -134,7 +134,7 @@ const UpdateMachine = ({ machine, goBack }) => {
         <button type="submit">Update Machine</button>
       </form>
 
-      <button onClick={goBack}>Go Back</button>
+      <button onClick={goBack}>Go back to search</button>
     </div>
   );
 };

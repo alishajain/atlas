@@ -12,7 +12,7 @@ const getSampleDetailsData = async (req, res) => {
 
 // Controller to fetch knitting details by RSN
 const getSampleDetailsByRSN = async (req, res) => {
-  const RSN = req.params.RSN; // Get RSN from URL parameters
+  const RSN = req.params.RSN;
 
   try {
     const [rows] = await db.query('SELECT * FROM sample_details WHERE RSN = ?', [RSN]);
@@ -42,6 +42,7 @@ const updateSampleRecord = async (req, res) => {
     grapher,
     master,
     sampleStatus,
+    userId,
   } = req.body;
 
   // Check if RSN and other required fields are provided
@@ -56,7 +57,8 @@ const updateSampleRecord = async (req, res) => {
     !designer ||
     !grapher ||
     !master ||
-    !sampleStatus
+    !sampleStatus ||
+    !userId
   ) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -66,7 +68,7 @@ const updateSampleRecord = async (req, res) => {
     const query = `
       UPDATE sample_details 
       SET ArticleName=?, DesignFileNo=?, SeriesArticleFileNo=?, ArticleType=?, Gender=?, 
-          MachineSpeed=?, Designer=?, Grapher=?, SampleMaster=?, SampleStatus=? 
+          MachineSpeed=?, Designer=?, Grapher=?, SampleMaster=?, SampleStatus=?, userId=? 
       WHERE RSN = ?`;
 
     // Execute the query with parameters
@@ -81,6 +83,7 @@ const updateSampleRecord = async (req, res) => {
       grapher,
       master,
       sampleStatus,
+      userId,
       RSN,
     ]);
 
@@ -111,6 +114,7 @@ const addSampleDetails = async (req, res) => {
     grapher,
     master,
     sampleStatus,
+    userId,
   } = req.body;
 
   // Validate input fields
@@ -124,9 +128,10 @@ const addSampleDetails = async (req, res) => {
     !designer ||
     !grapher ||
     !master ||
-    !sampleStatus
+    !sampleStatus ||
+    !userId
   ) {
-    return res.status(400).json({ message: "All fields are required." }); // Return an error if any field is missing
+    return res.status(400).json({ message: "All fields are required." }); 
   }
 
   let connection;
@@ -137,7 +142,7 @@ const addSampleDetails = async (req, res) => {
 
     // Insert into the sample_details table
     const [newSampleDetails] = await connection.query(
-      "INSERT INTO sample_details (ArticleName, DesignFileNo, SeriesArticleFileNo, ArticleType, Gender, MachineSpeed, Designer, Grapher, SampleMaster, SampleStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO sample_details (ArticleName, DesignFileNo, SeriesArticleFileNo, ArticleType, Gender, MachineSpeed, Designer, Grapher, SampleMaster, SampleStatus, UserId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         articleName,
         designFileNo,
@@ -149,34 +154,32 @@ const addSampleDetails = async (req, res) => {
         grapher,
         master,
         sampleStatus,
+        userId,
       ]
     );
 
     // Commit the transaction
     await connection.commit();
 
-    // Send a successful response with the RSN (insertId is the auto-incremented RSN)
     res
       .status(200)
       .json({
         success: true,
         message: "Sample details added successfully",
-        RSN: newSampleDetails.insertId, // Send back the generated RSN
+        RSN: newSampleDetails.insertId,
       });
   } catch (error) {
-    // Rollback if an error occurs
     if (connection) {
       await connection.rollback();
     }
-    console.error("Error inserting sample data:", error); // Log the detailed error for debugging
+    console.error("Error inserting sample data:", error);
     res
       .status(500)
       .json({
         success: false,
         message: `Error inserting sample data: ${error.message}`,
-      }); // Send error response with message
+      });
   } finally {
-    // Always release the connection back to the pool
     if (connection) {
       connection.release();
     }
@@ -186,10 +189,9 @@ const addSampleDetails = async (req, res) => {
 // New function to fetch the latest RSN (auto-incremented value)
 const getLatestRSN = async (req, res) => {
   try {
-    // Query to get the last inserted RSN (auto-incremented)
     const [rows] = await db.query('SELECT MAX(RSN) AS RSN FROM sample_details');
-    const latestRSN = rows[0].RSN + 1; // Increment by 1 to get the next RSN
-    res.json({ success: true, RSN: latestRSN }); // Return the next available RSN
+    const latestRSN = rows[0].RSN + 1; 
+    res.json({ success: true, RSN: latestRSN });
   } catch (err) {
     console.error("Error fetching latest RSN:", err);
     res.status(500).json({ success: false, message: "Error fetching latest RSN", error: err.message });

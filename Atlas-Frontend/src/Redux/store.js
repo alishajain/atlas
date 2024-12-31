@@ -5,6 +5,9 @@ const store = configureStore({
   reducer: {
     user: userReducer,
   },
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ thunk: true }),
 });
 
 export default store;

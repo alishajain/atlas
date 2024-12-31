@@ -1,49 +1,56 @@
-import React, { useState } from 'react';
-import { searchMachineByMachineNo, deleteMachine} from '../API/MachineApi'; // Assuming deleteMachineByMachineNo API function exists
-import UpdateMachine from './UpdateMachine'; // Assume you have UpdateMachine component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { searchMachineByMachineNo, deleteMachine } from "../API/MachineApi"; // Assuming deleteMachineByMachineNo API function exists
+import UpdateMachine from "./UpdateMachine"; // Assume you have UpdateMachine component
 
 const SearchMachine = () => {
-  const [machineNo, setMachineNo] = useState('');
+  const [machineNo, setMachineNo] = useState("");
   const [machines, setMachines] = useState([]); // To store the list of machines
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showUpdate, setShowUpdate] = useState(false);
   const [selectedMachine, setSelectedMachine] = useState(null); // To track the selected machine for updating
+  const navigate = useNavigate(); // Use navigate hook to programmatically navigate
 
   const handleSearch = async () => {
     try {
       const result = await searchMachineByMachineNo(machineNo);
-      setMachines(result.data); // Assuming result.data is an array of machines
-      setError('');
+      setMachines(result.data);
+      setError("");
     } catch (err) {
-      setError('Machine not found');
-      setMachines([]); // Clear machines if no machine found
+      setError("Machine not found");
+      setMachines([]);
     }
   };
 
   const handleUpdate = (machine) => {
-    setSelectedMachine(machine); // Set the selected machine for updating
-    setShowUpdate(true); // Show the Update form
+    setSelectedMachine(machine);
+    setShowUpdate(true);
   };
 
   const handleDelete = async (machineNo) => {
     try {
-      const result = await deleteMachine(machineNo); // Call the delete API
-      alert('Record Deleted');
+      const result = await deleteMachine(machineNo);
+      alert("Record Deleted");
       if (result.success) {
-        // Remove the deleted machine from the list of machines
-        setMachines((prevMachines) => prevMachines.filter((machine) => machine.MachineNo !== machineNo));
-        setError('');
+        setMachines((prevMachines) =>
+          prevMachines.filter((machine) => machine.MachineNo !== machineNo)
+        );
+        setError("");
       } else {
-        //setError('Failed to delete machine');
+        // Handle failure case if needed
       }
     } catch (err) {
-      //setError('Error deleting machine');
+      console.error("Error deleting machine:", err);
     }
   };
 
   const goBackToSearch = () => {
-    setShowUpdate(false); // Hide the update form and go back to search
-    setSelectedMachine(null); // Clear the selected machine
+    setShowUpdate(false);
+    setSelectedMachine(null);
+  };
+
+  const handleGoBack = () => {
+    navigate("/machine"); // Navigate back to /machine route
   };
 
   return (
@@ -56,7 +63,7 @@ const SearchMachine = () => {
         onChange={(e) => setMachineNo(e.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {machines.length > 0 && !showUpdate && (
         <div>
@@ -87,8 +94,13 @@ const SearchMachine = () => {
                   <td>{machine.MachineStatus}</td>
                   <td>{machine.Remarks}</td>
                   <td>
-                    <button onClick={() => handleUpdate(machine)}>Update</button>
-                    <button onClick={() => handleDelete(machine.MachineNo)}>Delete</button> {/* Delete button */}
+                    <button onClick={() => handleUpdate(machine)}>
+                      Update
+                    </button>
+                    <button onClick={() => handleDelete(machine.MachineNo)}>
+                      Delete
+                    </button>{" "}
+                    {/* Delete button */}
                   </td>
                 </tr>
               ))}
@@ -100,10 +112,12 @@ const SearchMachine = () => {
       {showUpdate && (
         <div>
           <UpdateMachine machine={selectedMachine} goBack={goBackToSearch} />
-          {/* Go Back Button */}
-          <button onClick={goBackToSearch}>Go Back</button>
         </div>
       )}
+
+      <div>
+        <button onClick={handleGoBack}>Back</button>
+      </div>
     </div>
   );
 };

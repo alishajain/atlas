@@ -1,60 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { registerUser, checkIfEmpIDExists } from '../API/UserApi';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
-  const [users, setUsers] = useState([]);
-  const [username, setUsername] = useState('');
+  const [userID, setUserID] = useState('');
+  const [empID, setEmpID] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch users from the backend
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/login')
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((error) => {
-        console.error('There was an error fetching the users!', error);
-      });
-  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Add a new user to the database
-  const addUser = () => {
-    axios.post('http://localhost:5000/api/login', { username, password })
-      .then((response) => {
-        setUsers([...users, response.data]);
-        setUsername('');
-        setPassword('');
-      })
-      .catch((error) => {
-        console.error('There was an error adding the user!', error);
-      });
+    // Validation
+    if (!userID || !empID || !password) {
+      setMessage('All fields are required!');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Check if the EmpID already exists
+      const empIDExists = await checkIfEmpIDExists(empID);
+      if (empIDExists) {
+        setMessage('An account with this EmpID already exists.');
+        return;
+      }
+
+      // Register the user if EmpID is unique
+      const userData = { UserID: userID, EmpID: empID, Password: password };
+      const data = await registerUser(userData);
+
+      if (data.success) {
+        setMessage('Signup successful!');
+        navigate('/');
+      } else {
+        setMessage(data.message || 'Signup failed!');
+      }
+    } catch (error) {
+      setMessage('An error occurred during signup!');
+      console.error('Error during signup:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div>
-      <h1>Users</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.username}
-          </li>
-        ))}
-      </ul>
-
-      <h2>Add User</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}  // Password input
-      />
-      <button onClick={addUser}>Add User</button>
+    <div className="signup-container">
+      <h1>Welcome to ATLAS</h1>
+      <h2>Signup</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label>UserID:</label>
+          <input
+            type="text"
+            value={userID}
+            onChange={(e) => setUserID(e.target.value)}
+            required
+          />
+        </div>
+        <div className="input-group">
+          <label>Employee ID:</label>
+          <input
+            type="text"
+            value={empID}
+            onChange={(e) => setEmpID(e.target.value)}
+            required
+          />
+        </div>
+        <div className="input-group">
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing up...' : 'Sign Up'}
+        </button>
+      </form>
+      {message && <p>{message}</p>}
     </div>
   );
 };

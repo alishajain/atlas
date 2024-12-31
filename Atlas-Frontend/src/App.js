@@ -20,29 +20,38 @@ import YarnStockDetails from "./Components/YarnStockDetails";
 import SearchEmployee from "./Components/SearchEmployee";
 import AddEmployeeDetails from "./Components/AddEmployeeDetails";
 import Employee from "./Pages/Employee";
-import SignIn from "./Pages/Signin";
+import Login from "./Components/Login";
+import Signup from "./Pages/Signup";
 import Home from "./Pages/Home";
+import Yarn from "./Pages/Yarn";
+import AddImage from "./Components/AddImage";
+import Machine from './Pages/Machine';
+import AddMachine from "./Components/AddMachine";
+import MachineDetails from "./Components/MachineDetails";
+import SearchMachine from "./Components/SearchMachine";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
     <Router>
-      <h1>Welcome to Atlas</h1>
-       <div>
-         <Routes>
-           {/* Route for signin page */}
-           <Route path="/" element={<SignIn />} />
+      <div>
+        <Routes>
+          {/* Route for signin page */}
+          <Route path="/" element={<Login />} />
 
-           <Route path="/home" element={<Home />} />
+          <Route path="/signup" element={<Signup />} />
 
-           <Route path="/sample" element={<WelcomeSample />} />
+          <Route path="/home" element={<Home />} />
 
-           {/* Routes for adding sample details */}
-           <Route path="/add-sample" element={<AddSample />} />
-           <Route path="/add-sample-details" element={<AddSampleDetails />} />
-           <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
-           <Route
+          <Route path="/sample" element={<WelcomeSample />} />
+
+          {/* Routes for adding sample details */}
+          <Route path="/add-sample" element={<AddSample />} />
+          <Route path="/add-sample-details" element={<AddSampleDetails />} />
+          <Route path="/add-image/:RSN" element={<AddImage />} />
+          <Route path="/panel-selection/:RSN" element={<PanelSelection />} />
+          <Route
             path="/add-knitting-details/:RSN"
             element={<AddKnittingDetailsForm />}
           />
@@ -59,25 +68,29 @@ const App = () => {
           {/* Routes for further sample actions */}
           <Route path="/sample-actions/:RSN" element={<SampleActions />} />
           <Route path="/delete-sample/:RSN" element={<DeleteSample />} />
-          <Route
-            path="/update-sample-details/:RSN"
-            element={<UpdateSampleDetails />}
-          />
+          <Route path="/update-sample/:RSN" element={<UpdateSampleDetails />} />
           <Route
             path="/update-knitting/:RSN"
             element={<UpdateKnittingDetails />}
           />
 
           {/* Routes for Yarn Management */}
+          <Route path="/yarn" element={<Yarn />} />
           <Route path="/add-yarn" element={<AddYarnDetails />} />
           <Route path="/show-yarn" element={<YarnDetails />} />
           <Route path="/add-yarn-stock" element={<AddYarnStockDetails />} />
           <Route path="/yarn-stock" element={<YarnStockDetails />} />
-          
+
           {/* Routes for Employee Management */}
           <Route path="/employee" element={<Employee />} />
           <Route path="/add-employee" element={<AddEmployeeDetails />} />
           <Route path="/search-employee" element={<SearchEmployee />} />
+
+          {/* Routes for Machine mnagement */}
+          <Route path="/machine" element={<Machine />} />
+          <Route path="/add-machine" element={<AddMachine />} />
+          <Route path="/show-machine" element={<MachineDetails />} />
+          <Route path="/search-machine" element={<SearchMachine />} />
         </Routes>
       </div>
     </Router>

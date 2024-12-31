@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
 const YarnDetails = () => {
   const [yarnDetails, setYarnDetails] = useState([]);  // Ensure initial state is an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate(); // Initialize navigate function
 
   useEffect(() => {
     axios
@@ -23,6 +26,10 @@ const YarnDetails = () => {
       });
   }, []);
 
+  const handleBack = () => {
+    navigate("/yarn"); // Navigate to the /yarn route
+  };
+
   if (loading) {
     return <p>Loading Yarn Details...</p>;
   }
@@ -32,7 +39,6 @@ const YarnDetails = () => {
   }
 
   return (
-    <div>
     <div>
       <h1>Yarn Details</h1>
       <table>
@@ -60,8 +66,12 @@ const YarnDetails = () => {
           {!Array.isArray(yarnDetails) && <p>Not an Array</p>}
         </tbody>
       </table>
+
+      {/* Button to navigate to /yarn */}
+      <div>
+        <button onClick={handleBack}>Back</button>
+      </div>
     </div>
-  </div>
   );
 };
 

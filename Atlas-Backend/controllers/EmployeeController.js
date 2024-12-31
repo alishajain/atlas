@@ -24,6 +24,7 @@ const addEmployee = async (req, res) => {
     JoiningDate,
     Designation,
     Anniversary,
+    UserId,  // Adding UserId from the request body
   } = req.body;
 
   // Basic validation: Ensure all required fields are provided
@@ -34,11 +35,12 @@ const addEmployee = async (req, res) => {
     !ContactNo ||
     !DOB ||
     !JoiningDate ||
-    !Designation
+    !Designation ||
+    !UserId // Ensure UserId is provided
   ) {
     return res
       .status(400)
-      .json({ error: "Please provide all required fields." });
+      .json({ error: "Please provide all required fields, including UserId." });
   }
 
   // Validate Email (must be in a valid email format)
@@ -66,9 +68,10 @@ const addEmployee = async (req, res) => {
 
     // Prepare SQL query to insert a new employee
     const query = `
-            INSERT INTO employee_details (EmpId, EmpName, Address, EmailId, ContactNo, AltContactNo, DOB, Age, JoiningDate, Designation, Anniversary)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+      INSERT INTO employee_details 
+      (EmpId, EmpName, Address, EmailId, ContactNo, AltContactNo, DOB, Age, JoiningDate, Designation, Anniversary, UserId)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
     // Execute the query with the provided data
     const [results] = await db.query(query, [
@@ -83,6 +86,7 @@ const addEmployee = async (req, res) => {
       joiningDate.toISOString().split("T")[0],
       Designation,
       anniversaryDate ? anniversaryDate.toISOString().split("T")[0] : null,
+      UserId,  // Insert UserId into the database
     ]);
     
     res.status(201).json({
@@ -176,6 +180,7 @@ const updateEmployee = async (req, res) => {
     JoiningDate,
     Designation,
     Anniversary,
+    UserId,  // Adding UserId to the update request
   } = req.body;
 
   // Check if all required fields are present
@@ -187,7 +192,8 @@ const updateEmployee = async (req, res) => {
     !DOB ||
     !Age ||
     !JoiningDate ||
-    !Designation
+    !Designation ||
+    !UserId // Ensure UserId is provided
   ) {
     return res
       .status(400)
@@ -212,7 +218,7 @@ const updateEmployee = async (req, res) => {
 
     // Update employee details in the database
     const result = await db.query(
-      "UPDATE employee_details SET EmpName = ?, Address = ?, EmailId = ?, ContactNo = ?, AltContactNo = ?, DOB = ?, Age = ?, JoiningDate = ?, Designation = ?, Anniversary = ? WHERE EmpId = ?",
+      "UPDATE employee_details SET EmpName = ?, Address = ?, EmailId = ?, ContactNo = ?, AltContactNo = ?, DOB = ?, Age = ?, JoiningDate = ?, Designation = ?, Anniversary = ?, UserId = ? WHERE EmpId = ?",
       [
         EmpName,
         Address,
@@ -224,6 +230,7 @@ const updateEmployee = async (req, res) => {
         joiningDate.toISOString().split("T")[0],
         Designation,
         anniversaryDate ? anniversaryDate.toISOString().split("T")[0] : null,
+        UserId,  // Update UserId in the employee record
         EmpId,
       ]
     );

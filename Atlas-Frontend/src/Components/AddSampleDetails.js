@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { addSampleDetails } from "../API/SampleApi";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AddSampleDetails = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,10 @@ const AddSampleDetails = () => {
 
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
+
+  // Fetch UserId from Redux store
+  const userId = useSelector((state) => state.user.userId);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -30,7 +34,6 @@ const AddSampleDetails = () => {
 
   const handleMachineSpeedChange = (e) => {
     const value = e.target.value;
-    // Allow only numbers greater than or equal to 0
     if (!isNaN(value) && value >= 0) {
       setFormData((prevData) => ({
         ...prevData,
@@ -99,6 +102,7 @@ const AddSampleDetails = () => {
       grapher,
       master,
       sampleStatus,
+      userId,
     };
 
     try {
@@ -106,8 +110,8 @@ const AddSampleDetails = () => {
       const result = await addSampleDetails(data);
       setMessage(result.message || "Sample details added successfully.");
 
-      navigate(`/panel-selection/${result.RSN}`, {
-        state: { RSN: result.RSN, action: "Add" },
+      navigate(`/add-image/${result.RSN}`, {
+        state: { RSN: result.RSN },
       });
     } catch (error) {
       setMessage(

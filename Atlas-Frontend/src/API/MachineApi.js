@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Base URL for the API
-const API_URL = 'http://localhost:5000/api'; // Replace with your backend URL
+const API_URL = "http://localhost:5000/api"; // Replace with your backend URL
 
 // Function to add a new machine
 export const addMachine = async (machineData) => {
@@ -9,8 +9,12 @@ export const addMachine = async (machineData) => {
     const response = await axios.post(`${API_URL}/add-machine`, machineData);
     return response.data;
   } catch (error) {
-    console.error('Error adding machine:', error);
-    throw new Error('Error adding machine');
+    // Improved error logging
+    console.error(
+      "Error adding machine:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Error adding machine");
   }
 };
 
@@ -20,49 +24,72 @@ export const searchMachineByMachineNo = async (MachineNo) => {
     const response = await axios.get(`${API_URL}/search-machine/${MachineNo}`);
     return response.data;
   } catch (error) {
-    console.error('Error searching machine:', error);
-    throw new Error('Error searching machine');
+    // Improved error logging
+    console.error(
+      "Error searching machine:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Error searching machine");
   }
 };
 
 // Function to update a machine by MachineNo
 export const updateMachineByMachineNo = async (MachineNo, updatedData) => {
- 
   try {
-    // Log the URL and data being sent
-    console.log(`Sending PUT request to: ${API_URL}/update-machine/${MachineNo}`);
-    console.log('Updated Data:', updatedData);
+    console.log(updatedData);
+    const response = await fetch(`${API_URL}/update-machine/${MachineNo}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
 
-    const response = await axios.put(`${API_URL}/update-machine/${MachineNo}`, updatedData);
-    
-    // Return the response data if successful
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error updating machine');
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    // Log detailed error information
-    console.error('Error updating machine:', error.response || error.message);
-    
-    // Throw a new error to be caught by the calling function
+    console.error(
+      'Error updating machine:',
+      error.response ? error.response.data : error.message
+    );
     throw new Error('Error updating machine');
   }
 };
 
 
+// Function to get all machines
 export const getAllMachines = async () => {
   try {
     const response = await axios.get(`${API_URL}/machines`);
     return response.data; // Assume the response data contains the machines
   } catch (error) {
-    console.error('Error fetching all machines:', error);
-    throw error;
+    // Enhanced error logging
+    console.error(
+      "Error fetching all machines:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Error fetching all machines");
   }
 };
 
+// Function to delete a machine by its MachineNo
 export const deleteMachine = async (machineNo) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete-machine/${machineNo}`);
+    const response = await axios.delete(
+      `${API_URL}/delete-machine/${machineNo}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error deleting machine:', error);
-    throw error;
+    // Enhanced error logging
+    console.error(
+      "Error deleting machine:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Error deleting machine");
   }
 };

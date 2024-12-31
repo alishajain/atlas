@@ -1,45 +1,67 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
-import { useDispatch } from "react-redux"; // Import useDispatch to dispatch actions
-import { logout } from "../Redux/userSlice"; // Import logout action to clear userId from Redux
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../Redux/userSlice";
+
+// Import images from the 'src/images' folder
+import sample from "../Images/sample.jpg";
+import employee from "../Images/employee.jpg";
+import machine from "../Images/machine.jpeg";
+import yarn from "../Images/Yarn.jpg";
 
 const Home = () => {
-  const navigate = useNavigate(); // Hook to navigate between different paths
-  const dispatch = useDispatch(); // Dispatch for logging out
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Handle Logout
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch logout action to reset userId in Redux
-    navigate("/login"); // Navigate to login page after logging out
+    dispatch(logout());
+    navigate("/");
   };
 
   return (
     <div>
-      {/* Logout button on top */}
       <button onClick={handleLogout}>Log Out</button>
 
       <h1>Welcome to the Home Page</h1>
 
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        {/* Image buttons that navigate to different paths */}
-        <img
-          src="https://via.placeholder.com/150" // Replace with actual image URL
-          alt="Page 1"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/page1")}
-        />
-        <img
-          src="https://via.placeholder.com/150" // Replace with actual image URL
-          alt="Page 2"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/page2")}
-        />
-        <img
-          src="https://via.placeholder.com/150" // Replace with actual image URL
-          alt="Page 3"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/page3")}
-        />
+      <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={yarn}
+            alt="yarn"
+            style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
+            onClick={() => navigate("/yarn")}
+          />
+          <p>Yarn</p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={machine}
+            alt="machine"
+            style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
+            onClick={() => navigate("/machine")}
+          />
+          <p>Machine</p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={employee}
+            alt="employee"
+            style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
+            onClick={() => navigate("/employee")}
+          />
+          <p>Employee</p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={sample}
+            alt="Sample"
+            style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
+            onClick={() => navigate("/sample")}
+          />
+          <p>Sample</p>
+        </div>
       </div>
     </div>
   );

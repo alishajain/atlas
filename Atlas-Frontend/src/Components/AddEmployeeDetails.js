@@ -1,8 +1,14 @@
 import React, { useState } from "react";
-import { addEmployee } from "../API/EmployeeApi"; // Import the API function
+import { addEmployee } from "../API/EmployeeApi";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 const AddEmployeeDetails = () => {
-  // State to hold form input values
+  const navigate = useNavigate();
+
+  // Access UserId from Redux store
+  const UserId = useSelector((state) => state.user.userId);
+
   const [employeeData, setEmployeeData] = useState({
     EmpId: "",
     EmpName: "",
@@ -73,8 +79,11 @@ const AddEmployeeDetails = () => {
     }
 
     try {
+      // Add the UserId to the employee data before submitting
+      const dataWithUserId = { ...employeeData, UserId };
+
       // Call the addEmployee function to submit data
-      const response = await addEmployee(employeeData);
+      const response = await addEmployee(dataWithUserId);
 
       // Handle successful response
       setSuccessMessage("Employee added successfully!");
@@ -85,6 +94,10 @@ const AddEmployeeDetails = () => {
     } finally {
       setLoading(false); // Stop loading
     }
+  };
+
+  const handleHome = () => {
+    navigate('/employee');
   };
 
   return (
@@ -264,6 +277,10 @@ const AddEmployeeDetails = () => {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+
+      <div>
+        <button onClick={handleHome}>Home</button>
+      </div>
     </div>
   );
 };

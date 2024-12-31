@@ -30,8 +30,10 @@ const addKnittingDetails = async (req, res) => {
     Kharcha2,
     Kharcha3,
     Total,
+    userId
   } = req.body;
 
+  console.log(req.body);
   // Validate input fields (for non-JSON fields)
   if (!RSN || !Size) {
     return res.status(400).json({ message: "RSN and Size are required." });
@@ -52,7 +54,7 @@ const addKnittingDetails = async (req, res) => {
     Kharcha1,
     Kharcha2,
     Kharcha3,
-    Total
+    Total,
   ];
 
   // Ensure each JSON field is valid (using `try/catch` to check JSON parsing)
@@ -73,7 +75,7 @@ const addKnittingDetails = async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
     const [newKnittingDetails] = await connection.query(
-      "INSERT INTO knitting_details (RSN, Size, FrontRight, FrontLeft, FrontComplete, BackRight, BackLeft, BackComplete, SleeveRight, SleeveLeft, BothSleeves, Tape, Collar, Kharcha1, Kharcha2, Kharcha3, Total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO knitting_details (RSN, Size, FrontRight, FrontLeft, FrontComplete, BackRight, BackLeft, BackComplete, SleeveRight, SleeveLeft, BothSleeves, Tape, Collar, Kharcha1, Kharcha2, Kharcha3, Total, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         RSN,
         Size,
@@ -92,6 +94,7 @@ const addKnittingDetails = async (req, res) => {
         JSON.stringify(Kharcha2),
         JSON.stringify(Kharcha3),
         JSON.stringify(Total),
+        userId,
       ]
     );
     await connection.commit();
@@ -155,7 +158,8 @@ const updateKnittingDetails = async (req, res) => {
     Kharcha1,
     Kharcha2,
     Kharcha3,
-    Total
+    Total,
+    userId,
   } = req.body;
 
   if (!Size) {
@@ -206,8 +210,9 @@ const updateKnittingDetails = async (req, res) => {
         Kharcha1 = ?, 
         Kharcha2 = ?, 
         Kharcha3 = ?, 
-        Total = ?
-      WHERE RSN = ?`,
+        Total = ?,
+        userId = ?
+      WHERE RSN = ?`, // Corrected: Removed the extra comma before WHERE clause
       [
         Size,
         JSON.stringify(jsonData.FrontRight),
@@ -225,7 +230,8 @@ const updateKnittingDetails = async (req, res) => {
         JSON.stringify(jsonData.Kharcha2),
         JSON.stringify(jsonData.Kharcha3),
         JSON.stringify(jsonData.Total),
-        RSN 
+        userId,
+        RSN,
       ]
     );
 

@@ -1,17 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const AddNewSample = () => {
-  const navigate = useNavigate(); // Initialize navigate function
-
-  // Function to handle "Yes" click - navigate to root to add sample
+  const navigate = useNavigate();
+  
   const handleYesClick = () => {
-    navigate("/add-sample-details"); // Navigate to root where AddSampleDetails is displayed
+    navigate("/add-sample-details"); 
   };
 
-  // Function to handle "No" click - navigate to homepage
   const handleNoClick = () => {
-    navigate("/"); // Navigate to home page where Homepage component is displayed
+    navigate("/home"); 
   };
 
   return (

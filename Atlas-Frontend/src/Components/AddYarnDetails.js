@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { addYarnDetails } from "../API/YarnApi";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddYarnDetails = () => {
   const [yarnId, setYarnId] = useState("");
@@ -9,6 +11,10 @@ const AddYarnDetails = () => {
   const [ColorCode, setColorCode] = useState("");
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const userId = useSelector((state) => state.user.userId);
+
+  const navigate = useNavigate();
 
   // Function to create the Yarn ID based on the fields
   const createYarnId = () => {
@@ -25,7 +31,7 @@ const AddYarnDetails = () => {
   // Create the yarnId before sending the data
   const yarnIdHandler = () => {
     createYarnId();
-  }
+  };
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -38,23 +44,28 @@ const AddYarnDetails = () => {
 
     // Prepare the data object for the API call
     const yarnData = {
-      YarnId: yarnId,        // Use the yarnId created by the function
+      YarnId: yarnId,
       YarnType: yarnType,
       YarnCount: yarnCount,
       ColorName: colorName,
       ColorCode: ColorCode,
+      UserId: userId,
     };
 
     setLoading(true);
     try {
       const response = await addYarnDetails(yarnData);
       setMessage(response.success ? "Yarn details added successfully!" : "Failed to add yarn details.");
-      console.log(response);
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function to navigate to home
+  const handleBack = () => {
+    navigate("/yarn");
   };
 
   return (
@@ -93,13 +104,23 @@ const AddYarnDetails = () => {
             onChange={(e) => setColorCode(e.target.value)}
           />
         </div>
-        <button onClick={yarnIdHandler}>Generate Yarn ID and Submit</button>
+        <button type="button" onClick={yarnIdHandler}>
+          Generate Yarn ID
+        </button>
         <div>
-            <label>YarnID: </label>
-            <label>{yarnId}</label>
+          <label>YarnID: </label>
+          <label>{yarnId}</label>
         </div>
+        <button type="submit" disabled={loading}>
+          {loading ? "Submitting..." : "Submit Yarn Details"}
+        </button>
       </form>
       {message && <p>{message}</p>}
+
+      {/* Button to navigate to home */}
+      <div>
+        <button onClick={handleBack}>Back</button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addKnittingDetails, updateKnittingDetails, getMachineNos } from "../API/SampleApi";
+import { useSelector } from "react-redux";
 
 const AddKnittingDetailsForm = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const AddKnittingDetailsForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [machineNos, setMachineNos] = useState([]);
+
+  const userId = useSelector((state) => state.user.userId);
 
   // Fetch machine numbers and initial form data (if action is "Update")
   useEffect(() => {
@@ -80,14 +83,15 @@ const AddKnittingDetailsForm = () => {
     setError(null);
     setSuccess(null);
 
+    const formDataId = {...formData, userId};
     try {
       if (action === "Add") {
         // Add RSN to the form data for the Add operation
-        const response = await addKnittingDetails({ RSN, ...formData });
+        const response = await addKnittingDetails({ RSN, ...formDataId });
         setSuccess("Knitting details added successfully!");
       } else if (action === "Update") {
         // Add RSN to the form data for the Update operation
-        const response = await updateKnittingDetails(RSN, formData);
+        const response = await updateKnittingDetails(RSN, formDataId);
         setSuccess("Knitting details updated successfully!");
       }
     } catch (error) {
