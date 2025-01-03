@@ -58,6 +58,7 @@ const YarnStockDetails = () => {
           <tr>
             <th>Date</th>
             <th>YarnID</th>
+            <th>Lott Number</th>
             <th>Supplier Name</th>
             <th>Supplier City</th>
             <th>Weight (in Kgs)</th>
@@ -71,6 +72,7 @@ const YarnStockDetails = () => {
               <tr key={`${yarn.YarnId}-${yarn.BillNo}`}>
                 <td>{formatDate(yarn.Date)}</td>
                 <td>{yarn.YarnID}</td>
+                <td>{yarn.LottNo}</td>
                 <td>{yarn.SupplierName}</td>
                 <td>{yarn.SupplierCity}</td>
                 <td>{yarn.Weight}</td>

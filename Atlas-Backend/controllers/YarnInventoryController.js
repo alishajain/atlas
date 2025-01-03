@@ -10,6 +10,29 @@ const getYarnStockDetails = async (req, res) => {
   }
 };
 
+//fetch yarn details by YarnId
+const getYarnbyYarnID = async (req, res) => {
+  const { YarnId } = req.params; // Extract YarnId from the request params
+
+  try {
+    // Query to select and group by LotNo for the given YarnId
+    const [results] = await db.query(
+      "SELECT LottNo, SUM(Weight) AS TotalWeight FROM yarn_inventory WHERE YarnId = ? GROUP BY LottNo",
+      [YarnId]
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No yarn found with this YarnId" });
+    }
+
+    res.json({ success: true, data: results });
+  } catch (err) {
+    // Catch and handle any database or query errors
+    console.error("Error fetching yarn data:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Fetch YarnIds from YarnMaster Table
 const getYarnIds = async (req, res) => {
   try {
@@ -22,10 +45,10 @@ const getYarnIds = async (req, res) => {
 
 // Add Yarn Stock Details and Update Yarn Master Table
 const addYarnStockDetails = async (req, res) => {
-  const { Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId } = req.body;
+  const { Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LottNo } = req.body;
 
   // Validate input fields
-  if (!Date || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo || !UserId) {
+  if (!Date || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo || !UserId || !LottNo) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
@@ -42,8 +65,8 @@ const addYarnStockDetails = async (req, res) => {
 
     // Check if the stock details already exist for the same YarnId and Date
     const [existingStock] = await connection.query(
-      "SELECT 1 FROM yarn_inventory WHERE YarnId = ? AND Date = ?",
-      [YarnId, Date]
+      "SELECT 1 FROM yarn_inventory WHERE YarnId = ? AND Date = ? AND LottNo = ?",
+      [YarnId, Date, LottNo]
     );
 
     if (existingStock.length > 0) {
@@ -54,8 +77,8 @@ const addYarnStockDetails = async (req, res) => {
 
     // Insert yarn stock details into yarn_inventory table
     const [newYarnStockDetails] = await connection.query(
-      "INSERT INTO yarn_inventory (Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId]
+      "INSERT INTO yarn_inventory (Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LottNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LottNo]
     );
     
     // Check if YarnId exists in yarn_master and update or insert weight
@@ -104,4 +127,5 @@ module.exports = {
   getYarnStockDetails,
   getYarnIds,
   addYarnStockDetails,
+  getYarnbyYarnID,
 };

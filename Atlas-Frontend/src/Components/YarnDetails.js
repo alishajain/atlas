@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom";
+import SearchYarn from "./SearchYarn";
 
 const YarnDetails = () => {
-  const [yarnDetails, setYarnDetails] = useState([]);  // Ensure initial state is an array
+  const [yarnDetails, setYarnDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/YarnDetails")
       .then((response) => {
-        if (Array.isArray(response.data.data)) { // Ensure the response is an array
+        if (Array.isArray(response.data.data)) {
           setYarnDetails(response.data.data);
         } else {
           setError("Invalid data format received.");
@@ -66,8 +67,7 @@ const YarnDetails = () => {
           {!Array.isArray(yarnDetails) && <p>Not an Array</p>}
         </tbody>
       </table>
-
-      {/* Button to navigate to /yarn */}
+      <SearchYarn />
       <div>
         <button onClick={handleBack}>Back</button>
       </div>

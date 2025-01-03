@@ -43,7 +43,7 @@ const ShowImage = ({ RSN }) => {
     <div>
       {imageData ? (
         <img
-          src={`http://localhost:5000/${imageData}`} // Use the correct URL to access the image
+          src={`http://localhost:5000/${imageData}`}
           alt="Sample"
           style={{ width: "100%", maxWidth: "600px" }}
         />

@@ -37,6 +37,7 @@ router.put('/update-yarn/:YarnId', yarnController.updateYarnDetails);
 router.get('/YarnStock', yarnStockController.getYarnStockDetails);
 router.get('/yarnId', yarnStockController.getYarnIds);
 router.post('/add-yarn-stock', yarnStockController.addYarnStockDetails);
+router.get('/yarn/:YarnId', yarnStockController.getYarnbyYarnID);
 
 // Routes for Employee Details
 router.get('/EmployeeDetails', employeeController.getEmployeeDetails);

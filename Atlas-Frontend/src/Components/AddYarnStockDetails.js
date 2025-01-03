@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getYarnIds, addYarnStockDetails } from "../API/YarnApi";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const AddYarnStockDetails = () => {
   const [yarnIds, setYarnIds] = useState([]);
@@ -12,18 +12,19 @@ const AddYarnStockDetails = () => {
   const [weight, setWeight] = useState("");
   const [amount, setAmount] = useState("");
   const [billNo, setBillNo] = useState("");
+  const [lottNo, setLottno] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const userId = useSelector((state) => state.user.userId);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch Yarn IDs when the component mounts
     getYarnIds()
       .then((data) => {
-        setYarnIds(data.data); // Set the Yarn IDs
+        setYarnIds(data.data);
       })
       .catch((error) => {
         setMessage("Error fetching Yarn IDs");
@@ -45,6 +46,7 @@ const AddYarnStockDetails = () => {
       Weight: weight,
       Amount: amount,
       BillNo: billNo,
+      LottNo: lottNo,
       UserId: userId,
     };
 
@@ -101,7 +103,16 @@ const AddYarnStockDetails = () => {
             ))}
           </select>
         </div>
-
+        <div>
+          <label htmlFor="lottNo">Lott Number:</label>
+          <input
+            type="text"
+            id="lottNo"
+            value={lottNo}
+            onChange={(e) => setLottno(e.target.value)}
+            required
+          />
+        </div>
         <div>
           <label htmlFor="supplierName">Supplier Name:</label>
           <input
@@ -164,7 +175,6 @@ const AddYarnStockDetails = () => {
         </div>
       </form>
 
-      {/* Button to navigate to home */}
       <div>
         <button onClick={handleBack}>Back</button>
       </div>
