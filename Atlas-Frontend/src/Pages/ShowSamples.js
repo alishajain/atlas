@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ShowSampleDetails from "../Components/ShowSampleDetails";
 import ShowKnittingDetails from "../Components/ShowKnittingDetails";
 import ShowImage from "../Components/ShowImage";
+import Comments from "../Components/Comments";
 
 const ShowSamples = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const ShowSamples = () => {
 
   // Back button handler to navigate to the root
   const handleBackButton = () => {
-    navigate("/"); // Navigate to the root path
+    navigate("/home");
   };
 
   return (
@@ -31,6 +32,7 @@ const ShowSamples = () => {
             <ShowImage RSN={RSN} />
           </div>
         </div>
+        <Comments RSN={RSN} />
         <button onClick={handleBackButton}>Back</button>
         <button onClick={handleNextButton}>Next</button>
       </div>

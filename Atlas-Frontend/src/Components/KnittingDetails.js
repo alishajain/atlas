@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const KnittingDetails = () => {
-  const [knittingDetails, setKnittingDetails] = useState([]); // Ensure initial state is an array
+
+  const [knittingDetails, setKnittingDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/KnittingDetails")
+      .get(`${API_URL}/KnittingDetails`)
       .then((response) => {
         if (Array.isArray(response.data.data)) {
           // Ensure the response is an array

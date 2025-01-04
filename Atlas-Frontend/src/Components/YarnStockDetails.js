@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom"; 
 
 const YarnStockDetails = () => {
-  const [yarnStockDetails, setYarnStockDetails] = useState([]); // Ensure initial state is an array
+  const [yarnStockDetails, setYarnStockDetails] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
+  
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  // Function to format the date to a readable format
   const formatDate = (date) => {
     const jsDate = new Date(date);
     const options = {
@@ -22,10 +23,9 @@ const YarnStockDetails = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/YarnStock")
+      .get(`${API_URL}/YarnStock`)
       .then((response) => {
         if (Array.isArray(response.data.data)) {
-          // Ensure the response is an array
           setYarnStockDetails(response.data.data);
         } else {
           setError("Invalid data format received.");
@@ -39,7 +39,7 @@ const YarnStockDetails = () => {
   }, []);
 
   const handleBack = () => {
-    navigate("/yarn"); // Navigate to the /yarn route
+    navigate("/yarn");
   };
 
   if (loading) {

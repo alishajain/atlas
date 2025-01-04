@@ -21,7 +21,7 @@ const getSampleDetailsByRSN = async (req, res) => {
       return res.status(404).json({ success: false, message: "Sample record not found." });
     }
 
-    res.status(200).json({ success: true, data: rows[0] }); // Return the first record (should be unique by RSN)
+    res.status(200).json({ success: true, data: rows[0] });
   } catch (err) {
     console.error("Error fetching sample details:", err);
     res.status(500).json({ success: false, message: "Error fetching sample details.", error: err.message });

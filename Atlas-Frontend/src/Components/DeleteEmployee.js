@@ -1,15 +1,15 @@
 import React from "react";
-import { deleteEmployee } from "../API/EmployeeApi"; // Assuming deleteEmployee is an API function for deleting an employee
+import { deleteEmployee } from "../API/EmployeeApi";
 
 const DeleteEmployee = ({ empId, onDeleteSuccess, onDeleteError }) => {
   const handleDelete = async () => {
     try {
       const result = await deleteEmployee(empId);
       if (result.success) {
-        onDeleteSuccess(empId); // Notify parent on successful delete
+        onDeleteSuccess(empId);
       }
     } catch (err) {
-      onDeleteError("Error deleting employee"); // Notify parent of error
+      onDeleteError("Error deleting employee");
     }
   };
 

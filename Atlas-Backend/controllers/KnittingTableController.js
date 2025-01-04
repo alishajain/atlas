@@ -6,7 +6,7 @@ const getKnittingDetails = async (req, res) => {
     const [results] = await db.query("SELECT * FROM knitting_details");
     res.json({ success: true, data: results });
   } catch (err) {
-    res.status(500).json({ error: err.message }); // Return error response if query fails
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -33,7 +33,6 @@ const addKnittingDetails = async (req, res) => {
     userId
   } = req.body;
 
-  console.log(req.body);
   // Validate input fields (for non-JSON fields)
   if (!RSN || !Size) {
     return res.status(400).json({ message: "RSN and Size are required." });
@@ -212,7 +211,7 @@ const updateKnittingDetails = async (req, res) => {
         Kharcha3 = ?, 
         Total = ?,
         userId = ?
-      WHERE RSN = ?`, // Corrected: Removed the extra comma before WHERE clause
+      WHERE RSN = ?`,
       [
         Size,
         JSON.stringify(jsonData.FrontRight),

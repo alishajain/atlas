@@ -10,9 +10,11 @@ const YarnDetails = () => {
 
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/YarnDetails")
+      .get(`${API_URL}/YarnDetails`)
       .then((response) => {
         if (Array.isArray(response.data.data)) {
           setYarnDetails(response.data.data);

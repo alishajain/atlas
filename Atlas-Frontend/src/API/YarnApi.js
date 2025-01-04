@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Add Yarn Details - Insert new Yarn into yarn_master
 export const addYarnDetails = async (data) => {
@@ -48,13 +48,13 @@ export const getYarnIds = async () => {
 // API function to insert Yarn stock details and update YarnMaster table
 export const addYarnStockDetails = async (data) => {
   try {
-    console.log("Sending data to API:", data);  // Debugging log
+    console.log("Sending data to API:", data);
 
     const stockResponse = await axios.post(`${API_URL}/add-yarn-stock`, data, {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("Received API response:", stockResponse);  // Debugging log
+    console.log("Received API response:", stockResponse);
 
     // Check if success status is true
     if (stockResponse.data && stockResponse.data.success) {
@@ -88,7 +88,6 @@ export const getYarnDetailsByLotNo = async (YarnId) => {
     // Sending a GET request to fetch the yarn details grouped by LotNo
     const response = await axios.get(`${API_URL}/yarn/${YarnId}`);
 
-    console.log("Alisha",response.data);
     // Returning the response data to the caller
     return response.data;
   } catch (error) {

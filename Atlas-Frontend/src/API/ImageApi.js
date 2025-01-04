@@ -1,26 +1,22 @@
 import axios from 'axios';
 
 // Define the base URL for your API
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Function to upload an image
 export const uploadImage = async (imageData, imageName, RSN, userId) => {
   // Create FormData object to send the image and additional data as a multipart form
   const formData = new FormData();
-  formData.append('Image', imageData); // Append the image file
-  formData.append('ImageName', imageName); // Append the image name
-  formData.append('RSN', RSN); // Append RSN (Record Serial Number)
-  formData.append('UserId', userId); // Append UserId (who is uploading the image)
-
+  formData.append('Image', imageData);
+  formData.append('ImageName', imageName);
+  formData.append('RSN', RSN);
+  formData.append('UserId', userId);
 
   try {
     const response = await axios.post(`${API_URL}/upload-image`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 5000, // Set timeout for the request
     });
-
-    // Log the response from the server
-    console.log("Upload response:", response.data);
     
     // Return response data (like a success message)
     return response.data;
@@ -39,8 +35,6 @@ export const getImageByRSN = async (RSN) => {
     }
 
     const response = await axios.get(`${API_URL}/image/${RSN}`);
-
-    console.log("Fetch response:", response.data);
 
     // Return the image data (either file path or base64 string)
     return response.data;

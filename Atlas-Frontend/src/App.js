@@ -29,7 +29,6 @@ import Machine from './Pages/Machine';
 import AddMachine from "./Components/AddMachine";
 import MachineDetails from "./Components/MachineDetails";
 import SearchMachine from "./Components/SearchMachine";
-import SearchYarn from "./Components/SearchYarn";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 

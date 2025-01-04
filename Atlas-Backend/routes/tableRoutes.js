@@ -12,6 +12,7 @@ const machineController = require('../controllers/MachineMasterController');
 const imageController = require('../controllers/ImageController');
 const colorMatchingController = require('../controllers/ColorMatchingController');
 const colorDetailsController = require('../controllers/ColorDetailsController');
+const commentController = require('../controllers/SampleCommentController');
 
 // Routes for Sample Details
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -78,6 +79,10 @@ router.get('/color-details', colorDetailsController.getAllColorDetails);
 router.get('/get-color-details/:ColorId', colorDetailsController.getColorDetailByColorId);
 router.put('/update-color-detail/:ColorId', colorDetailsController.updateColorDetail);
 router.delete('/delete-color-detail/:ColorId', colorDetailsController.deleteColorDetail);
+
+//Routes for Sample Comments
+router.get('/comments/:RSN', commentController.getComments);
+router.post('/comments', commentController.addComment);
 
 // Export the router to use it in the main server file
 module.exports = router;

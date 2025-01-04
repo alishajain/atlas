@@ -11,9 +11,8 @@ const SearchYarn = () => {
     const fetchYarnIds = async () => {
       try {
         const yarnIdsData = await getYarnIds();
-        // Accessing the data field from the response and ensuring it's an array
         if (yarnIdsData && Array.isArray(yarnIdsData.data)) {
-          setYarnIds(yarnIdsData.data); // Setting the yarnIds to the data array
+          setYarnIds(yarnIdsData.data);
         } else {
           console.error("Invalid data format for YarnIds", yarnIdsData);
         }
@@ -31,7 +30,7 @@ const SearchYarn = () => {
       const fetchYarnDetails = async () => {
         try {
           const yarnData = await getYarnDetailsByLotNo(selectedYarnId);
-          setYarnDetails(yarnData.data || []); // Ensure the data is an array
+          setYarnDetails(yarnData.data || []);
         } catch (error) {
           console.error("Error fetching yarn details:", error);
         }
