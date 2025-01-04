@@ -35,22 +35,16 @@ const addComment = async (req, res) => {
 const getComments = async (req, res) => {
   const { RSN } = req.params;
 
-  // Log the received RSN for debugging
-  console.log("Received RSN:", RSN);
-  console.log("Alisha");
-
   // Validate if RSN is provided
   if (!RSN) {
     return res.status(400).json({ error: 'RSN is required' });
   }
 
-  const query = 'SELECT Comments FROM sample_comments WHERE RSN = ?';
+  const query = 'SELECT Comments, Date FROM sample_comments WHERE RSN = ?';
 
   try {
     // Use await with mysql2's promise-based query method
     const [results] = await db.query(query, [RSN]);
-
-    console.log('Query Results:', results); // Log query results for debugging
 
     // Check if comments are found
     if (results.length === 0) {

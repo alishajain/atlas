@@ -21,6 +21,7 @@ const Comments = ({ RSN }) => {
       console.error('Failed to fetch comments:', error.message);
     }
   };
+  console.log(comments);
 
   useEffect(() => {
     fetchComments();
@@ -48,23 +49,37 @@ const Comments = ({ RSN }) => {
 
   // Handle showing and hiding the comment textbox
   const handleAddCommentClick = () => {
-    setIsCommentBoxVisible(true); // Show the textbox when the button is clicked
+    setIsCommentBoxVisible(true);
   };
 
   return (
     <div>
       <h2>Comments for RSN: {RSN}</h2>
+      
       <div>
         <h3>Comment Section</h3>
-        <ul>
-          {comments.length === 0 ? (
-            <li>No comments available</li>
-          ) : (
-            comments.map((comment, index) => (
-              <li key={index}>{comment.Comments}</li>
-            ))
-          )}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Comment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comments.length === 0 ? (
+              <tr>
+                <td colSpan="2">No comments available</td>
+              </tr>
+            ) : (
+              comments.map((comment, index) => (
+                <tr key={index}>
+                  <td>{comment.Comments}</td>
+                  <td>{new Date(comment.Date).toLocaleString()}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
 
       <div>
