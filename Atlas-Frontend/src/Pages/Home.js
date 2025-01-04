@@ -7,7 +7,7 @@ import { logout } from "../Redux/userSlice";
 import sample from "../Images/sample.jpg";
 import employee from "../Images/employee.jpg";
 import machine from "../Images/machine.jpeg";
-import yarn from "../Images/yarn.jpg";
+import yarn from "../Images/Yarn.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
