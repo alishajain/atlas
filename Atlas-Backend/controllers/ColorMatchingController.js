@@ -174,7 +174,6 @@ const getMatchingNameByRSN = async (req, res) => {
 
     // Await the database query
     const [results] = await db.query(query, [RSN]);
-
     if (results.length === 0) {
       return res
         .status(404)
