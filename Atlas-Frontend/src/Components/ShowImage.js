@@ -43,7 +43,7 @@ const ShowImage = ({ RSN }) => {
     <div>
       {imageData ? (
         <img
-          src={`http://147.93.28.229/${imageData}`}
+          src={`http://localhost:5000/${imageData}`}
           alt="Sample"
           style={{ width: "100%", maxWidth: "600px" }}
         />

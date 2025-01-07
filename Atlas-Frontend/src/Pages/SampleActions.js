@@ -14,7 +14,7 @@ const SampleActions = () => {
     
     switch (option) {
       case "allocate":
-        navigate(`/allocate-article/${RSN}`, { state: { RSN }});
+        navigate(`/add-article/${RSN}`, { state: { RSN }});
         break;
 
       case "delete":

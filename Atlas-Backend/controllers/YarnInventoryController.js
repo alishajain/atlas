@@ -45,10 +45,11 @@ const getYarnIds = async (req, res) => {
 
 // Add Yarn Stock Details and Update Yarn Master Table
 const addYarnStockDetails = async (req, res) => {
-  const { Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo } = req.body;
+  const { BillDate, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo } = req.body;
+
 
   // Validate input fields
-  if (!Date || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo || !UserId || !LotNo) {
+  if (!BillDate || !YarnId || !SupplierName || !SupplierCity || !Weight || !Amount || !BillNo || !UserId || !LotNo) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
@@ -65,8 +66,8 @@ const addYarnStockDetails = async (req, res) => {
 
     // Check if the stock details already exist for the same YarnId and Date
     const [existingStock] = await connection.query(
-      "SELECT 1 FROM yarn_inventory WHERE YarnId = ? AND Date = ? AND LotNo = ?",
-      [YarnId, Date, LotNo]
+      "SELECT 1 FROM yarn_inventory WHERE YarnId = ? AND BillDate = ? AND LotNo = ?",
+      [YarnId, BillDate, LotNo]
     );
 
     if (existingStock.length > 0) {
@@ -77,8 +78,8 @@ const addYarnStockDetails = async (req, res) => {
 
     // Insert yarn stock details into yarn_inventory table
     const [newYarnStockDetails] = await connection.query(
-      "INSERT INTO yarn_inventory (Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [Date, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo]
+      "INSERT INTO yarn_inventory (BillDate, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [BillDate, YarnId, SupplierName, SupplierCity, Weight, Amount, BillNo, UserId, LotNo]
     );
     
     // Check if YarnId exists in yarn_master and update or insert weight

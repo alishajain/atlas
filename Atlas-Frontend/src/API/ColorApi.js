@@ -112,6 +112,33 @@ const getPanel = async (RSN) => {
   }
 };
 
+// Get MatchingName by RSN
+const getMatchingNameByRSN = async (RSN) => {
+  try {
+    const response = await axios.get(`${API_URL}/matching-name/${RSN}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching matching name for RSN ${RSN}:`, error);
+    throw error;
+  }
+};
+
+// Get ColorIds by RSN and MatchingName
+const getColorIds = async (RSN, MatchingName) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/get-colorIds/${RSN}/${MatchingName}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error fetching color IDs for RSN ${RSN} and MatchingName ${MatchingName}:`,
+      error
+    );
+    throw error;
+  }
+};
+
 export {
   addColorMatching,
   getAllColorMatching,
@@ -120,4 +147,6 @@ export {
   deleteColorMatching,
   getColorId,
   getPanel,
+  getMatchingNameByRSN,
+  getColorIds,
 };

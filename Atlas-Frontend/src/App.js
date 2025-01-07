@@ -29,6 +29,8 @@ import Machine from './Pages/Machine';
 import AddMachine from "./Components/AddMachine";
 import MachineDetails from "./Components/MachineDetails";
 import SearchMachine from "./Components/SearchMachine";
+import AddArticle from "./Components/AddArticle";
+import YarnUsage from "./Components/YarnUsage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -39,7 +41,6 @@ const App = () => {
         <Routes>
           {/* Route for signin page */}
           <Route path="/" element={<Login />} />
-
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/home" element={<Home />} />
@@ -73,6 +74,9 @@ const App = () => {
             path="/update-knitting/:RSN"
             element={<UpdateKnittingDetails />}
           />
+
+          {/* Routes for Articles */}
+          <Route path="/add-article/:RSN" element={<AddArticle />} />
 
           {/* Routes for Yarn Management */}
           <Route path="/yarn" element={<Yarn />} />

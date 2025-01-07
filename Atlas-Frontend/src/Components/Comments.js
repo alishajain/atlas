@@ -21,7 +21,6 @@ const Comments = ({ RSN }) => {
       console.error('Failed to fetch comments:', error.message);
     }
   };
-  console.log(comments);
 
   useEffect(() => {
     fetchComments();

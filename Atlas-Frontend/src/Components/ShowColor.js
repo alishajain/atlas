@@ -18,7 +18,7 @@ const ShowColor = () => {
   const [error, setError] = useState("");
   const [colorDetails, setColorDetails] = useState({});
   const [selectedPanels, setSelectedPanels] = useState(null);
-  const [selectedStates, setSelectedStates] = useState({}); // State to store selectedStates
+  const [selectedStates, setSelectedStates] = useState({});
 
   // First useEffect for fetching color matching data
   useEffect(() => {

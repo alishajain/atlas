@@ -136,7 +136,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
   };
 
   // Fetch userId from Redux store (outside of the handleSubmit function)
-  const userId = useSelector((state) => state.user.userId); // Access userId directly inside the component
+  const userId = useSelector((state) => state.user.userId);
 
   // Handle form submission
   const handleSubmit = async (e) => {

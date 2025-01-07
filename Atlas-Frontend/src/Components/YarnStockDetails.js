@@ -56,7 +56,7 @@ const YarnStockDetails = () => {
       <table>
         <thead>
           <tr>
-            <th>Date</th>
+            <th>Bill Date</th>
             <th>YarnID</th>
             <th>Lott Number</th>
             <th>Supplier Name</th>
@@ -70,9 +70,9 @@ const YarnStockDetails = () => {
           {Array.isArray(yarnStockDetails) &&
             yarnStockDetails.map((yarn) => (
               <tr key={`${yarn.YarnId}-${yarn.BillNo}`}>
-                <td>{formatDate(yarn.Date)}</td>
+                <td>{formatDate(yarn.BillDate)}</td>
                 <td>{yarn.YarnID}</td>
-                <td>{yarn.LottNo}</td>
+                <td>{yarn.LotNo}</td>
                 <td>{yarn.SupplierName}</td>
                 <td>{yarn.SupplierCity}</td>
                 <td>{yarn.Weight}</td>

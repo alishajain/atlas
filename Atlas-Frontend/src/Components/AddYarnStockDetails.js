@@ -35,18 +35,18 @@ const AddYarnStockDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(""); // Clear previous messages
+    setMessage("");
 
     // Prepare form data
     const formData = {
-      Date: date,
+      BillDate: date,
       YarnId: selectedYarnId,
       SupplierName: supplierName,
       SupplierCity: supplierCity,
       Weight: weight,
       Amount: amount,
       BillNo: billNo,
-      LottNo: lottNo,
+      LotNo: lottNo,
       UserId: userId,
     };
 
@@ -54,7 +54,17 @@ const AddYarnStockDetails = () => {
       const response = await addYarnStockDetails(formData);
       if (response.success) {
         setMessage("Yarn stock details added successfully.");
-        window.location.reload();
+
+        // Reset form fields after successful submission
+        setSelectedYarnId("");
+        setDate("");
+        setSupplierName("");
+        setSupplierCity("");
+        setWeight("");
+        setAmount("");
+        setBillNo("");
+        setLottno("");
+
       } else {
         setMessage("Error adding yarn stock details.");
       }
@@ -78,7 +88,7 @@ const AddYarnStockDetails = () => {
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="date">Date:</label>
+          <label htmlFor="date">Bill Date:</label>
           <input
             type="date"
             id="date"
@@ -104,7 +114,7 @@ const AddYarnStockDetails = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="lottNo">Lott Number:</label>
+          <label htmlFor="lottNo">Lot Number:</label>
           <input
             type="text"
             id="lottNo"
