@@ -25,14 +25,14 @@ const addColorDetail = async (req, res) => {
 
   try {
     // Ensure that BaseColor and ColorX are valid objects
-    if (!BaseColor || typeof BaseColor !== 'object' || !BaseColor.Name || !BaseColor.Weight) {
+    if (!BaseColor || typeof BaseColor !== 'object' || !BaseColor.YarnId || !BaseColor.Weight) {
       return res.status(400).json({ message: "BaseColor must be an object with 'Name' and 'Weight'." });
     }
 
     // Validate each ColorX (Color1, Color2, ...) to ensure they have 'Name' and 'Weight' properties
     const validateColor = (color, colorIndex) => {
-      if (!color || typeof color !== 'object' || !color.Name || !color.Weight) {
-        return res.status(400).json({ message: `Color${colorIndex} must be an object with 'Name' and 'Weight'.` });
+      if (!color || typeof color !== 'object' || !color.YarnId || !color.Weight) {
+        return res.status(400).json({ message: `Color${colorIndex} must be an object with 'YarnId' and 'Weight'.` });
       }
     };
 

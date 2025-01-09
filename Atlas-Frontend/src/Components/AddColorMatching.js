@@ -49,6 +49,7 @@ const AddColorMatching = () => {
   const checkColorMatchingExists = async (RSN) => {
     try {
       const response = await getColorMatchingByRSN(RSN);
+      console.log('Color Matching Exists Response:', response);
       return response && response.length > 0; // If response has data, return true
     } catch (error) {
       console.error("Error checking for existing data:", error);
@@ -93,12 +94,9 @@ const AddColorMatching = () => {
 
       // If action is 'update', first check if color matching exists and then delete existing records by RSN
       if (action === "update") {
-        // Check if existing color matching data exists for the RSN
-        const exists = await checkColorMatchingExists(RSN);
-
-        if (exists) {
-          apiCalls.push(deleteColorMatching(RSN)); // Delete existing data if found
-        }
+          const deleteResponse = await deleteColorMatching(RSN);
+          apiCalls.push(deleteResponse); 
+        
       }
 
       // Loop through each matchingName and create API calls for each selected panel
@@ -123,8 +121,9 @@ const AddColorMatching = () => {
         });
       });
 
-      // Wait for all API calls to finish
+      // Wait for all API calls to finish (deletion + new addition)
       const responses = await Promise.all(apiCalls);
+      console.log("Responses from API calls:", responses);
 
       setSuccess("Color matching added successfully!");
       setShowColorDetails(true);

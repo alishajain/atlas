@@ -8,7 +8,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
   const initialRowState = {
     ColorId: "",
     Size: size,
-    BaseColor: { Name: "", Weight: "" },
+    BaseColor: { YarnId: "", Weight: "" },
     yarnCount: 0,
     colors: [],
   };
@@ -85,7 +85,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
         return {
           ...row,
           yarnCount: yarnCount, // Update the yarn count for this row
-          colors: Array(yarnCount).fill({ Name: "", Weight: "" }), // Adjust the colors array size based on yarn count
+          colors: Array(yarnCount).fill({ YarnId: "", Weight: "" }), // Adjust the colors array size based on yarn count
         };
       }
       return row;
@@ -144,7 +144,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
 
     const colorData = formData.map((row) => {
       const colors = row.colors.reduce((acc, color, index) => {
-        acc[`Color${index + 1}`] = { Name: color.Name, Weight: color.Weight };
+        acc[`Color${index + 1}`] = { YarnId: color.YarnId, Weight: color.Weight };
         return acc;
       }, {});
 
@@ -196,7 +196,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
               <th style={{ width: "4%" }}>Panel</th>
               <th style={{ width: "4%" }}>Total Weight</th>
               <th style={{ width: "4%" }}>Base Yarn</th>
-              <th style={{ width: "4%" }}>Yarns Used</th>{" "}
+              <th style={{ width: "4%" }}>Yarns Used</th>
               {[...Array(14)].map((_, index) => (
                 <th key={index} style={{ width: "6%" }}>
                   Yarn {index + 1}
@@ -219,8 +219,8 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                 </td>
                 <td>
                   <select
-                    name="Name"
-                    value={row.BaseColor.Name || ""}
+                    name="YarnId"
+                    value={row.BaseColor.YarnId || ""}
                     onChange={(e) => handleInputChange(e, rowIndex, "BaseColor")}
                   >
                     <option value="">Select Yarn</option>
@@ -228,7 +228,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                       <option value="">No Yarn available</option>
                     ) : (
                       Object.values(yarnIds).map((yarn) => (
-                        <option key={yarn.YarnId} value={yarn.Name}>
+                        <option key={yarn.YarnId} value={yarn.YarnId}>
                           {yarn.YarnId}
                         </option>
                       ))
@@ -255,8 +255,8 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                 {row.colors.map((color, colorIndex) => (
                   <td key={colorIndex}>
                     <select
-                      name="Name"
-                      value={color.Name || ""}
+                      name="YarnId"
+                      value={color.YarnId || ""}
                       onChange={(e) =>
                         handleInputChange(e, rowIndex, "colors", colorIndex)
                       }
@@ -266,7 +266,7 @@ const AddColorDetails = ({ matchingName, RSN, size, selectedStates }) => {
                         <option value="">No Yarn available</option>
                       ) : (
                         Object.values(yarnIds).map((yarn) => (
-                          <option key={yarn.YarnId} value={yarn.Name}>
+                          <option key={yarn.YarnId} value={yarn.YarnId}>
                             {yarn.YarnId}
                           </option>
                         ))

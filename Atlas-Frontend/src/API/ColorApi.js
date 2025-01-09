@@ -5,7 +5,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 // Create a new color matching entry
 const addColorMatching = async (colorData) => {
   try {
-    console.log(colorData);
     const response = await axios.post(
       `${API_URL}/add-color-matching`,
       colorData,

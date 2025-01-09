@@ -121,12 +121,12 @@ const ShowColor = () => {
         const colorData = details[colorKey];
         return (
           colorData &&
-          isValidValue(colorData.Name) &&
+          isValidValue(colorData.YarnId) &&
           isValidValue(colorData.Weight)
         );
       });
 
-      const names = validColorKeys.map((colorKey) => details[colorKey].Name);
+      const names = validColorKeys.map((colorKey) => details[colorKey].YarnId);
       const weights = validColorKeys.map(
         (colorKey) => details[colorKey].Weight
       );
@@ -145,9 +145,9 @@ const ShowColor = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td>Name</td>
-                  {names.map((name, index) => (
-                    <td key={index}>{name}</td>
+                  <td>YarnId</td>
+                  {names.map((yarnId, index) => (
+                    <td key={index}>{yarnId}</td>
                   ))}
                 </tr>
                 <tr>
