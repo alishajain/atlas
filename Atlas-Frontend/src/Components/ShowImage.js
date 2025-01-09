@@ -16,7 +16,7 @@ const ShowImage = ({ RSN }) => {
         // Check if response data contains image and handle it
         if (response.data && response.data.length > 0 && response.data[0].ImageData) {
           const imagePath = response.data[0].ImageData.replace(/\\/g, "/");
-          setImageData(imagePath);
+          setImageData(imagePath);  // Set the relative image path
         } else {
           throw new Error("No ImageData found in response.");
         }
@@ -43,7 +43,7 @@ const ShowImage = ({ RSN }) => {
     <div>
       {imageData ? (
         <img
-          src={`http://localhost:5000/${imageData}`}
+          src={`http://147.93.28.229:5000/${imageData}`}
           alt="Sample"
           style={{ width: "100%", maxWidth: "600px" }}
         />
