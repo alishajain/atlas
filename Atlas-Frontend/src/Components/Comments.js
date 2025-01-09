@@ -60,7 +60,8 @@ const Comments = ({ RSN }) => {
         <table>
           <thead>
             <tr>
-              <th>Comment</th>
+              <th>User</th>
+              <th>Comments</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -72,6 +73,7 @@ const Comments = ({ RSN }) => {
             ) : (
               comments.map((comment, index) => (
                 <tr key={index}>
+                  <td>{comment.UserId}</td>
                   <td>{comment.Comments}</td>
                   <td>{new Date(comment.Date).toLocaleString()}</td>
                 </tr>

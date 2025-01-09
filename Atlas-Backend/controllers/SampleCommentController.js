@@ -40,7 +40,7 @@ const getComments = async (req, res) => {
     return res.status(400).json({ error: 'RSN is required' });
   }
 
-  const query = 'SELECT Comments, Date FROM sample_comments WHERE RSN = ?';
+  const query = 'SELECT Comments, Date, UserId FROM sample_comments WHERE RSN = ?';
 
   try {
     // Use await with mysql2's promise-based query method
