@@ -9,20 +9,10 @@ const addComment = async (req, res) => {
     return res.status(400).json({ error: 'All fields (RSN, UserId, Comments) are required' });
   }
 
-  // SQL query to insert a new comment into the sample_comments table
   const query = 'INSERT INTO sample_comments (RSN, UserId, Comments) VALUES (?, ?, ?)';
 
   try {
-    // Using promise wrapper for the database query to work with async/await
-    const result = await new Promise((resolve, reject) => {
-      db.query(query, [RSN, UserId, Comments], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    const result = await db.query(query, [RSN, UserId, Comments]);
 
     return res.status(201).json({ message: 'Comment added successfully', data: result });
   } catch (error) {
@@ -60,7 +50,6 @@ const getComments = async (req, res) => {
     return res.status(500).json({ error: 'Failed to fetch comments' });
   }
 };
-
 
 module.exports = {
   addComment,
