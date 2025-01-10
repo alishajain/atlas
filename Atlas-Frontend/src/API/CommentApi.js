@@ -19,7 +19,6 @@ export const addComment = async (RSN, userId, comment) => {
   try {
     const data = { RSN, UserId: userId, Comments: comment };
     const response = await axios.post(`${API_URL}/comments`, data);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error adding comment:', error);

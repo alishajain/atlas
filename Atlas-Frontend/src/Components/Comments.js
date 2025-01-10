@@ -68,7 +68,7 @@ const Comments = ({ RSN }) => {
           <tbody>
             {comments.length === 0 ? (
               <tr>
-                <td colSpan="2">No comments available</td>
+                <td colSpan="3">No comments available</td>
               </tr>
             ) : (
               comments.map((comment, index) => (

@@ -112,7 +112,7 @@ const AddKnittingDetailsForm = () => {
           <thead>
             <tr>
               <th>Field</th>
-              <th>Weight</th>
+              <th>Weight (in grams)</th>
               <th>Time</th>
               <th>Machine No</th>
             </tr>

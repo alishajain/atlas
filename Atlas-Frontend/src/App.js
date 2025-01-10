@@ -65,6 +65,7 @@ const App = () => {
           <Route path="/get-RSN" element={<RSNInput />} />
           <Route path="/show-sample/:RSN" element={<ShowSamples />} />
           <Route path="/show-color/:RSN" element={<ShowColor />} />
+          <Route path="/yarn-usage/:RSN" element={<YarnUsage />} />
 
           {/* Routes for further sample actions */}
           <Route path="/sample-actions/:RSN" element={<SampleActions />} />

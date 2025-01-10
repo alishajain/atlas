@@ -15,16 +15,16 @@ const AddArticle = () => {
   // State for form data
   const [articleNumber, setArticleNumber] = useState("");
   const [sizes, setSizes] = useState({
-    freesize: { selected: false, weight: "" },
-    xs: { selected: false, weight: "" },
-    s: { selected: false, weight: "" },
-    m: { selected: false, weight: "" },
-    l: { selected: false, weight: "" },
-    xl: { selected: false, weight: "" },
-    xxl: { selected: false, weight: "" },
-    "3xl": { selected: false, weight: "" },
-    "4xl": { selected: false, weight: "" },
-    "5xl": { selected: false, weight: "" },
+    freesize: { selected: false, wtvariance: "" },
+    xs: { selected: false, wtvariance: "" },
+    s: { selected: false, wtvariance: "" },
+    m: { selected: false, wtvariance: "" },
+    l: { selected: false, wtvariance: "" },
+    xl: { selected: false, wtvariance: "" },
+    xxl: { selected: false, wtvariance: "" },
+    "3xl": { selected: false, wtvariance: "" },
+    "4xl": { selected: false, wtvariance: "" },
+    "5xl": { selected: false, wtvariance: "" },
   });
   const [selectedColors, setSelectedColors] = useState([]);
   const [colorOptions, setColorOptions] = useState([]);
@@ -68,8 +68,7 @@ const AddArticle = () => {
 
     console.log("Form data:", formData);
 
-    // Example of navigating after submission (you can replace this with your actual submit logic)
-    navigate("/success"); // Assuming you have a success route
+    navigate("/success");
   };
 
   // Handle checkbox change for sizes
@@ -81,12 +80,12 @@ const AddArticle = () => {
     }));
   };
 
-  // Handle weight variation input change for sizes
+  // Handle wtvariance variation input change for sizes
   const handleWeightChange = (e) => {
     const { name, value } = e.target;
     setSizes((prevSizes) => ({
       ...prevSizes,
-      [name]: { ...prevSizes[name], weight: value },
+      [name]: { ...prevSizes[name], wtvariance: value },
     }));
   };
 
@@ -104,7 +103,6 @@ const AddArticle = () => {
     <div>
       <h1>Add Article</h1>
       <form onSubmit={handleSubmit}>
-        {/* RSN Field (read-only) */}
         <div>
           <label>RSN:</label>
           <input type="text" value={RSN} readOnly />
@@ -121,7 +119,7 @@ const AddArticle = () => {
           />
         </div>
 
-        {/* Sizes Checkboxes with Weight Variation */}
+        {/* Sizes Checkboxes with wtvariance Variation */}
         <div>
           <label>Sizes:</label>
           <div>
@@ -137,9 +135,9 @@ const AddArticle = () => {
                 {sizes[size].selected && (
                   <input
                     type="text"
-                    name={`${size}_weight`}
-                    value={sizes[size].weight}
-                    placeholder="Weight Variation Percentage"
+                    name={`${size}_wtvariance`}
+                    value={sizes[size].wtvariance}
+                    placeholder="wtvariance Variation Percentage"
                     onChange={handleWeightChange}
                   />
                 )}

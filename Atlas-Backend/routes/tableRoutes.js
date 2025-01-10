@@ -13,6 +13,7 @@ const imageController = require('../controllers/ImageController');
 const colorMatchingController = require('../controllers/ColorMatchingController');
 const colorDetailsController = require('../controllers/ColorDetailsController');
 const commentController = require('../controllers/SampleCommentController');
+const yarnUsageController = require('../controllers/YarnUsageContoller');
 
 // Routes for Sample Details
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -85,6 +86,9 @@ router.delete('/delete-color-detail/:ColorId', colorDetailsController.deleteColo
 //Routes for Sample Comments
 router.get('/comments/:RSN', commentController.getComments);
 router.post('/comments', commentController.addComment);
+
+//Routes for Yarn Usage
+router.post('/add-yarn-usage/', yarnUsageController.addYarnUsage);
 
 // Export the router to use it in the main server file
 module.exports = router;

@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getColorIds, getMatchingNameByRSN } from "../API/ColorApi";
 import { getColorDetailByColorId } from "../API/ColorDetailApi";
+import { addYarnUsage } from "../API/YarnUsageApi";
+import { useSelector } from "react-redux";
 
 const YarnUsage = () => {
-  const RSN = 69; // You can change this to dynamically set it if needed.
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const RSN = location.state ? location.state.RSN : null;
+  const userId = useSelector((state) => state.user.userId);
 
   // State to hold matching names, color IDs, and color details
   const [matchingNames, setMatchingNames] = useState([]);
-  const [usageByName, setUsageByName] = useState({});
+  const [colorDetailsByMatchingName, setColorDetailsByMatchingName] = useState({});
   const [loading, setLoading] = useState(true);
+  const [yarnUsageData, setYarnUsageData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,85 +25,228 @@ const YarnUsage = () => {
       try {
         // Step 1: Get matching names by RSN
         const matchingNamesResponse = await getMatchingNameByRSN(RSN);
-        console.log("Matching Names Response: ", matchingNamesResponse.data); // Debugging line
         setMatchingNames(matchingNamesResponse.data);
 
         // Step 2: For each matching name, get color IDs and fetch color details
         const fetchColorDetails = async () => {
-          const usage = {}; // This will hold total usage grouped by color Name
+          const colorDetailsDataByMatchingName = {};
 
           for (const matchingName of matchingNamesResponse.data) {
             const colorIdsResponse = await getColorIds(RSN, matchingName.MatchingName);
-            console.log("Color IDs Response: ", colorIdsResponse.data); // Debugging line
+            console.log("Color IDs for:", matchingName.MatchingName, colorIdsResponse.data);  // Log the Color IDs for debugging
 
-            // Safeguard: Check if colorIdsResponse has data
             if (colorIdsResponse?.data?.length > 0) {
               const colorDetailPromises = colorIdsResponse.data.map(async (color) => {
                 if (color?.ColorId) {
                   const colorDetail = await getColorDetailByColorId(color.ColorId);
-                  console.log(`Color Detail for ColorId ${color.ColorId}: `, colorDetail[0]); // Debugging line
-                  return colorDetail[0]; // Assume colorDetail is an array and we're taking the first element
+                  return colorDetail[0];
                 }
                 return null;
               });
 
               // Wait for all color details to be fetched for the current matching name
               const colorDetailsData = await Promise.all(colorDetailPromises);
-
-              // Process each color detail and sum yarn usage grouped by Name
-              colorDetailsData.forEach((colorDetail) => {
-                if (colorDetail) {
-                  const colorName = colorDetail.BaseColor?.Name || "Unknown Color"; // Get color name
-
-                  if (colorDetail.YarnUsage) {
-                    console.log("YarnUsage for ColorId:", colorDetail.ColorId, colorDetail.YarnUsage); // Debugging line
-                    colorDetail.YarnUsage.forEach((yarn) => {
-                      // Group by color Name instead of YarnId
-                      if (!usage[colorName]) {
-                        usage[colorName] = 0;
-                      }
-                      usage[colorName] += yarn.UsageAmount || 0; // Sum up yarn usage
-                    });
-                  }
-                }
-              });
+              colorDetailsDataByMatchingName[matchingName.MatchingName] = colorDetailsData.filter(Boolean);
             }
           }
 
-          setUsageByName(usage); // Store the total yarn usage grouped by Name
-          setLoading(false); // Set loading to false when data is fetched
+          setColorDetailsByMatchingName(colorDetailsDataByMatchingName);
+          setLoading(false);
         };
 
-        fetchColorDetails(); // Call to fetch color details
+        fetchColorDetails();
       } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false);
       }
     };
 
-    fetchData(); // Fetch data when the component mounts
+    fetchData();
   }, [RSN]);
+
+  // Helper function to get YarnId and Weight pairs for a MatchingName
+  const getYarnIdWeightPairs = (colorDetails) => {
+    const yarnIdWeightPairs = {};
+
+    colorDetails.forEach((colorDetail) => {
+      if (colorDetail.BaseColor && colorDetail.BaseColor.YarnId) {
+        const yarnId = colorDetail.BaseColor.YarnId;
+        const weight = parseFloat(colorDetail.BaseColor.Weight);
+        if (yarnIdWeightPairs[yarnId]) {
+          yarnIdWeightPairs[yarnId] += weight;
+        } else {
+          yarnIdWeightPairs[yarnId] = weight;
+        }
+      }
+
+      // Check for other color fields (Color1, Color2, ..., Color14)
+      for (let i = 1; i <= 14; i++) {
+        const colorKey = `Color${i}`;
+        if (colorDetail[colorKey] && colorDetail[colorKey].YarnId) {
+          const yarnId = colorDetail[colorKey].YarnId;
+          const weight = parseFloat(colorDetail[colorKey].Weight);
+          if (yarnIdWeightPairs[yarnId]) {
+            yarnIdWeightPairs[yarnId] += weight;
+          } else {
+            yarnIdWeightPairs[yarnId] = weight;
+          }
+        }
+      }
+    });
+
+    // Convert the object to an array of YarnId, Weight pairs
+    return Object.entries(yarnIdWeightPairs).map(([YarnId, Weight]) => ({
+      YarnId,
+      Weight,
+    }));
+  };
+
+  // Function to prepare yarn usage data
+  const prepareYarnUsageData = () => {
+    const yarnUsageEntries = matchingNames.map((matchingName) => {
+      const colorDetails = colorDetailsByMatchingName[matchingName.MatchingName];
+      const yarnData = getYarnIdWeightPairs(colorDetails);
+
+      const yarnUsage = {
+        RSN,
+        MatchingName: matchingName.MatchingName,
+        UserId: userId,
+      };
+
+      // Dynamically add Yarn1, Yarn2, ..., Yarn15
+      yarnData.forEach((entry, index) => {
+        yarnUsage[`Yarn${index + 1}`] = { YarnId: entry.YarnId, Weight: entry.Weight };
+      });
+
+      // Ensure that Yarn1 is not null and others are set as null if missing
+      for (let i = yarnData.length; i < 15; i++) {
+        yarnUsage[`Yarn${i + 1}`] = null;
+      }
+
+      return yarnUsage;
+    });
+
+    setYarnUsageData(yarnUsageEntries);
+  };
+
+  // Insert the prepared yarn usage data
+  const handleInsertData = async () => {
+    try {
+      // Log matching names for debugging
+      console.log("Matching Names:", matchingNames);
+  
+      const processedMatchingNames = new Set();
+  
+      // Loop through each matching name and prepare yarn usage data
+      for (const matchingName of matchingNames) {
+        if (processedMatchingNames.has(matchingName.MatchingName)) {
+          console.log(`Skipping already processed MatchingName: ${matchingName.MatchingName}`);
+          continue;
+        }
+  
+        console.log("Inserting data for:", matchingName.MatchingName);  // Log each iteration
+  
+        const colorDetails = colorDetailsByMatchingName[matchingName.MatchingName];
+  
+        // Check if there are color details for the matching name
+        if (!colorDetails || colorDetails.length === 0) {
+          console.log(`No color details found for ${matchingName.MatchingName}`);
+          continue;
+        }
+  
+        const yarnData = getYarnIdWeightPairs(colorDetails);
+  
+        const yarnUsage = {
+          RSN,
+          MatchingName: matchingName.MatchingName,
+          UserId: userId,
+        };
+  
+        // Add Yarn1, Yarn2, ..., Yarn15 dynamically
+        yarnData.forEach((entry, index) => {
+          yarnUsage[`Yarn${index + 1}`] = { YarnId: entry.YarnId, Weight: entry.Weight };
+        });
+  
+        // Ensure that Yarn1 is not null and others are set as null if missing
+        for (let i = yarnData.length; i < 15; i++) {
+          yarnUsage[`Yarn${i + 1}`] = null;
+        }
+  
+        // Log the prepared yarnUsage data
+        console.log("Prepared Yarn Usage:", yarnUsage);
+  
+        // Call the API for each MatchingName
+        const response = await addYarnUsage(yarnUsage);
+  
+        // Log the API response
+        console.log("API Response:", response);
+  
+        if (response && response.data) {
+          console.log(`Successfully inserted data for ${matchingName.MatchingName}`);
+        } else {
+          console.log(`Failed to insert data for ${matchingName.MatchingName}`);
+        }
+  
+        // Mark this MatchingName as processed
+        processedMatchingNames.add(matchingName.MatchingName);
+      }
+  
+      alert("Yarn usage data inserted successfully.");
+    } catch (error) {
+      console.error("Error inserting yarn usage data:", error);
+      alert("Failed to insert yarn usage data.");
+    }
+  };
+  
+
+  const handleNext = () => {
+    navigate(`/sample-actions/${RSN}`, { state: { RSN } });
+  };
 
   return (
     <div>
-      <h1>Yarn Usage Details</h1>
+      <h1>Yarn Usage Details by Matching Name</h1>
       {loading ? (
         <p>Loading yarn usage data...</p>
-      ) : Object.keys(usageByName).length > 0 ? (
+      ) : Object.keys(colorDetailsByMatchingName).length > 0 ? (
         <div>
-          <h2>Total Yarn Usage Grouped by Color Name</h2>
-          <ul>
-            {Object.entries(usageByName).map(([colorName, totalUsage]) => (
-              <li key={colorName}>
-                <h3>Color Name: {colorName}</h3>
-                <p>Total Usage: {totalUsage} units</p>
-              </li>
-            ))}
-          </ul>
+          {matchingNames.map((matchingName) => {
+            const colorDetails = colorDetailsByMatchingName[matchingName.MatchingName];
+
+            return (
+              <div key={matchingName.MatchingName}>
+                <h3>{matchingName.MatchingName}</h3>
+                {colorDetails.length > 0 ? (
+                  <table border="1">
+                    <thead>
+                      <tr>
+                        <th>YarnId</th>
+                        <th>Total Weight</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getYarnIdWeightPairs(colorDetails).map((pair, index) => (
+                        <tr key={index}>
+                          <td>{pair.YarnId}</td>
+                          <td>{pair.Weight}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p>No color details available for this matching name.</p>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : (
         <p>No yarn usage data available.</p>
       )}
+
+      <button onClick={prepareYarnUsageData}>Prepare Data</button>
+      <button onClick={handleInsertData}>OK</button>
+      <button onClick={handleNext}>Next</button>
     </div>
   );
 };

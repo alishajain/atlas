@@ -174,7 +174,7 @@ const ShowColor = () => {
 
   // Function to handle navigation next
   const handleNext = () => {
-    navigate(`/sample-actions/${RSN}`, { state: { RSN } });
+    navigate(`/yarn-usage/${RSN}`, { state: { RSN } });
   };
 
   // Function to handle Add Color button click
