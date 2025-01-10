@@ -5,7 +5,7 @@ import { updateMachineByMachineNo } from "../API/MachineApi";
 const UpdateMachine = ({ machine, goBack }) => {
   // Fetch userId from Redux store
   const userId = useSelector((state) => state.user.userId);
-  console.log(userId);
+  
   const [updatedMachine, setUpdatedMachine] = useState({ ...machine });
   const [successMessage, setSuccessMessage] = useState("");
   

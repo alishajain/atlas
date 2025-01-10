@@ -36,7 +36,6 @@ export const searchMachineByMachineNo = async (MachineNo) => {
 // Function to update a machine by MachineNo
 export const updateMachineByMachineNo = async (MachineNo, updatedData) => {
   try {
-    console.log(updatedData);
     const response = await fetch(`${API_URL}/update-machine/${MachineNo}`, {
       method: 'PUT',
       headers: {
@@ -60,7 +59,6 @@ export const updateMachineByMachineNo = async (MachineNo, updatedData) => {
     throw new Error('Error updating machine');
   }
 };
-
 
 // Function to get all machines
 export const getAllMachines = async () => {

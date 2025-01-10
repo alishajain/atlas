@@ -22,8 +22,6 @@ const MachineDetails = () => {
     };
     fetchMachines();
   }, []);
-
-  console.log(machines);
   
   // Handle back button click
   const handleBackButton = () => {

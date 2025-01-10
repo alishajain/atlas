@@ -24,9 +24,10 @@ const addMachine = async (req, res) => {
     !MachineStatus ||
     !UserId // Validate if UserId is provided
   ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required, including UserId" });
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required, including UserId",
+    });
   }
 
   try {
@@ -105,16 +106,19 @@ const deleteMachine = async (req, res) => {
       [MachineNo]
     );
 
-    if (result.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: "Machine deleted successfully",
-      });
-    } else {
+    if (result.affectedRows === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Machine not found" });
-    }
+        .json({
+          success: false,
+          message: "Machine details not found.",
+        });
+    } res
+      .status(200)
+      .json({
+        success: true,
+        message: "Machine details deleted successfully.",
+      });
   } catch (error) {
     console.error("Error deleting machine:", error);
     return res
@@ -134,7 +138,7 @@ const updateMachine = async (req, res) => {
     MachineSystem,
     MachineStatus,
     Remarks,
-    UserId, // Added UserId field for update
+    UserId,
   } = req.body;
 
   if (
@@ -144,11 +148,12 @@ const updateMachine = async (req, res) => {
     !CountPeriod ||
     !MachineSystem ||
     !MachineStatus ||
-    !UserId // Validate if UserId is provided
+    !UserId
   ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required, including UserId" });
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required, including UserId",
+    });
   }
 
   try {
@@ -162,21 +167,24 @@ const updateMachine = async (req, res) => {
         MachineSystem,
         MachineStatus,
         Remarks,
-        UserId, // Include UserId in the query
+        UserId,
         MachineNo,
       ]
     );
 
-    if (result.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: "Machine updated successfully",
-      });
-    } else {
+    if (result.affectedRows === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Machine not found" });
-    }
+        .json({
+          success: false,
+          message: "Machine details not found for update.",
+        });
+    } res
+      .status(200)
+      .json({
+        success: true,
+        message: "Machine details updated successfully.",
+      });
   } catch (error) {
     console.error("Error updating machine:", error);
     return res
@@ -198,11 +206,9 @@ const getMachineNo = async (req, res) => {
     }
   } catch (error) {
     console.error("Error while fetching machine numbers:", error);
-    res
-      .status(500)
-      .json({
-        error: `An error occurred while fetching machine numbers: ${error.message}`,
-      });
+    res.status(500).json({
+      error: `An error occurred while fetching machine numbers: ${error.message}`,
+    });
   }
 };
 
