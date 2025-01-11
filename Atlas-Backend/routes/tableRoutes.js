@@ -14,6 +14,7 @@ const colorMatchingController = require('../controllers/ColorMatchingController'
 const colorDetailsController = require('../controllers/ColorDetailsController');
 const commentController = require('../controllers/SampleCommentController');
 const yarnUsageController = require('../controllers/YarnUsageContoller');
+const articleController = require('../controllers/ArticleController');
 
 // Routes for Sample Details
 router.get('/SampleDetails', sampleController.getSampleDetailsData);
@@ -22,9 +23,10 @@ router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);
 router.put('/update-sample', sampleController.updateSampleRecord);
 router.get('/get-latest-rsn', sampleController.getLatestRSN);
 router.delete('/delete-sample/:RSN', sampleController.deleteSample);
+router.put('/update-articleNo/:RSN', sampleController.updateArticleNo);
 
 // Routes for Knitting Details
-router.get('/KnittingDetails', knittingController.getKnittingDetails);
+router.get('/get-size/:RSN', knittingController.getKnittingSize);
 router.post('/add-knitting', knittingController.addKnittingDetails);
 router.get('/knitting-details/:RSN', knittingController.getKnittingDetailsByRSN);
 router.put('/update-knitting-details/:RSN', knittingController.updateKnittingDetails);
@@ -88,7 +90,10 @@ router.get('/comments/:RSN', commentController.getComments);
 router.post('/comments', commentController.addComment);
 
 //Routes for Yarn Usage
-router.post('/add-yarn-usage/', yarnUsageController.addYarnUsage);
+router.post('/add-yarn-usage', yarnUsageController.addYarnUsage);
+
+//Routes for Article master
+router.post('/add-article', articleController.addArticleMaster);
 
 // Export the router to use it in the main server file
 module.exports = router;

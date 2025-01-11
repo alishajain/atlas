@@ -138,7 +138,7 @@ const addSampleDetails = async (req, res) => {
   try {
     // Get a connection from the pool
     connection = await db.getConnection();
-    await connection.beginTransaction(); // Begin a transaction
+    await connection.beginTransaction();
 
     // Insert into the sample_details table
     const [newSampleDetails] = await connection.query(
@@ -218,8 +218,42 @@ const deleteSample = async (req, res) => {
 };
 
 const updateArticleNo = async (req, res) => {
+  try {
+    const { ArticleNo } = req.body;  
+    const { RSN } = req.params;
 
-}
+    // Validate the inputs
+    if (!ArticleNo || !RSN) {
+      return res.status(400).json({
+        message: "RSN and ArticleNo are required fields."
+      });
+    }
+
+    // Prepare the query to update the ArticleNo where RSN matches
+    const query = `UPDATE sample_details SET ArticleNo = ? WHERE RSN = ?`;
+
+    // Execute the query
+    const [results] = await db.query(query, [ArticleNo, RSN]);
+
+    // Check if any rows were updated
+    if (results.affectedRows === 0) {
+      return res.status(404).json({
+        message: "No record found with the provided RSN."
+      });
+    }
+
+    // Respond with success
+    return res.status(200).json({
+      message: "ArticleNo updated successfully."
+    });
+
+  } catch (error) {
+    console.error("Error updating ArticleNo:", error);
+    return res.status(500).json({
+      message: "Error updating ArticleNo."
+    });
+  }
+};
 
 module.exports = {
   getSampleDetailsData,

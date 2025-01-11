@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getColorMatchingByRSN, getPanel } from "../API/ColorApi";
 import { getColorDetailByColorId } from "../API/ColorDetailApi";
+import { getSize } from "../API/SampleApi";
 
 const isValidValue = (value) => {
   return value !== null && value !== "" && value !== 0;
@@ -19,6 +20,7 @@ const ShowColor = () => {
   const [colorDetails, setColorDetails] = useState({});
   const [selectedPanels, setSelectedPanels] = useState(null);
   const [selectedStates, setSelectedStates] = useState({});
+  const [sizeData, setSizeData] = useState(null); // State to hold size data
 
   // First useEffect for fetching color matching data
   useEffect(() => {
@@ -69,7 +71,7 @@ const ShowColor = () => {
           }
           return acc;
         }, {});
-        
+
         setSelectedStates(states);
       } catch (err) {
         console.error("Failed to fetch panel data:", err);
@@ -80,6 +82,22 @@ const ShowColor = () => {
       fetchPanelData();
     }
   }, [RSN, selectedPanels]);
+
+  // Fetch size data from getSize API
+  useEffect(() => {
+    const fetchSizeData = async () => {
+      try {
+        const response = await getSize(RSN);
+        setSizeData(response.data);
+      } catch (err) {
+        console.error("Failed to fetch size data:", err);
+      }
+    };
+
+    if (RSN) {
+      fetchSizeData();
+    }
+  }, [RSN]);
 
   if (loading) return <p>Loading color matching data...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -130,7 +148,6 @@ const ShowColor = () => {
       const weights = validColorKeys.map(
         (colorKey) => details[colorKey].Weight
       );
-
       return (
         <td>
           {validColorKeys.length > 0 ? (
@@ -174,7 +191,7 @@ const ShowColor = () => {
 
   // Function to handle navigation next
   const handleNext = () => {
-    navigate(`/yarn-usage/${RSN}`, { state: { RSN } });
+    navigate(`/yarn-usage/${RSN}`, { state: { RSN }, size: sizeData });
   };
 
   // Function to handle Add Color button click
@@ -183,7 +200,9 @@ const ShowColor = () => {
       console.log("Panels are not loaded yet, please try again later.");
       return;
     }
-    navigate(`/add-color-details/${RSN}`, { state: { RSN, selectedStates, size: 'M', action: 'addUpdate' } });
+    navigate(`/add-color-details/${RSN}`, {
+      state: { RSN, selectedStates, size: sizeData, action: "addUpdate" },
+    });
   };
 
   return (

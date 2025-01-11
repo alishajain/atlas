@@ -209,3 +209,13 @@ export const deleteSample = async (RSN) => {
     }
   }
 };
+
+export const getSize = async (RSN) => {
+  try {
+    const response = await axios.get(`${API_URL}/get-size/${RSN}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching knitting size:', error.response || error.message);
+    throw error;
+  }
+};

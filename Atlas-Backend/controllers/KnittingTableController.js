@@ -1,12 +1,24 @@
 const db = require("../db/database");
 
 // Fetch data from Knitting_Details table
-const getKnittingDetails = async (req, res) => {
+const getKnittingSize = async (req, res) => {
+  const RSN = req.params.RSN;
+
   try {
-    const [results] = await db.query("SELECT * FROM knitting_details");
+    // Execute the database query to fetch the knitting size
+    const [results] = await db.query("SELECT Size FROM knitting_details WHERE RSN = ?", [RSN]);
+
+    // Check if results are empty and return a no data found message if necessary
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No knitting size found for the provided RSN." });
+    }
+
+    // Return the data if found
     res.json({ success: true, data: results });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Log the error for debugging purposes
+    console.error("Error fetching knitting size:", err);
+    res.status(500).json({ error: "An error occurred while fetching knitting size." });
   }
 };
 
@@ -259,7 +271,7 @@ const updateKnittingDetails = async (req, res) => {
 };
 
 module.exports = {
-  getKnittingDetails,
+  getKnittingSize,
   addKnittingDetails,
   getKnittingDetailsByRSN,
   updateKnittingDetails,
