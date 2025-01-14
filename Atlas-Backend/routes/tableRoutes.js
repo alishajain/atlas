@@ -18,7 +18,7 @@ const articleController = require('../controllers/ArticleController');
 const orderController = require('../controllers/OrderController');
 
 // Routes for Sample Details
-router.get('/SampleDetails', sampleController.getSampleDetailsData);
+router.get('/SampleList', sampleController.getSampleList);
 router.post('/add-sample', sampleController.addSampleDetails);
 router.get('/sample-details/:RSN', sampleController.getSampleDetailsByRSN);
 router.put('/update-sample', sampleController.updateSampleRecord);

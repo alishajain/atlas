@@ -5,6 +5,11 @@ const WelcomeSample = () => {
   const navigate = useNavigate(); // Initialize useNavigate for routing
 
   // Function to handle navigation to '/add-sample'
+  const handleAllSample = () => {
+    navigate("/show-all-samples");
+  };
+
+  // Function to handle navigation to '/add-sample'
   const handleAddSample = () => {
     navigate("/add-sample");
   };
@@ -14,16 +19,27 @@ const WelcomeSample = () => {
     navigate("/get-RSN");
   };
 
+  // Function to handle navigation to '/home'
+  const handleHome = () => {
+    navigate("/home");
+  };
+
   return (
     <div className="welcome-container">
       <h1>Welcome to Sample Details Form</h1>
       <div className="button-group">
+      <button onClick={handleAllSample}>
+          Show all Samples
+        </button>
         <button onClick={handleShowSample}>
           Show Sample Details
         </button>
         <button onClick={handleAddSample}>
           Add New Sample Record
         </button>
+      </div>
+      <div>
+        <button onClick={handleHome}>Home</button>
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ const Home = () => {
             src={sample}
             alt="Sample"
             style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
-            onClick={() => navigate("/sample")}
+            onClick={() => navigate("/welcome-sample")}
           />
           <p>Sample</p>
         </div>

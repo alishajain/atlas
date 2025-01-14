@@ -5,7 +5,7 @@ import ShowKnittingDetails from "../Components/ShowKnittingDetails";
 import ShowImage from "../Components/ShowImage";
 import Comments from "../Components/Comments";
 
-const ShowSamples = () => {
+const ShowDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,4 +40,4 @@ const ShowSamples = () => {
   );
 };
 
-export default ShowSamples;
+export default ShowDetails;

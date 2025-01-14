@@ -219,3 +219,13 @@ export const getSize = async (RSN) => {
     throw error;
   }
 };
+
+export const sampleList = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/SampleList`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching sample list:', error.response || error.message);
+    throw error;
+  }
+};

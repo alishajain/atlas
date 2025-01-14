@@ -9,7 +9,7 @@ const AddNewSample = () => {
   };
 
   const handleNoClick = () => {
-    navigate("/home"); 
+    navigate("/welcome-sample"); 
   };
 
   return (

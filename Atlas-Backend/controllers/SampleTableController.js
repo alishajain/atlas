@@ -1,12 +1,18 @@
 const db = require("../db/database");
 
 // Fetch data from Sample_Details table
-const getSampleDetailsData = async (req, res) => {
+const getSampleList = async (req, res) => {
   try {
-    const [results] = await db.query("SELECT * FROM sample_details");
-    res.json({ success: true, data: results });
+    const [rows] = await db.query(" SELECT sd.RSN, sd.ArticleNo, kd.Total, si.ImageData FROM sample_details sd LEFT JOIN knitting_details kd ON sd.RSN = kd.RSN LEFT JOIN sample_images si ON sd.RSN = si.RSN");
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Sample record not found." });
+    }
+
+    res.status(200).json({ success: true, data: rows });
   } catch (err) {
-    res.status(500).json({ error: err.message }); // Return error response if query fails
+    console.error("Error fetching sample details:", err);
+    res.status(500).json({ success: false, message: "Error fetching sample details.", error: err.message });
   }
 };
 
@@ -256,7 +262,7 @@ const updateArticleNo = async (req, res) => {
 };
 
 module.exports = {
-  getSampleDetailsData,
+  getSampleList,
   addSampleDetails,
   updateSampleRecord,
   getSampleDetailsByRSN,

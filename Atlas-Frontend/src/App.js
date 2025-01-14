@@ -5,11 +5,12 @@ import AddSampleDetails from "./Components/AddSampleDetails";
 import AddKnittingDetailsForm from "./Components/AddKnittingDetails";
 import AddColorMatching from "./Components/AddColorMatching";
 import WelcomeSample from "./Pages/WelcomeSample";
+import SampleList from "./Components/SampleList";
 import AddSample from "./Pages/AddSample";
 import ShowColor from "./Components/ShowColor";
 import SampleActions from "./Pages/SampleActions";
 import RSNInput from "./Components/RSNInput";
-import ShowSamples from "./Pages/ShowSamples";
+import ShowDetails from "./Pages/ShowDetails";
 import DeleteSample from "./Pages/DeleteSample";
 import UpdateSampleDetails from "./Components/UpdateSampleDetails";
 import UpdateKnittingDetails from "./Components/UpdateKnittingDetails";
@@ -50,7 +51,7 @@ const App = () => {
 
           <Route path="/home" element={<Home />} />
 
-          <Route path="/sample" element={<WelcomeSample />} />
+          <Route path="/welcome-sample" element={<WelcomeSample />} />
 
           {/* Routes for adding sample details */}
           <Route path="/add-sample" element={<AddSample />} />
@@ -67,8 +68,9 @@ const App = () => {
           />
 
           {/* Routes for displaying sample data */}
+          <Route path="/show-all-samples" element={<SampleList />} />
           <Route path="/get-RSN" element={<RSNInput />} />
-          <Route path="/show-sample/:RSN" element={<ShowSamples />} />
+          <Route path="/show-sample/:RSN" element={<ShowDetails />} />
           <Route path="/show-color/:RSN" element={<ShowColor />} />
           <Route path="/yarn-usage/:RSN" element={<YarnUsage />} />
 
