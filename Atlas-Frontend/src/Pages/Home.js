@@ -8,6 +8,7 @@ import sample from "../Images/sample.jpg";
 import employee from "../Images/employee.jpg";
 import machine from "../Images/machine.jpeg";
 import yarn from "../Images/Yarn.jpg";
+import order from "../Images/order.jpeg"
 
 const Home = () => {
   const navigate = useNavigate();
@@ -61,6 +62,15 @@ const Home = () => {
             onClick={() => navigate("/sample")}
           />
           <p>Sample</p>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={order}
+            alt="Order"
+            style={{ width: 130, height: 130, cursor: "pointer", marginBottom: "8px" }}
+            onClick={() => navigate("/order")}
+          />
+          <p>Order</p>
         </div>
       </div>
     </div>

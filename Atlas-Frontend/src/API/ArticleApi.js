@@ -23,3 +23,14 @@ export const updateArticleNo = async (RSN, ArticleNo) => {
     throw error;
   }
 };
+
+// to fetch article nos
+export const getArticleNos = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-article-numbers`);
+    return response.data;
+  } catch (error) {
+    console.error('Error retrieving article numbers:', error);
+    throw error;
+  }
+};

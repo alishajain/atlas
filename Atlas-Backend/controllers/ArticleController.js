@@ -81,4 +81,39 @@ const addArticleMaster = async (req, res) => {
   }
 };
 
-module.exports = { addArticleMaster };
+// Function to get all ArticleNo
+const getAllArticleNos = async (req, res) => {
+  let connection;
+  try {
+    // Get a connection from the pool
+    connection = await db.getConnection();
+
+    // Query to fetch all ArticleNo from the article_master table
+    const [results] = await connection.query("SELECT ArticleNo FROM article_master");
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No article numbers found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Article numbers retrieved successfully",
+      data: results,
+    });
+  } catch (error) {
+    console.error("Error retrieving article numbers:", error);
+    res.status(500).json({
+      success: false,
+      message: `Error retrieving article numbers: ${error.message}`,
+    });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
+module.exports = { addArticleMaster, getAllArticleNos };

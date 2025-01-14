@@ -31,6 +31,11 @@ import MachineDetails from "./Components/MachineDetails";
 import SearchMachine from "./Components/SearchMachine";
 import AddArticle from "./Components/AddArticle";
 import YarnUsage from "./Components/YarnUsage";
+import AddOrder from "./Components/AddOrder";
+import SearchOrder from "./Components/SearchOrder";
+import ShowOrders from "./Components/ShowOrders";
+import UpdateOrder from "./Components/UpdateOrder";
+import Order from "./Pages/Order";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -96,6 +101,13 @@ const App = () => {
           <Route path="/add-machine" element={<AddMachine />} />
           <Route path="/show-machine" element={<MachineDetails />} />
           <Route path="/search-machine" element={<SearchMachine />} />
+
+           {/* Routes for Ordere mnagement */}
+           <Route path="/order" element={<Order />} />
+           <Route path="/show-orders" element={<ShowOrders />} />
+           <Route path="/add-order" element={<AddOrder />} />
+           <Route path="/update-order" element={<UpdateOrder />} />
+           <Route path="/search-order" element={<SearchOrder />} />
         </Routes>
       </div>
     </Router>
