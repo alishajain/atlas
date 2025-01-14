@@ -1,22 +1,18 @@
 /* MachineDetails.css */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+    width: 90%;    
+    border: 1px;
+    margin: 2px;
   }
   
   th, td {
+    width:max-content ;
     border: 1px solid #ddd;
     padding: 8px;
-    text-align: left;
+    text-align: center;
   }
   
   th {
     background-color: #f2f2f2;
-  }
-  
-  td[colspan="8"] {
-    text-align: center;
-    padding: 10px;
   }
   

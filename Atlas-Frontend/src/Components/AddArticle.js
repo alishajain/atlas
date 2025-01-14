@@ -70,34 +70,33 @@ const AddArticle = () => {
     event.preventDefault();
     setLoading(true);
     setError("");
-
+  
     // Prepare form data based on selected sizes and their weight variance
     const formData = {
       RSN: RSN,
       ArticleNo: articleNumber,
       UserId: userId,
-      Freesize: sizes.Freesize.selected ? sizes.Freesize.wtvariance : null,
-      XS: sizes.XS.selected ? sizes.XS.wtvariance : null,
-      S: sizes.S.selected ? sizes.S.wtvariance : null,
-      M: sizes.M.selected ? sizes.M.wtvariance : null,
-      L: sizes.L.selected ? sizes.L.wtvariance : null,
-      XL: sizes.XL.selected ? sizes.XL.wtvariance : null,
-      "2XL": sizes["2XL"].selected ? sizes["2XL"].wtvariance : null,
-      "3XL": sizes["3XL"].selected ? sizes["3XL"].wtvariance : null,
-      "4XL": sizes["4XL"].selected ? sizes["4XL"].wtvariance : null,
-      "5XL": sizes["5XL"].selected ? sizes["5XL"].wtvariance : null,
+      Freesize: sizes.Freesize.selected ? sizes.Freesize.wtvariance : (isSizeMatched("Freesize")? "0": null),
+      XS: sizes.XS.selected ? sizes.XS.wtvariance : (isSizeMatched("XS")? "0": null),
+      S: sizes.S.selected ? sizes.S.wtvariance : (isSizeMatched("S")? "0": null),
+      M: sizes.M.selected ? sizes.M.wtvariance : (isSizeMatched("M")? "0": null),
+      L: sizes.L.selected ? sizes.L.wtvariance : (isSizeMatched("L")? "0": null),
+      XL: sizes.XL.selected ? sizes.XL.wtvariance : (isSizeMatched("XL")? "0": null),
+      "2XL": sizes["2XL"].selected ? sizes["2XL"].wtvariance : (isSizeMatched("2XL")? "0": null),
+      "3XL": sizes["3XL"].selected ? sizes["3XL"].wtvariance : (isSizeMatched("3XL")? "0": null),
+      "4XL": sizes["4XL"].selected ? sizes["4XL"].wtvariance : (isSizeMatched("4XL")? "0": null),
+      "5XL": sizes["5XL"].selected ? sizes["5XL"].wtvariance : (isSizeMatched("5XL")? "0": null),
     };
-
+  
     // Log the form data
     console.log("Form data:", formData);
-    console.log("Size", sizeData);
-
+  
     try {
       // Add article first
       const addResponse = await addArticle(formData);
       if (addResponse.success) {
         alert("Article added successfully!"); // Success alert
-
+  
         // Now, call the updateArticleNo API to update ArticleNo with RSN
         const updateResponse = await updateArticleNo(RSN, { ArticleNo: articleNumber });
         if (updateResponse.message === "ArticleNo updated successfully.") {
@@ -114,7 +113,7 @@ const AddArticle = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   // Compare sizeData with sizes and set weight variance to '0' for matching sizes
   const isSizeMatched = (size) => {
@@ -159,17 +158,17 @@ const AddArticle = () => {
                   name={size}
                   checked={sizes[size].selected}
                   onChange={handleSizeChange}
-                  disabled={isSizeMatched(size)} // Disable checkbox if size matches
+                  disabled={isSizeMatched(size)}
                 />
                 <label>{size.toUpperCase()}</label>
                 {sizes[size].selected && (
                   <input
                     type="text"
                     name={`${size}_wtvariance`}
-                    value={isSizeMatched(size) ? "0" : sizes[size].wtvariance}
+                    value={isSizeMatched(size) ? 0 : sizes[size].wtvariance}
                     placeholder="Weight variance (%)"
                     onChange={handleWeightChange}
-                    readOnly={isSizeMatched(size)} // Make the input read-only if size matches
+                    readOnly={isSizeMatched(size)}
                   />
                 )}
               </div>
@@ -183,7 +182,6 @@ const AddArticle = () => {
         {/* Loading indicator */}
         {loading && <div>Loading...</div>}
 
-        {/* Submit Button */}
         <div>
           <button type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit"}

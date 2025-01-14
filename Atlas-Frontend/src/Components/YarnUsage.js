@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 const YarnUsage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const RSN = location.state?.RSN || null; // Make sure RSN is properly passed
+  const RSN = location.state?.RSN || null;
   const userId = useSelector((state) => state.user.userId);
 
   const [matchingNames, setMatchingNames] = useState([]);
@@ -131,6 +131,11 @@ const YarnUsage = () => {
     });
   };
 
+   // Handle Back button
+   const handleBackButton = () => {
+    navigate(`/show-color/${RSN}`, { state: { RSN } });
+  };
+
   // Handle inserting data
   const handleInsertData = async () => {
     try {
@@ -203,6 +208,7 @@ const YarnUsage = () => {
         <p>No yarn usage data available.</p>
       )}
 
+      <button onClick={handleBackButton}>Back</button>
       <button onClick={handleInsertData}>Insert Data</button>
       <button onClick={handleNext}>Next</button>
     </div>

@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { sampleList } from "../API/SampleApi";
+import { useNavigate } from "react-router-dom";
+import RSNInput from "./RSNInput";
+import "../Styles/MachineDetails.css";
 
 const SampleList = () => {
+  const navigate = useNavigate();
+
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,9 +39,15 @@ const SampleList = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
+  const handleBackButton = () => {
+    navigate('/welcome-sample');
+  };
+
   return (
     <div>
+      <RSNInput />
       <h2>Sample List</h2>
+      <button onClick={handleBackButton}>Back</button>
       {samples.length > 0 ? (
         <table
           border="1"
@@ -62,9 +73,9 @@ const SampleList = () => {
                 <td>
                   {sample.imagePath ? (
                     <img
-                      src={`http://147.93.29.228:5000/${sample.imagePath}`}
+                      src={`http://localhost:5000/${sample.imagePath}`}
                       alt="Sample Image"
-                      style={{ width: "100px", height: "auto" }}
+                      style={{ width: "80px", height: "auto" }}
                     />
                   ) : (
                     "No image"

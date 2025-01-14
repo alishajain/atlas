@@ -14,11 +14,6 @@ const WelcomeSample = () => {
     navigate("/add-sample");
   };
 
-  // Function to handle navigation to '/get-RSN'
-  const handleShowSample = () => {
-    navigate("/get-RSN");
-  };
-
   // Function to handle navigation to '/home'
   const handleHome = () => {
     navigate("/home");
@@ -29,10 +24,7 @@ const WelcomeSample = () => {
       <h1>Welcome to Sample Details Form</h1>
       <div className="button-group">
       <button onClick={handleAllSample}>
-          Show all Samples
-        </button>
-        <button onClick={handleShowSample}>
-          Show Sample Details
+          Show Samples
         </button>
         <button onClick={handleAddSample}>
           Add New Sample Record

@@ -14,10 +14,6 @@ const RSNInput = ({ onSubmit }) => {
     navigate(`/show-sample/${RSN}`, { state: { RSN: RSN } });
   };
 
-  const handleBackButton = () => {
-    navigate("/welcome-sample");
-  };
-
   return (
     <div>
       <h1>Enter RSN</h1>
@@ -32,11 +28,8 @@ const RSNInput = ({ onSubmit }) => {
             placeholder="Enter RSN to fetch details"
             required
           />
-        </div>
         <button type="submit">Submit</button>
-        <button type="button" onClick={handleBackButton}>
-          Back
-        </button>
+        </div>
       </form>
     </div>
   );
