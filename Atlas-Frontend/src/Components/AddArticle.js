@@ -120,13 +120,17 @@ const AddArticle = () => {
     return sizeData && sizeData[0].Size === size;
   };
 
+  const handleHomeButton = () => {
+    navigate('/welcome-sample');
+  };
+  
   return (
     <div>
       <h1>Add Article</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>RSN:</label>
-          <input type="text" value={RSN} readOnly />
+          <input type="text" value={RSN} disabled />
         </div>
 
         {/* Article Number Field */}
@@ -188,6 +192,7 @@ const AddArticle = () => {
           </button>
         </div>
       </form>
+      <button onClick={handleHomeButton}>Home</button>
     </div>
   );
 };
