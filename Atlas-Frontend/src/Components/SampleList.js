@@ -62,7 +62,7 @@ const SampleList = () => {
                 <td>
                   {sample.imagePath ? (
                     <img
-                      src={`http://localhost:5000/${sample.imagePath}`}
+                      src={`http://147.93.29.228:5000/${sample.imagePath}`}
                       alt="Sample Image"
                       style={{ width: "100px", height: "auto" }}
                     />
