@@ -59,7 +59,7 @@ const UpdateOrder = () => {
         window.alert(
           `Order No ${orderDetails.OrderNo} has been updated successfully.`
         );
-        navigate("/"); // Navigate back to the home page after successful update
+        navigate("/order");
       } else {
         setError("Failed to update the order");
       }

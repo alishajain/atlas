@@ -30,7 +30,7 @@ const addOrderDetails = async (req, res) => {
 
   try {
     const result = await db.query(
-      "INSERT INTO order_details (OrderDate, OrderStatus, Client, ArticleNo, DelieveryDate, ApprovedBy, UserId) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO order_master (OrderDate, OrderStatus, Client, ArticleNo, DelieveryDate, ApprovedBy, UserId) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         OrderDate,
         OrderStatus,
@@ -80,7 +80,7 @@ const updateOrderDetails = async (req, res) => {
 
   try {
     const updateQuery = `
-      UPDATE order_details
+      UPDATE order_master
       SET OrderDate = ?, OrderStatus = ?, Client = ?, ArticleNo = ?, DelieveryDate = ?, ApprovedBy = ?, UserId = ?
       WHERE OrderNo = ?
     `;
@@ -132,7 +132,7 @@ const updateOrderStatus = async (req, res) => {
   try {
     console.log("Alisha");
     const result = await db.query(
-      "UPDATE order_details SET OrderStatus = ? WHERE OrderNo = ?",
+      "UPDATE order_master SET OrderStatus = ? WHERE OrderNo = ?",
       [OrderStatus, OrderNo]
     );
 
@@ -162,7 +162,7 @@ const deleteOrder = async (req, res) => {
   const { OrderNo } = req.params;
 
   try {
-    const result = await db.query("DELETE FROM order_details WHERE OrderNo = ?", [OrderNo]);
+    const result = await db.query("DELETE FROM order_master WHERE OrderNo = ?", [OrderNo]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -186,7 +186,7 @@ const deleteOrder = async (req, res) => {
 // Show all orders
 const getAllOrders = async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM order_details");
+    const result = await db.query("SELECT * FROM order_master");
 
     if (result.length === 0) {
       return res.status(404).json({
@@ -213,7 +213,7 @@ const getOrderDetails = async (req, res) => {
     const OrderNo = req.params.OrderNo;
 
     try {
-      const result = await db.query("SELECT * FROM order_details WHERE OrderNo = ?", [OrderNo]);
+      const result = await db.query("SELECT * FROM order_master WHERE OrderNo = ?", [OrderNo]);
   
       if (result.length === 0) {
         return res.status(404).json({

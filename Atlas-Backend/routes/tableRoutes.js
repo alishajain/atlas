@@ -92,6 +92,7 @@ router.post('/comments', commentController.addComment);
 
 //Routes for Yarn Usage
 router.post('/add-yarn-usage', yarnUsageController.addYarnUsage);
+router.get('/get-yarn-usage/:ArticleNo', yarnUsageController.getYarnUsageByArticleNo);
 
 //Routes for Article Master
 router.post('/add-article', articleController.addArticleMaster);

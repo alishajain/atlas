@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addOrder } from '../API/OrderApi';
 import { getArticleNos } from '../API/ArticleApi';
 import { useSelector } from 'react-redux';
+import AddOrderDetails from './AddOrderDetails';  // Import AddOrderDetails component
 
 const AddOrder = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const AddOrder = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [articleNos, setArticleNos] = useState([]);
+  const [isOrderAdded, setIsOrderAdded] = useState(false);  // New state to track order addition
 
   useEffect(() => {
     const fetchArticleNos = async () => {
@@ -54,6 +56,7 @@ const AddOrder = () => {
     try {
       const response = await addOrder(orderData);
       setSuccess(response.message);
+      setIsOrderAdded(true);  // Set order as added
       setOrderData({
         OrderDate: '',
         OrderStatus: '',
@@ -152,6 +155,9 @@ const AddOrder = () => {
         </div>
       </form>
       <button onClick={handleBackButton}>Back</button>
+
+      {/* Conditionally render AddOrderDetails component */}
+      {isOrderAdded && <AddOrderDetails ArticleNo={orderData.ArticleNo} />}
     </div>
   );
 };

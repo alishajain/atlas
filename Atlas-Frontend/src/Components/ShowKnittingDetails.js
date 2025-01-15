@@ -64,6 +64,7 @@ const ShowKnittingDetails = ({ RSN }) => {
                       <th>Field</th>
                       <th>Weight</th>
                       <th>Time</th>
+                      <th>Machine Number</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -74,13 +75,14 @@ const ShowKnittingDetails = ({ RSN }) => {
                             <td>{key}</td>
                             <td>{value.Weight || "N/A"}</td>
                             <td>{value.Time || "N/A"}</td>
+                            <td>{value.MachineNo || "N/A"}</td>
                           </tr>
                         );
                       }
                       return (
                         <tr key={key}>
                           <td>{key}</td>
-                          <td colSpan="2">{value}</td>
+                          <td colSpan="3">{value}</td>
                         </tr>
                       );
                     })}

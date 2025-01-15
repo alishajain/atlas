@@ -24,6 +24,10 @@ const Order = () => {
       <div>
         <button onClick={() => handleNavigation("/search-order")}>Search Order</button>
       </div>
+
+      <div>
+        <button onClick={() => handleNavigation("/home")}>Home</button>
+      </div>
     </div>
   );
 };

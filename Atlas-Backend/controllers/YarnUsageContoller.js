@@ -26,7 +26,8 @@ const addYarnUsage = async (req, res) => {
   // Validate input data
   if (!RSN || !MatchingName || !UserId || !Yarn1) {
     return res.status(400).json({
-      message: "Missing required fields: RSN, MatchingName, UserId, and Yarn1 are mandatory.",
+      message:
+        "Missing required fields: RSN, MatchingName, UserId, and Yarn1 are mandatory.",
     });
   }
 
@@ -106,4 +107,51 @@ const addYarnUsage = async (req, res) => {
   }
 };
 
-module.exports = { addYarnUsage };
+// Function to fetch yarn usage details based on ArticleNo
+const getYarnUsageByArticleNo = async (req, res) => {
+  const { ArticleNo } = req.params;
+
+  if (!ArticleNo) {
+    return res.status(400).json({
+      message: "ArticleNo is required.",
+    });
+  }
+
+  const query = `
+    SELECT * 
+    FROM article_master AS am
+    INNER JOIN yarn_usage AS yu
+    ON am.RSN = yu.RSN
+    WHERE am.ArticleNo = ?;
+  `;
+
+  let connection;
+  try {
+    connection = await db.getConnection();
+    const [yarnUsageData] = await connection.query(query, [ArticleNo]);
+
+    if (yarnUsageData.length === 0) {
+      return res.status(404).json({
+        message: `No yarn usage data found for ArticleNo: ${ArticleNo}`,
+      });
+    }
+
+    // Send the data as a response
+    res.status(200).json({
+      success: true,
+      data: yarnUsageData,
+    });
+  } catch (error) {
+    console.error("Error fetching Yarn Usage data:", error);
+    res.status(500).json({
+      success: false,
+      message: `Error fetching Yarn Usage data: ${error.message}`,
+    });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
+module.exports = { addYarnUsage, getYarnUsageByArticleNo };

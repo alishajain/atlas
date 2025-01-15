@@ -37,6 +37,7 @@ import SearchOrder from "./Components/SearchOrder";
 import ShowOrders from "./Components/ShowOrders";
 import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
+import AddOrderDetails from "./Components/AddOrderDetails";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -46,7 +47,7 @@ const App = () => {
       <div>
         <Routes>
           {/* Route for signin page */}
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<AddOrderDetails ArticleNo='A73' />} />
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/home" element={<Home />} />
