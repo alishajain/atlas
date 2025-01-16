@@ -56,15 +56,7 @@ const AddOrder = () => {
     try {
       const response = await addOrder(orderData);
       setSuccess(response.message);
-      setIsOrderAdded(true);  // Set order as added
-      setOrderData({
-        OrderDate: '',
-        OrderStatus: '',
-        Client: '',
-        ArticleNo: '',
-        DelieveryDate: '',
-        ApprovedBy: '',
-      });
+      setIsOrderAdded(true);
     } catch (error) {
       setError('Failed to add order. Please try again.');
     } finally {
@@ -156,8 +148,10 @@ const AddOrder = () => {
       </form>
       <button onClick={handleBackButton}>Back</button>
 
-      {/* Conditionally render AddOrderDetails component */}
-      {isOrderAdded && <AddOrderDetails ArticleNo={orderData.ArticleNo} />}
+      {/* Conditionally render AddOrderDetails component only if ArticleNo is available */}
+      {isOrderAdded && orderData.ArticleNo && (
+        <AddOrderDetails ArticleNo={orderData.ArticleNo} />
+      )}
     </div>
   );
 };

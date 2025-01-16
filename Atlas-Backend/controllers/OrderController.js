@@ -235,6 +235,17 @@ const getOrderDetails = async (req, res) => {
     }
 };
 
+// New function to fetch the latest RSN (auto-incremented value)
+const getLatestOrderNo = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT MAX(OrderNo) AS OrderNo FROM order_master');
+    res.json({ success: true, OrderNo: rows[0].OrderNo });
+  } catch (err) {
+    console.error("Error fetching latest OrderNo:", err);
+    res.status(500).json({ success: false, message: "Error fetching latest OrderNo", error: err.message });
+  }
+};
+
 module.exports = {
   addOrderDetails,
   updateOrderDetails,
@@ -242,4 +253,5 @@ module.exports = {
   deleteOrder,
   getAllOrders,
   getOrderDetails,
+  getLatestOrderNo,
 };

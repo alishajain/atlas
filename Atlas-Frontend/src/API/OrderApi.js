@@ -14,7 +14,6 @@ const addOrder = async (orderData) => {
 
 const updateOrder = async (orderNo, orderData) => {
   try {
-    console.log(orderData);
     const response = await axios.put(`${API_URL}/update-order/${orderNo}`, orderData);
     return response.data;
   } catch (error) {
@@ -53,6 +52,16 @@ const getAllOrders = async () => {
   }
 };
 
+const getOrderNo = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-orderNo`);
+    return response.data;
+  } catch (error) {
+    console.error('Error retrieving order no:', error);
+    throw error;
+  }
+};
+
 const getOrderDetails = async (orderNo) => {
   try {
     const response = await axios.get(`${API_URL}/get-order/${orderNo}`);
@@ -70,4 +79,5 @@ export {
   deleteOrder,
   getAllOrders,
   getOrderDetails,
+  getOrderNo,
 };

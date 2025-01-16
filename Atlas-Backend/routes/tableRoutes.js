@@ -16,6 +16,8 @@ const commentController = require('../controllers/SampleCommentController');
 const yarnUsageController = require('../controllers/YarnUsageContoller');
 const articleController = require('../controllers/ArticleController');
 const orderController = require('../controllers/OrderController');
+const orderYarnController = require('../controllers/OrderYarnController');
+const orderDetailsController = require('../controllers/OrderDetailsController');
 
 // Routes for Sample Details
 router.get('/SampleList', sampleController.getSampleList);
@@ -105,6 +107,14 @@ router.put('/update-order-status/:OrderNo', orderController.updateOrderStatus);
 router.delete('/delete-order/:OrderNo', orderController.deleteOrder);
 router.get('/get-all-orders', orderController.getAllOrders);
 router.get('/get-order/:OrderNo', orderController.getOrderDetails);
+router.get('/get-orderNo', orderController.getLatestOrderNo);
+
+// Routes for Order Yarn
+router.post('/add-order-yarn', orderYarnController.addOrderYarn);
+
+//Routes for Order Details
+router.post('/add-order-details', orderDetailsController.addOrderDetails);
+router.put('/update-order-details', orderDetailsController.updateOrderDetails);
 
 // Export the router to use it in the main server file
 module.exports = router;
