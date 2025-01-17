@@ -73,13 +73,16 @@ const AddOrderDetails = ({ ArticleNo }) => {
 
   const handleQuantityChange = (matchingName, size, value) => {
     const quantity = parseInt(value) || 0;
-    setQuantities((prev) => ({
-      ...prev,
-      [matchingName]: {
-        ...prev[matchingName],
-        [size]: quantity,
-      },
-    }));
+    setQuantities((prev) => {
+      const updatedQuantities = {
+        ...prev,
+        [matchingName]: {
+          ...prev[matchingName],
+          [size]: quantity,
+        },
+      };
+      return updatedQuantities;
+    });
   };
 
   const calculateTotalQuantity = (matchingName) => {
@@ -105,89 +108,82 @@ const AddOrderDetails = ({ ArticleNo }) => {
 
   const calculateUpdatedWeight = (originalWeight, size, matchingName) => {
     const quantity = quantities[matchingName]?.[size];
-    if (!quantity) return 0;
+    if (quantity <= 0) return 0;
 
     const row = yarnUsageData.find((row) => row.MatchingName === matchingName);
     const percentage = row ? row[size] : 0;
 
-    return originalWeight * (1 + percentage / 100) * quantity;
+    const weight = originalWeight * (1 + percentage / 100) * quantity;
+    return weight > 0 ? weight : 0;
   };
 
-  // This function prepares the updated yarn usage data without calling the API
-  const handleSubmit = () => {
-    if (!orderNo) {
-      setError("Order No is not available.");
-      return;
-    }
+  // Pre-calculate yarn details whenever quantities change
+  useEffect(() => {
+    if (yarnUsageData.length > 0 && Object.keys(quantities).length > 0) {
+      const updatedData = yarnUsageData.map((data) => {
+        const yarns = getNonNullYarns(data);
+        const updatedYarns = yarns.reduce((acc, yarn, index) => {
+          const updatedYarnDetails = {};
+          let totalWeight = 0;
 
-    // Prepare the updated data in the required format for the API
-    const updatedData = yarnUsageData.map((data) => {
-      const yarns = getNonNullYarns(data);
-      const updatedYarns = yarns.reduce((acc, yarn, index) => {
-        const updatedYarnDetails = {};
-        let totalWeight = 0;
+          // Perform calculation for each size based on updated quantities
+          getNonNullSizes(data).forEach((size) => {
+            const updatedWeight = calculateUpdatedWeight(
+              yarn.Weight,
+              size,
+              data.MatchingName
+            );
+            updatedYarnDetails[size] = updatedWeight;
+            totalWeight += updatedWeight;
+          });
 
-        getNonNullSizes(data).forEach((size) => {
-          const updatedWeight = calculateUpdatedWeight(
-            yarn.Weight,
-            size,
-            data.MatchingName
-          );
-          updatedYarnDetails[size] = updatedWeight;
-          totalWeight += updatedWeight;
-        });
+          // Assign the calculated weight to the yarn
+          acc[`Yarn${index + 1}`] = {
+            YarnId: yarn.YarnId,
+            Weight: totalWeight,
+            ...updatedYarnDetails,
+          };
 
-        acc[`Yarn${index + 1}`] = {
-          YarnId: yarn.YarnId,
-          Weight: totalWeight,
+          return acc;
+        }, {});
+
+        return {
+          MatchingName: data.MatchingName,
+          UserId: userId,
+          OrderNo: orderNo,
+          ...updatedYarns,
         };
+      });
 
-        return acc;
-      }, {});
-
-      return {
-        MatchingName: data.MatchingName,
-        UserId: userId,
-        OrderNo: orderNo,
-        ...updatedYarns, // Dynamically adds Yarn1, Yarn2, etc. to the object
-      };
-    });
-
-    setUpdatedYarnUsageData(updatedData);
-  };
+      setUpdatedYarnUsageData(updatedData); // Update the state with the pre-calculated data
+    }
+  }, [quantities, yarnUsageData, userId, orderNo]);
 
   const addYarnHandler = async () => {
-    // Ensure updatedYarnUsageData has content
     if (updatedYarnUsageData.length === 0) {
       setError("No updated yarn usage data available.");
       return;
     }
 
-    // Process each updated yarn usage entry and send them via the API
     try {
       for (const data of updatedYarnUsageData) {
-        // Extract the yarn details dynamically
         const orderYarnData = {
           MatchingName: data.MatchingName,
           UserId: data.UserId,
           OrderNo: data.OrderNo,
-          // Dynamically add Yarn fields (Yarn1, Yarn2, etc.)
           ...Object.keys(data)
-            .filter((key) => key.startsWith("Yarn")) // Ensure only yarn fields are considered
+            .filter((key) => key.startsWith("Yarn"))
             .reduce((acc, key) => {
               acc[key] = data[key];
               return acc;
             }, {}),
         };
 
-        // Make API call to add yarn details for each MatchingName
-        const response = await addOrderYarn(orderYarnData);
+        await addOrderYarn(orderYarnData);
       }
 
-      // If all data was processed without error
       alert("Yarn details added successfully!");
     } catch (err) {
-      console.error("Failed to add yarn request:", err);
       setError("Failed to add yarn request.");
     }
   };
@@ -198,12 +194,10 @@ const AddOrderDetails = ({ ArticleNo }) => {
       return;
     }
 
-    // Iterate over each yarn usage data (each `MatchingName`)
     try {
       for (const data of yarnUsageData) {
         const matchingName = data.MatchingName;
 
-        // Prepare the order details for each matching name
         const orderDetails = {
           OrderNo: orderNo,
           MatchingName: matchingName,
@@ -215,17 +209,15 @@ const AddOrderDetails = ({ ArticleNo }) => {
           }, {}),
         };
 
-        // Call the API for each MatchingName
         await addOrderDetails(orderDetails);
       }
 
-      // If all order details are added successfully
       alert("Order details added successfully!");
     } catch (err) {
-      console.error("Failed to add order details:", err);
       setError("Failed to add order details.");
     }
   };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -283,7 +275,6 @@ const AddOrderDetails = ({ ArticleNo }) => {
       )}
 
       <button onClick={addOrderDetailsHandler}>Add Quantity</button>
-      <button onClick={handleSubmit}>Prepare Data</button>
 
       {updatedYarnUsageData.length > 0 && (
         <div style={{ marginTop: "30px" }}>
@@ -314,12 +305,27 @@ const AddOrderDetails = ({ ArticleNo }) => {
                       <td rowSpan={yarnKeys.length}>{data.MatchingName}</td>
                     )}
                     <td>{data[key].YarnId}</td>
-                    {nonNullSizes.map((size) => (
-                      <td key={`${size}-${yarnIndex}`}>
-                        {data[key].Weight ? data[key].Weight.toFixed(2) : "-"}
-                      </td>
-                    ))}
-                    <td>{data[key].Weight.toFixed(2)}</td>
+
+                    {nonNullSizes.map((size) => {
+                      const updatedWeight = data[key][size] || 0;
+
+                      return (
+                        <td key={`${size}-${yarnIndex}`}>
+                          {updatedWeight && updatedWeight !== 0
+                            ? updatedWeight.toFixed(2)
+                            : 0}
+                        </td>
+                      );
+                    })}
+
+                    <td>
+                      {nonNullSizes
+                        .reduce((total, size) => {
+                          const updatedWeight = data[key][size] || 0;
+                          return total + updatedWeight;
+                        }, 0)
+                        .toFixed(2)}
+                    </td>
                   </tr>
                 ));
               })}
