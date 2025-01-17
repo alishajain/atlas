@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { getImageByRSN } from "../API/ImageApi";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const ShowImage = ({ RSN }) => {
   const [imageData, setImageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -31,6 +34,11 @@ const ShowImage = ({ RSN }) => {
     fetchImage();
   }, [RSN]);
 
+  // Navigate to the Update Image page
+  const handleUpdateImage = () => {
+    navigate(`/update-image/${RSN}`, { state: { RSN: RSN } });
+  };
+
   if (loading) {
     return <p>Loading image...</p>;
   }
@@ -41,6 +49,9 @@ const ShowImage = ({ RSN }) => {
 
   return (
     <div>
+      <div style={{ marginBottom: "10px" }}>
+        <button onClick={handleUpdateImage}>Update Image</button>
+      </div>
       {imageData ? (
         <img
           src={`http://localhost:5000/${imageData}`}

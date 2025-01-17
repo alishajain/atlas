@@ -82,5 +82,55 @@ const getImage = async (req, res) => {
   }
 };
 
+// Function to update the image
+const updateImage = async (req, res) => {
+  try {
+    const { RSN } = req.params; // Get the RSN from params
+    const { ImageName, UserId } = req.body; // Image details to update
+
+    // Check if the image exists for the provided RSN
+    const selectQuery = "SELECT ImageData FROM sample_images WHERE RSN = ?";
+    const [existingImage] = await db.query(selectQuery, [RSN]);
+
+    if (existingImage.length === 0) {
+      return res.status(404).json({ message: "Image not found to update" });
+    }
+
+    // Delete the old image file from the filesystem
+    const oldImagePath = path.join(__dirname, "..", existingImage[0].ImageData);
+    if (fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath); // Delete the old image file
+    }
+
+    // Proceed to upload the new image if provided in the request
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "No image file uploaded to update" });
+    }
+
+    // New image file data
+    const newImageData = path.join("uploads", req.file.filename);
+
+    // Update the image data in the database
+    const updateQuery =
+      "UPDATE sample_images SET ImageName = ?, ImageData = ? WHERE RSN = ?";
+    const [updateResults] = await db.query(updateQuery, [
+      ImageName,
+      newImageData,
+      RSN,
+    ]);
+
+    // Return the result to the client
+    res.status(200).json({
+      message: "Image updated successfully",
+      data: updateResults,
+    });
+  } catch (error) {
+    console.error("Error during image update:", error);
+    return res.status(500).json({ message: "Error updating image" });
+  }
+};
+
 // Export the upload middleware and functions to be used in routes
-module.exports = { uploadImage, getImage, upload };
+module.exports = { uploadImage, getImage, updateImage, upload };

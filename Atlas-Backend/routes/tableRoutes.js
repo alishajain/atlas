@@ -69,6 +69,7 @@ router.get('/get-machineNo', machineController.getMachineNo);
 // Routes for Sample Image
 router.post('/upload-image', imageController.upload, imageController.uploadImage);
 router.get('/image/:RSN', imageController.getImage);
+router.put('/update-image/:RSN', imageController.upload, imageController.updateImage);
 
 // Routes for Color Matching
 router.get('/color-matching', colorMatchingController.getAllColorMatching); 

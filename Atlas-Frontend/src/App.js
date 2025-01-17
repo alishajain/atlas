@@ -37,7 +37,7 @@ import SearchOrder from "./Components/SearchOrder";
 import ShowOrders from "./Components/ShowOrders";
 import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
-import AddOrderDetails from "./Components/AddOrderDetails";
+import UpdateImage from "./Components/UpdateImage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -79,6 +79,7 @@ const App = () => {
           <Route path="/sample-actions/:RSN" element={<SampleActions />} />
           <Route path="/delete-sample/:RSN" element={<DeleteSample />} />
           <Route path="/update-sample/:RSN" element={<UpdateSampleDetails />} />
+          <Route path="/update-image/:RSN" element={<UpdateImage />}/>
           <Route
             path="/update-knitting/:RSN"
             element={<UpdateKnittingDetails />}
