@@ -101,7 +101,7 @@ router.get('/get-yarn-usage/:ArticleNo', yarnUsageController.getYarnUsageByArtic
 router.post('/add-article', articleController.addArticleMaster);
 router.get('/get-article-numbers', articleController.getAllArticleNos);
 
-//Routes for Order Details
+//Routes for Order Master
 router.post('/add-order', orderController.addOrderDetails);
 router.put('/update-order/:OrderNo', orderController.updateOrderDetails);
 router.put('/update-order-status/:OrderNo', orderController.updateOrderStatus);
@@ -112,10 +112,12 @@ router.get('/get-orderNo', orderController.getLatestOrderNo);
 
 // Routes for Order Yarn
 router.post('/add-order-yarn', orderYarnController.addOrderYarn);
+router.get ('/order-yarn/:OrderNo', orderYarnController.searchOrderYarnByOrderNo)
 
 //Routes for Order Details
 router.post('/add-order-details', orderDetailsController.addOrderDetails);
 router.put('/update-order-details', orderDetailsController.updateOrderDetails);
+router.get('/order-details/:OrderNo', orderDetailsController.getOrderByOrderNo);
 
 // Export the router to use it in the main server file
 module.exports = router;

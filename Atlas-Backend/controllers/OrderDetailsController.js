@@ -1,4 +1,4 @@
-const db = require("../db/database"); // Assuming your database connection is set up here
+const db = require("../db/database");
 
 // Controller function to add new order details
 const addOrderDetails = async (req, res) => {
@@ -123,7 +123,38 @@ const updateOrderDetails = async (req, res) => {
   }
 };
 
+// Controller function to get order details by OrderNo
+const getOrderByOrderNo = async (req, res) => {
+  const { OrderNo } = req.params;  // Extract OrderNo from the request parameters
+
+  if (!OrderNo) {
+    return res.status(400).json({
+      error: "OrderNo is required to search for the order.",
+    });
+  }
+
+  try {
+    // Query to get order details by OrderNo
+    const query = `
+      SELECT * FROM order_details
+      WHERE OrderNo = ?
+    `;
+
+    const [results] = await db.execute(query, [OrderNo]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Order not found." });
+    }
+
+    res.status(200).json({ data: results });
+  } catch (err) {
+    console.error("Error fetching order by OrderNo:", err);
+    res.status(500).json({ error: "Failed to fetch order details" });
+  }
+};
+
 module.exports = {
   addOrderDetails,
   updateOrderDetails,
+  getOrderByOrderNo,
 };

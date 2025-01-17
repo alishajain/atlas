@@ -38,6 +38,8 @@ import ShowOrders from "./Components/ShowOrders";
 import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
 import UpdateImage from "./Components/UpdateImage";
+import ShowOrderDetails from "./Components/ShowOrderDetails";
+import ShowOrderYarn from "./Components/ShowOrderYarn";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -47,7 +49,7 @@ const App = () => {
       <div>
         <Routes>
           {/* Route for signin page */}
-          <Route path="/" element={<Login/>} />
+          <Route path="/" element={<ShowOrderYarn/>} />
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/home" element={<Home />} />

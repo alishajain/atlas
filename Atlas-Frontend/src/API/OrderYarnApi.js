@@ -14,3 +14,15 @@ export const addOrderYarn = async (orderYarn) => {
     throw new Error(error.response?.data?.message || 'Error adding yarn request');
   }
 };
+
+// Function to search order yarn by OrderNo (GET request)
+export const searchOrderYarn = async (OrderNo) => {
+  try {
+    const response = await axios.get(`${API_URL}/order-yarn/${OrderNo}`);
+    return response.data;
+  } catch (error) {
+    // Handle errors and return an error message
+    console.error('Error searching order yarn by OrderNo:', error);
+    throw new Error(error.response?.data?.message || 'Error searching order yarn');
+  }
+};

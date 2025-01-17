@@ -146,4 +146,45 @@ const addOrderYarn = async (req, res) => {
   }
 };
 
-module.exports = { addOrderYarn };
+// Controller function to search order yarn data by OrderNo
+const searchOrderYarnByOrderNo = async (req, res) => {
+  const { OrderNo } = req.params;
+
+  // Validate that OrderNo is provided
+  if (!OrderNo) {
+    return res.status(400).json({
+      message: 'OrderNo is required to search for order yarn details.'
+    });
+  }
+
+  // Prepare the SQL query to fetch order yarn data by OrderNo
+  const query = `
+    SELECT * FROM order_yarn_req WHERE OrderNo = ?
+  `;
+
+  try {
+    // Execute the query with the provided OrderNo
+    const [result] = await db.execute(query, [OrderNo]);
+
+    // Check if any order yarn data is found
+    if (result.length === 0) {
+      return res.status(404).json({
+        message: 'No order yarn data found for the given OrderNo.'
+      });
+    }
+
+    // Return the search result
+    res.status(200).json({
+      message: 'Order yarn data retrieved successfully',
+      data: result
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Error retrieving order yarn data',
+      error: err.message
+    });
+  }
+};
+
+module.exports = { searchOrderYarnByOrderNo, addOrderYarn };

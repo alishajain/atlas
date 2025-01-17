@@ -23,3 +23,14 @@ export const updateOrderDetails = async (orderData) => {
     throw error;
   }
 };
+
+// Function to fetch order details by OrderNo
+export const getOrderByOrderNo = async (OrderNo) => {
+  try {
+    const response = await axios.get(`${API_URL}/order-details/${OrderNo}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching order by OrderNo:", error);
+    throw error;
+  }
+};
