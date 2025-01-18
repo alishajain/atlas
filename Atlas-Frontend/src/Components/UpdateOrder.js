@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { updateOrder } from "../API/OrderApi";
 
 const UpdateOrder = () => {
-  const { state } = useLocation(); // Get the order details from state
-  const navigate = useNavigate(); // Initialize navigate
+  const { state } = useLocation(); 
+  const navigate = useNavigate();
+  const userId = useSelector((state) => state.user.userId);
+
   const [orderDetails, setOrderDetails] = useState(
     state ? state.orderDetails : {}
   );
@@ -21,7 +24,7 @@ const UpdateOrder = () => {
     setOrderDetails((prevState) => ({
       ...prevState,
       [name]: value,
-      UserId: "admin",
+      UserId: userId,
     }));
   };
 

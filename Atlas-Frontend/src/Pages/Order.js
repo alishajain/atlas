@@ -14,15 +14,11 @@ const Order = () => {
       <h2>Order Management</h2>
       
       <div>
-        <button onClick={() => handleNavigation("/show-orders")}>Show All Orders</button>
+        <button onClick={() => handleNavigation("/search-orders")}>Show All Orders</button>
       </div>
 
       <div>
         <button onClick={() => handleNavigation("/add-order")}>Add New Order</button>
-      </div>
-
-      <div>
-        <button onClick={() => handleNavigation("/search-order")}>Search Order</button>
       </div>
 
       <div>

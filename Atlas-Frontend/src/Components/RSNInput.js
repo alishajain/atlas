@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const RSNInput = ({ onSubmit }) => {
+const RSNInput = () => {
   const [RSN, setRSN] = useState("");
   const navigate = useNavigate();
 

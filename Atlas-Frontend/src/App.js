@@ -33,13 +33,11 @@ import SearchMachine from "./Components/SearchMachine";
 import AddArticle from "./Components/AddArticle";
 import YarnUsage from "./Components/YarnUsage";
 import AddOrder from "./Components/AddOrder";
-import SearchOrder from "./Components/SearchOrder";
-import ShowOrders from "./Components/ShowOrders";
+import SearchOrders from "./Components/SearchOrders";
 import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
 import UpdateImage from "./Components/UpdateImage";
-import ShowOrderDetails from "./Components/ShowOrderDetails";
-import ShowOrderYarn from "./Components/ShowOrderYarn";
+import ShowOrder from "./Pages/ShowOrder";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -49,7 +47,7 @@ const App = () => {
       <div>
         <Routes>
           {/* Route for signin page */}
-          <Route path="/" element={<ShowOrderYarn/>} />
+          <Route path="/" element={<Login/>} />
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/home" element={<Home />} />
@@ -110,10 +108,10 @@ const App = () => {
 
            {/* Routes for Ordere mnagement */}
            <Route path="/order" element={<Order />} />
-           <Route path="/show-orders" element={<ShowOrders />} />
+           <Route path="/search-orders" element={<SearchOrders />} />
+           <Route path="/show-order/:orderNo" element={<ShowOrder />} />
            <Route path="/add-order" element={<AddOrder />} />
            <Route path="/update-order" element={<UpdateOrder />} />
-           <Route path="/search-order" element={<SearchOrder />} />
         </Routes>
       </div>
     </Router>

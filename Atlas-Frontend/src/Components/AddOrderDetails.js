@@ -137,11 +137,11 @@ const AddOrderDetails = ({ ArticleNo }) => {
             totalWeight += updatedWeight;
           });
 
-          // Assign the calculated weight to the yarn
+          // Assign the total weight to each yarn
           acc[`Yarn${index + 1}`] = {
             YarnId: yarn.YarnId,
-            Weight: totalWeight,
-            ...updatedYarnDetails,
+            Weight: totalWeight, // Store the total weight here
+            ...updatedYarnDetails, // Store individual weights for display
           };
 
           return acc;
@@ -172,13 +172,17 @@ const AddOrderDetails = ({ ArticleNo }) => {
           UserId: data.UserId,
           OrderNo: data.OrderNo,
           ...Object.keys(data)
-            .filter((key) => key.startsWith("Yarn"))
+            .filter((key) => key.startsWith("Yarn")) // Filter only yarn-related keys
             .reduce((acc, key) => {
-              acc[key] = data[key];
+              acc[key] = {
+                YarnId: data[key].YarnId,
+                Weight: data[key].Weight, // Only send the total weight
+              };
               return acc;
             }, {}),
         };
 
+        // Send only the total weight for each yarn to the API
         await addOrderYarn(orderYarnData);
       }
 

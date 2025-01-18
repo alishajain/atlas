@@ -68,6 +68,22 @@ const AddOrder = () => {
     navigate('/order');
   };
 
+  // Reset the form to its initial state
+  const handleAddAnotherOrder = () => {
+    setOrderData({
+      OrderDate: '',
+      OrderStatus: '',
+      Client: '',
+      ArticleNo: '',
+      DelieveryDate: '',
+      ApprovedBy: '',
+      UserId: userId,
+    });
+    setSuccess('');
+    setError('');
+    setIsOrderAdded(false);
+  };
+
   return (
     <div>
       <h2>Add New Order</h2>
@@ -151,6 +167,13 @@ const AddOrder = () => {
       {/* Conditionally render AddOrderDetails component only if ArticleNo is available */}
       {isOrderAdded && orderData.ArticleNo && (
         <AddOrderDetails ArticleNo={orderData.ArticleNo} />
+      )}
+
+      {/* Add Another Order button */}
+      {isOrderAdded && (
+        <div>
+          <button onClick={handleAddAnotherOrder}>Add Another Order</button>
+        </div>
       )}
     </div>
   );

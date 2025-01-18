@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllOrders } from "../API/OrderApi";
+import OrderNoInput from "./OrderNoInput";
 
-const ShowOrders = () => {
+const SearchOrders = () => {
   const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
@@ -34,6 +35,7 @@ const ShowOrders = () => {
 
   return (
     <div>
+      <OrderNoInput />
       <h2>All Orders</h2>
 
       {/* Display error message if any */}
@@ -79,4 +81,4 @@ const ShowOrders = () => {
   );
 };
 
-export default ShowOrders;
+export default SearchOrders;
