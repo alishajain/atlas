@@ -13,18 +13,23 @@ const ShowImage = ({ RSN }) => {
     const fetchImage = async () => {
       try {
         setLoading(true);
-        setError(null);
+        setError(null); // Reset error state on each fetch attempt
         const response = await getImageByRSN(Number(RSN));
 
         // Check if response data contains image and handle it
-        if (response.data && response.data.length > 0 && response.data[0].ImageData) {
+        if (
+          response.data &&
+          response.data.length > 0 &&
+          response.data[0].ImageData
+        ) {
           const imagePath = response.data[0].ImageData.replace(/\\/g, "/");
-          setImageData(imagePath);  // Set the relative image path
+          setImageData(imagePath);
         } else {
-          throw new Error("No ImageData found in response.");
+          setImageData(null); // No image data found
+          setError("No image uploaded yet."); // Set error if no image found
         }
       } catch (err) {
-        setError("Error fetching image");
+        setError("Error fetching image.");
         console.error("Error details:", err);
       } finally {
         setLoading(false);
@@ -39,12 +44,23 @@ const ShowImage = ({ RSN }) => {
     navigate(`/update-image/${RSN}`, { state: { RSN: RSN } });
   };
 
+  const handleAddImage = () => {
+    navigate(`/add-image/${RSN}`, {
+      state: { RSN: RSN },
+    });
+  };
+
   if (loading) {
     return <p>Loading image...</p>;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <div>
+        <p>{error}</p>
+        <button onClick={handleAddImage}>Add Image</button>
+      </div>
+    );
   }
 
   return (
@@ -52,6 +68,7 @@ const ShowImage = ({ RSN }) => {
       <div style={{ marginBottom: "10px" }}>
         <button onClick={handleUpdateImage}>Update Image</button>
       </div>
+
       {imageData ? (
         <img
           src={`http://localhost:5000/${imageData}`}

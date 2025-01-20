@@ -26,7 +26,20 @@ const ShowKnittingDetails = ({ RSN }) => {
   }, [RSN]);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+
+  const handleAddClick = () => {
+    navigate(`/panel-selection/${RSN}`, { state: { RSN, action: 'Add'} });
+  };
+
+  // 1. If there's an error (non-null), show only the "Add Knitting Details" button
+  if (error) {
+    return (
+      <div>
+        <p style={{ color: "red" }}>{error}</p>
+        <button onClick={handleAddClick}>Add Knitting Details</button>
+      </div>
+    );
+  }
 
   // Function to check for non-null, non-zero, and non-empty values
   const isNonZero = (value) => {
@@ -46,9 +59,10 @@ const ShowKnittingDetails = ({ RSN }) => {
   const handleUpdateClick = () => {
     navigate(`/panel-selection/${RSN}`, {
       state: { RSN: RSN, action: "update" },
-    })
+    });
   };
 
+  // 2. Otherwise, render knitting details and "Update Knitting Details" button
   return (
     <div>
       <h1>Knitting Details</h1>
