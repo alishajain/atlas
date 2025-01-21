@@ -18,6 +18,20 @@ const articleController = require('../controllers/ArticleController');
 const orderController = require('../controllers/OrderController');
 const orderYarnController = require('../controllers/OrderYarnController');
 const orderDetailsController = require('../controllers/OrderDetailsController');
+const cuttingController = require('../controllers/CuttingController');
+const kachianController = require('../controllers/KachianController');
+const kachiPressController = require('../controllers/KachiPressController');
+const kachiWashController = require('../controllers/KachiWashController');
+const kajController = require('../controllers/KajController');
+const linkingController = require('../controllers/LinkingController');
+const overlockController = require('../controllers/OverlockController');
+const pakkiPressController = require('../controllers/PakkiPressController');
+const pakkiWashController = require('../controllers/PakkiWashController');
+const raffuController = require('../controllers/RaffuController');
+const sewingController = require('../controllers/SewingController');
+const tailoringController = require('../controllers/TailoringController');
+const thokeTankeController = require('../controllers/ThokeTankeController');
+const sideController = require('../controllers/SideController');
 
 // Routes for Sample Details
 router.get('/SampleList', sampleController.getSampleList);
@@ -118,6 +132,62 @@ router.get ('/order-yarn/:OrderNo', orderYarnController.searchOrderYarnByOrderNo
 router.post('/add-order-details', orderDetailsController.addOrderDetails);
 router.put('/update-order-details', orderDetailsController.updateOrderDetails);
 router.get('/order-details/:OrderNo', orderDetailsController.getOrderByOrderNo);
+
+// Route for cutting process
+router.get('/get-cutting', cuttingController.getCuttingByRSN);
+router.post('/add-cutting', cuttingController.addCutting);
+
+// Route for kachian process
+router.get('/get-kachian', kachianController.getKachianByRSN);
+router.post('/add-kachian', kachianController.addKachian);
+
+// Route for kachi press process
+router.get('/get-kachipress', kachiPressController.getKachiPressByRSN);
+router.post('/add-kachipress', kachiPressController.addKachiPress);
+
+// Route for kachi wash process
+router.get('/get-kachiwash', kachiWashController.getKachiWashByRSN);
+router.post('/add-kachiwash', kachiWashController.addKachiWash);
+
+// Route for kaj process
+router.get('/get-kaj', kajController.getKajByRSN);
+router.post('/add-kaj', kajController.addKaj);
+
+// Route for linking process
+router.get('/get-linking', linkingController.getLinkingByRSN);
+router.post('/add-linking', linkingController.addLinking);
+
+// Routes for overlock process
+router.get('/get-overlock', overlockController.getOverlockByRSN);
+router.post('/add-overlock', overlockController.addOverlock);
+
+// Routes for pakki press process
+router.get('/get-pakkipress', pakkiPressController.getPakkiPressByRSN)
+router.post('/add-pakkipress', pakkiPressController.addPakkiPress);
+
+// Routes for pakki wash process
+router.get('/get-pakkiwash', pakkiWashController.getPakkiWashByRSN);
+router.post('/add-pakkiwash', pakkiWashController.addPakkiWash);
+
+// Routes for raffu process
+router.get('/get-raffu', raffuController.getRaffuByRSN);
+router.post('/add-raffu', raffuController.addRaffu);
+
+// Route for sewing process
+router.post('/add-sewing', sewingController.addSewing);
+router.get('/get-sewing', sewingController.getSewingByRSN);
+
+// Route for tailoring process
+router.get('/get-tailoring', tailoringController.getTailoringByRSN);
+router.post('/add-tailoring', tailoringController.addTailoring);
+
+// Route for thoke/tanke process
+router.get('/get-thoketanke', thokeTankeController.getThokeTankeByRSN)
+router.post('/add-thoketanke', thokeTankeController.addThokeTanke);
+
+// Route for side process
+router.get('/get-side', sideController.getSideByRSN);
+router.add('/add-side', sideController.addSide);
 
 // Export the router to use it in the main server file
 module.exports = router;
