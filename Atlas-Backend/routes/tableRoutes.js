@@ -133,61 +133,61 @@ router.post('/add-order-details', orderDetailsController.addOrderDetails);
 router.put('/update-order-details', orderDetailsController.updateOrderDetails);
 router.get('/order-details/:OrderNo', orderDetailsController.getOrderByOrderNo);
 
-// Route for cutting process
-router.get('/get-cutting', cuttingController.getCuttingByRSN);
+// Routes for cutting process
+router.get('/get-cutting/:RSN', cuttingController.getCuttingByRSN);
 router.post('/add-cutting', cuttingController.addCutting);
 
-// Route for kachian process
-router.get('/get-kachian', kachianController.getKachianByRSN);
+// Routes for kachian process
+router.get('/get-kachian/:RSN', kachianController.getKachianByRSN);
 router.post('/add-kachian', kachianController.addKachian);
 
-// Route for kachi press process
-router.get('/get-kachipress', kachiPressController.getKachiPressByRSN);
+// Routes for kachi press process
+router.get('/get-kachipress/:RSN', kachiPressController.getKachiPressByRSN);
 router.post('/add-kachipress', kachiPressController.addKachiPress);
 
-// Route for kachi wash process
-router.get('/get-kachiwash', kachiWashController.getKachiWashByRSN);
+// Routes for kachi wash process
+router.get('/get-kachiwash/:RSN', kachiWashController.getKachiWashByRSN);
 router.post('/add-kachiwash', kachiWashController.addKachiWash);
 
-// Route for kaj process
-router.get('/get-kaj', kajController.getKajByRSN);
+// Routes for kaj process
+router.get('/get-kaj/:RSN', kajController.getKajByRSN);
 router.post('/add-kaj', kajController.addKaj);
 
-// Route for linking process
-router.get('/get-linking', linkingController.getLinkingByRSN);
+// Routes for linking process
+router.get('/get-linking/:RSN', linkingController.getLinkingByRSN);
 router.post('/add-linking', linkingController.addLinking);
 
 // Routes for overlock process
-router.get('/get-overlock', overlockController.getOverlockByRSN);
+router.get('/get-overlock/:RSN', overlockController.getOverlockByRSN);
 router.post('/add-overlock', overlockController.addOverlock);
 
 // Routes for pakki press process
-router.get('/get-pakkipress', pakkiPressController.getPakkiPressByRSN)
+router.get('/get-pakkipress/:RSN', pakkiPressController.getPakkiPressByRSN)
 router.post('/add-pakkipress', pakkiPressController.addPakkiPress);
 
 // Routes for pakki wash process
-router.get('/get-pakkiwash', pakkiWashController.getPakkiWashByRSN);
+router.get('/get-pakkiwash/:RSN', pakkiWashController.getPakkiWashByRSN);
 router.post('/add-pakkiwash', pakkiWashController.addPakkiWash);
 
 // Routes for raffu process
-router.get('/get-raffu', raffuController.getRaffuByRSN);
+router.get('/get-raffu/:RSN', raffuController.getRaffuByRSN);
 router.post('/add-raffu', raffuController.addRaffu);
 
-// Route for sewing process
+// Routes for sewing process
 router.post('/add-sewing', sewingController.addSewing);
-router.get('/get-sewing', sewingController.getSewingByRSN);
+router.get('/get-sewing/:RSN', sewingController.getSewingByRSN);
 
-// Route for tailoring process
-router.get('/get-tailoring', tailoringController.getTailoringByRSN);
+// Routes for tailoring process
+router.get('/get-tailoring/:RSN', tailoringController.getTailoringByRSN);
 router.post('/add-tailoring', tailoringController.addTailoring);
 
-// Route for thoke/tanke process
-router.get('/get-thoketanke', thokeTankeController.getThokeTankeByRSN)
+// Routes for thoke/tanke process
+router.get('/get-thoketanke/:RSN', thokeTankeController.getThokeTankeByRSN)
 router.post('/add-thoketanke', thokeTankeController.addThokeTanke);
 
-// Route for side process
-router.get('/get-side', sideController.getSideByRSN);
-router.add('/add-side', sideController.addSide);
+// Routes for side process
+router.get('/get-side/:RSN', sideController.getSideByRSN);
+router.post('/add-side', sideController.addSide);
 
 // Export the router to use it in the main server file
 module.exports = router;
