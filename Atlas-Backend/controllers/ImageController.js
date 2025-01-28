@@ -46,7 +46,6 @@ const uploadImage = async (req, res) => {
       UserId,
       RSN,
     ]);
-    console.log("Image uploaded to database successfully!");
 
     // Return the result to the client
     res.status(200).json({

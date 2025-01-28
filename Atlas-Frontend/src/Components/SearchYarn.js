@@ -79,7 +79,7 @@ const SearchYarn = () => {
             <tbody>
               {yarnDetails.map((yarn, index) => (
                 <tr key={index}>
-                  <td>{yarn.LottNo}</td>
+                  <td>{yarn.LotNo}</td>
                   <td>{yarn.TotalWeight}</td>
                 </tr>
               ))}

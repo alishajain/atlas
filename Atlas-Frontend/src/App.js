@@ -38,6 +38,7 @@ import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
 import UpdateImage from "./Components/UpdateImage";
 import ShowOrder from "./Pages/ShowOrder";
+import AddProcessDetails from "./Components/AddProcessDetails";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
