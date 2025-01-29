@@ -69,7 +69,7 @@ export const addKnittingDetails = async (data) => {
 // Updates Sample details
 export const updateRecord = async (data) => {
   try {
-    const response = await fetch('http://localhost:5000/api/update-sample', {
+    const response = await fetch(`${API_URL}/update-sample`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

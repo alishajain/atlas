@@ -38,6 +38,7 @@ import UpdateOrder from "./Components/UpdateOrder";
 import Order from "./Pages/Order";
 import UpdateImage from "./Components/UpdateImage";
 import ShowOrder from "./Pages/ShowOrder";
+import EmployeeDetails from "./Components/EmployeeDetails";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -99,6 +100,7 @@ const App = () => {
           <Route path="/employee" element={<Employee />} />
           <Route path="/add-employee" element={<AddEmployeeDetails />} />
           <Route path="/search-employee" element={<SearchEmployee />} />
+          <Route path ="/show-employee" element={<EmployeeDetails />} />
 
           {/* Routes for Machine mnagement */}
           <Route path="/machine" element={<Machine />} />

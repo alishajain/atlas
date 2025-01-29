@@ -138,7 +138,7 @@ const SearchEmployee = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="6">No employees found</td>
+              <td colSpan="11">No employees found</td>
             </tr>
           )}
         </tbody>

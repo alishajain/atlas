@@ -12,6 +12,10 @@ const Employee = () => {
     navigate('/search-employee');
   };
 
+  const handleShowAAllClick = () => {
+    navigate('/show-employee');
+  };
+
   const handleHome = () => {
     navigate('/home');
   };
@@ -21,6 +25,7 @@ const Employee = () => {
         <h1>Employee Actions</h1>
       <button onClick={handleAddClick}>Add</button>
       <button onClick={handleSearchClick}>Search</button>
+      <button onClick={handleShowAAllClick}>Show All</button>
       <div>
         <button onClick={handleHome}>Home</button>
       </div>
